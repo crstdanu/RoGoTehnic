@@ -1,0 +1,139 @@
+{% extends "StudiiFezabilitate/base.html" %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <h3 class="m-4">Toate lucrările</h3>
+    <div class="row">
+        <div class="col-12">
+            {% if lucrari %}
+            <div class="card bg-light ms-4 me-4 mb-4">
+                <div class=" card-header">
+                    <i class="fa-solid fa-list fa-lg"></i> Lucrări
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nume intern</th>
+                                    <th scope="col">Lot</th>
+                                    <th scope="col">Firmă proiectare</th>
+                                    <th scope="col">Persoană contact</th>
+                                    <th scope="col">Finalizată</th>
+                                    <th scope="col">ACȚIUNI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lucrare in lucrari %}
+                                <tr>
+                                    <td>{{lucrare.nume_intern}}</td>
+                                    <td>{{lucrare.lot}}</td>
+                                    <td>{{lucrare.firma_proiectare}}</td>
+                                    <td>{{lucrare.persoana_contact}}</td>
+                                    <td>{% if lucrare.finalizata %}✅ Da{% else %}❌ Nu{% endif %}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-success me-1" data-bs-toggle="modal"
+                                            data-bs-target="#myModal{{lucrare.id}}">
+                                            <i class="fa-solid fa-circle-info fa-lg"></i>
+                                        </button>
+
+                                        <!-- Modal - View Lucrare -->
+                                        <div class="modal" id="myModal{{lucrare.id}}" tabindex="-1"
+                                            aria-labelledby="myModalLabel{{Lucrare.id}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            Lucrare: {{lucrare.nume_intern}}
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <ul class="list-unstyled">
+                                                            <li> Lot: <strong>{{lucrare.lot}}</strong></li>
+                                                            <li> Nume: <strong>{{lucrare.nume}}</strong></li>
+                                                            <li> Adresă: <strong>{{lucrare.localitate}},
+                                                                    {{lucrare.adresa}}, județ
+                                                                    {{lucrare.judet}}</strong></li>
+                                                            <li> Persoană contact:
+                                                                <strong>{{lucrare.persoana_contact}}</strong>
+                                                            </li>
+                                                            <li> Finalizată: <strong>
+                                                                    {% if lucrare.finalizata == True %}✅ Da
+                                                                    {% else %} ❌ Nu
+                                                                    {% endif %}
+                                                                </strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary"
+                                                            data-bs-dismiss="modal">Închide</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <a class="btn btn-warning me-1" href="{% url 'edit_lucrare' lucrare.id %}">
+                                            <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                                        </a>
+
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#delete{{lucrare.id}}">
+                                            <i class="fa-solid fa-trash-can fa-lg"></i>
+                                        </button>
+
+                                        <!-- Modal - Delete Lucrare -->
+                                        <div class="modal" id="delete{{lucrare.id}}" tabindex="-1"
+                                            aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            Lucrare: {{lucrare.nume_intern}}
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Închide">
+                                                            <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p> Ești sigur că vrei să ștergi lucrarea
+                                                            {{lucrare.nume_intern}}?
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form action="{% url 'delete_lucrare' lucrare.id %}"
+                                                            method="POST">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Șterge</button>
+                                                        </form>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Renunță</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-primary ms-4 me-4 mb-4"> Nu sunt lucrări în baza de date </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
