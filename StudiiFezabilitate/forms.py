@@ -1,5 +1,5 @@
 from django import forms
-from StudiiFezabilitate.models import Lucrare
+from StudiiFezabilitate.models import Lucrare, Localitate
 from django.core.exceptions import ValidationError
 
 
@@ -32,3 +32,14 @@ class LucrareForm(forms.ModelForm):
             'persoana_contact': forms.Select(attrs={'class': 'form-control'}),
             'finalizata': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+        def clean(self):
+            cleaned_data = super().clean()
+            judet = cleaned_data.get("judet")
+            localitate = cleaned_data.get("localitate")
+
+            if localitate and judet and localitate.judet != judet:
+                self.add_error(
+                    'localitate', "Localitatea selectată nu aparține județului ales.")
+
+            return cleaned_data

@@ -1,8 +1,8 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from StudiiFezabilitate.models import Lucrare
+from StudiiFezabilitate.models import Lucrare, Localitate
 from StudiiFezabilitate.forms import LucrareForm
 
 # Create your views here.
@@ -49,6 +49,10 @@ def add(request):
             return render(request, 'StudiiFezabilitate/add.html', {
                 'form': LucrareForm(),
                 'success': True
+            })
+        else:
+            return render(request, 'StudiiFezabilitate/add.html', {
+                'form': form
             })
     else:
         form = LucrareForm()

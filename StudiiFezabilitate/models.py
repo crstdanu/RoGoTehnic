@@ -27,6 +27,7 @@ class Judet(models.Model):
     class Meta:
         verbose_name = 'Județ'
         verbose_name_plural = 'Județe'
+        ordering = ['nume']
 
     def __str__(self):
         return self.nume
@@ -37,10 +38,39 @@ class Localitate(models.Model):
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, related_name='localitati')
 
+    TIP_CHOICES = [
+        ('Municipiul', 'Municipiul'),
+        ('Orașul', 'Orașul'),
+        ('Comuna', 'Comuna'),
+    ]
+    tip = models.CharField(
+        max_length=16, choices=TIP_CHOICES, null=True, blank=True)
+
     class Meta:
         unique_together = ('nume', 'judet')
         verbose_name = "Localitate"
         verbose_name_plural = "Localități"
+        ordering = ['nume']
+
+    def __str__(self):
+        return f"{self.tip} {self.nume}"
+
+
+class UAT(models.Model):
+    nume = models.CharField(max_length=100)
+    judet = models.ForeignKey(
+        Judet, on_delete=models.PROTECT, blank=True, null=True, related_name='UAT',)
+    localitate = models.ForeignKey(
+        Localitate, on_delete=models.PROTECT, blank=True, null=True, related_name='UAT')
+    adresa = models.CharField(max_length=512, blank=True, null=True,)
+    cod_postal = models.CharField(max_length=6, blank=True, null=True,)
+    telefon = models.CharField(max_length=20)
+    email = models.EmailField()
+    cont_trezorerie = models.CharField(max_length=30, blank=True, null=True,)
+
+    class Meta:
+        verbose_name = "Unitate administrativ teritorială"
+        verbose_name_plural = "Unități administrativ teritoriale"
 
     def __str__(self):
         return f"{self.nume}"
@@ -60,7 +90,7 @@ class Inginer(models.Model):
     serie_ci = models.CharField(
         max_length=2, blank=True, null=True, validators=[serie_ci_validator])
     numar_ci = models.CharField(
-        max_length=10, blank=True, null=True, validators=[numar_ci_validator])
+        max_length=6, blank=True, null=True, validators=[numar_ci_validator])
     data_ci = models.DateField(blank=True, null=True,)
     cale_ci = models.CharField(max_length=512, blank=True, null=True,)
     cale_semnatura = models.CharField(max_length=512, blank=True, null=True,)
@@ -103,7 +133,7 @@ class PersoanaContact(models.Model):
     serie_ci = models.CharField(
         max_length=2, blank=True, null=True, validators=[serie_ci_validator])
     numar_ci = models.CharField(
-        max_length=10, blank=True, null=True, validators=[numar_ci_validator])
+        max_length=6, blank=True, null=True, validators=[numar_ci_validator])
     data_ci = models.DateField(blank=True, null=True,)
     cale_ci = models.CharField(max_length=512, blank=True, null=True,)
     cale_semnatura = models.CharField(max_length=512, blank=True, null=True,)
@@ -170,6 +200,16 @@ class Beneficiar(models.Model):
         return self.nume
 
 
+class Aviz(models.Model):
+    nume = models.CharField(max_length=100)
+    judet = models.ForeignKey(
+        Judet, on_delete=models.PROTECT, related_name='avize')
+    descriere = models.TextField()
+
+    def __str__(self):
+        return self.nume
+
+
 class Lucrare(models.Model):
     nume = models.CharField(max_length=1000)
     nume_intern = models.CharField(max_length=255, unique=True)
@@ -195,5 +235,96 @@ class Lucrare(models.Model):
     def clean(self):
         validate_localitate(self)
 
+    def save(self, *args, **kwargs):
+        if self.pk:  # Dacă lucrarea există deja în baza de date
+            lucrare_veche = Lucrare.objects.get(pk=self.pk)
+            if lucrare_veche.finalizata and self.finalizata:
+                raise ValidationError(
+                    "Lucrarea finalizată nu poate fi modificată.")
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.nume_intern
+
+
+class CertificatUrbanism(models.Model):
+    # date despre CU
+    emitent = models.ForeignKey(UAT, on_delete=models.PROTECT)
+    numar = models.CharField(max_length=100)
+    data = models.DateField()
+    lucrare = models.OneToOneField(
+        Lucrare, on_delete=models.PROTECT, related_name='certificat_urbanism')
+    valabilitate = models.DateField()
+    # Date obligatorii
+    descrierea_proiectului = models.TextField()
+    inginer_intocmit = models.ForeignKey(
+        Inginer, on_delete=models.PROTECT, related_name='certificat_urbanism_intocmit')
+    inginer_verificat = models.ForeignKey(
+        Inginer, on_delete=models.PROTECT, related_name='certificat_urbanism_verificat')
+    # Date optionale
+    suprafata_ocupata = models.IntegerField(blank=True, null=True,)
+    lungime_traseu = models.IntegerField(blank=True, null=True,)
+    # atasamente obligatorii
+    cale_CU = models.CharField(max_length=512, blank=True, null=True,)
+    cale_plan_incadrare_CU = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_plan_situatie_CU = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_acte_beneficiar = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_acte_facturare = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_chitanta_APM = models.CharField(
+        max_length=512, blank=True, null=True,)
+    # atasamente optionale
+    cale_plan_situatie_PDF = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_plan_topo_DWG = models.CharField(
+        max_length=512, blank=True, null=True,)
+    cale_extrase_CF = models.CharField(max_length=512, blank=True, null=True,)
+    cale_aviz_GIS = models.CharField(max_length=512, blank=True, null=True,)
+    cale_ATR = models.CharField(max_length=512, blank=True, null=True,)
+    cale_aviz_CTE = models.CharField(max_length=512, blank=True, null=True,)
+    cale_chitanta_DSP = models.CharField(
+        max_length=512, blank=True, null=True,)
+
+    class Meta:
+        verbose_name = "Certificat de urbanism"
+        verbose_name_plural = "Certificate de urbanism"
+
+    def __str__(self):
+        return f"CU pentru {self.lucrare.nume_intern}"
+
+
+class AvizeCU(models.Model):
+    certificat_urbanism = models.ForeignKey(
+        CertificatUrbanism, on_delete=models.PROTECT, related_name='avize_certificat')
+    nume_aviz = models.ForeignKey(
+        Aviz, on_delete=models.PROTECT, related_name='certificat_avize')
+    depus = models.BooleanField(default=False)
+    data_depunere = models.DateField(blank=True, null=True,)
+    primit = models.BooleanField(default=False)
+    numar_aviz = models.CharField(max_length=100, blank=True, null=True,)
+    data_aviz = models.DateField(blank=True, null=True,)
+    cale_aviz = models.CharField(max_length=512)
+    descriere_aviz = models.TextField(blank=True, null=True,)
+    cost_net = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0.00)
+    cost_tva = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0.00)
+    cost_total = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0.00)
+
+    class Meta:
+        verbose_name = "Aviz"
+        verbose_name_plural = "Avize"
+        unique_together = ('certificat_urbanism', 'nume_aviz')
+
+    def save(self, *args, **kwargs):
+        # Setează automat cost_total înainte de a salva
+        self.cost_total = self.cost_net + self.cost_tva
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.nume_aviz.nume} pentru {self.certificat_urbanism.lucrare.nume_intern}"

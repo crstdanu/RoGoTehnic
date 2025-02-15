@@ -18,6 +18,7 @@
                 <form action="{% url 'add_lucrare' %}" method="POST">
                     {% csrf_token %}
                     {{form.as_p}}
+
                     <button type="submit" class="btn btn-primary">Adaugă lucrarea</button>
                     <a href="{% url 'index' %}" class="btn btn-secondary">Anulează</a>
                 </form>
