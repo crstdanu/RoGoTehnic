@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from StudiiFezabilitate.models import Lucrare, Localitate
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
 from StudiiFezabilitate.forms import LucrareForm
 
 # Create your views here.
@@ -84,3 +84,16 @@ def delete(request, id):
         lucrare = Lucrare.objects.get(pk=id)
         lucrare.delete()
     return HttpResponseRedirect(reverse('index'))
+
+
+def view_CU(request, id):
+    try:
+        certificat_urbanism = CertificatUrbanism.objects.get(lucrare_id=id)
+        avize = AvizeCU.objects.filter(certificat_urbanism=certificat_urbanism)
+    except CertificatUrbanism.DoesNotExist:
+        certificat_urbanism = None
+        avize = []
+    return render(request, 'CU/index.html', {
+        'avize': avize,
+        'certificat_urbanism': certificat_urbanism
+    })

@@ -204,15 +204,19 @@ class Aviz(models.Model):
     nume = models.CharField(max_length=100)
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, related_name='avize')
-    descriere = models.TextField()
+    descriere = models.TextField(blank=True, null=True,)
+
+    class Meta:
+        verbose_name = "Aviz"
+        verbose_name_plural = "Avize"
 
     def __str__(self):
         return self.nume
 
 
 class Lucrare(models.Model):
-    nume = models.CharField(max_length=1000)
     nume_intern = models.CharField(max_length=255, unique=True)
+    nume = models.CharField(max_length=1000, blank=True, null=True,)
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, related_name='lucrari')
     localitate = models.ForeignKey(
@@ -231,9 +235,12 @@ class Lucrare(models.Model):
     class Meta:
         verbose_name = "Lucrare"
         verbose_name_plural = "Lucrări"
+        ordering = ['nume_intern']
 
     def clean(self):
-        validate_localitate(self)
+        if self.localitate and self.judet and self.localitate.judet != self.judet:
+            raise ValidationError(
+                {'localitate': "Localitatea selectata nu aparține județului ales."})
 
     def save(self, *args, **kwargs):
         if self.pk:  # Dacă lucrarea există deja în baza de date
@@ -250,9 +257,10 @@ class Lucrare(models.Model):
 
 class CertificatUrbanism(models.Model):
     # date despre CU
-    emitent = models.ForeignKey(UAT, on_delete=models.PROTECT)
     numar = models.CharField(max_length=100)
     data = models.DateField()
+    emitent = models.ForeignKey(UAT, on_delete=models.PROTECT)
+    nume = models.CharField(max_length=2000, blank=True, null=True,)
     lucrare = models.OneToOneField(
         Lucrare, on_delete=models.PROTECT, related_name='certificat_urbanism')
     valabilitate = models.DateField()
@@ -307,7 +315,7 @@ class AvizeCU(models.Model):
     primit = models.BooleanField(default=False)
     numar_aviz = models.CharField(max_length=100, blank=True, null=True,)
     data_aviz = models.DateField(blank=True, null=True,)
-    cale_aviz = models.CharField(max_length=512)
+    cale_aviz = models.CharField(max_length=512, blank=True, null=True,)
     descriere_aviz = models.TextField(blank=True, null=True,)
     cost_net = models.DecimalField(
         max_digits=8, decimal_places=2, default=0.00)
@@ -317,8 +325,8 @@ class AvizeCU(models.Model):
         max_digits=8, decimal_places=2, default=0.00)
 
     class Meta:
-        verbose_name = "Aviz"
-        verbose_name_plural = "Avize"
+        verbose_name = "AvizCU"
+        verbose_name_plural = "AvizeCU"
         unique_together = ('certificat_urbanism', 'nume_aviz')
 
     def save(self, *args, **kwargs):

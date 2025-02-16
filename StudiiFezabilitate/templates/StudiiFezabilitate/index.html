@@ -18,7 +18,7 @@
                                 <tr>
                                     <th scope="col">Nume intern</th>
                                     <th scope="col">Lot</th>
-                                    <th scope="col">Firmă proiectare</th>
+                                    <th scope="col">Certificat de urbanism</th>
                                     <th scope="col">Persoană contact</th>
                                     <th scope="col">Finalizată</th>
                                     <th scope="col">ACȚIUNI</th>
@@ -29,8 +29,13 @@
                                 <tr>
                                     <td>{{lucrare.nume_intern}}</td>
                                     <td>{{lucrare.lot}}</td>
-                                    <td>{{lucrare.firma_proiectare}}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{% url 'index_CU' lucrare.id %}" role="button">
+                                            Certificat de urbanism
+                                        </a>
+                                    </td>
                                     <td>{{lucrare.persoana_contact}}</td>
+
                                     <td>{% if lucrare.finalizata %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                     <td>
                                         <button type="button" class="btn btn-success me-1" data-bs-toggle="modal"
