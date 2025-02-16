@@ -86,7 +86,7 @@ def delete(request, id):
     return HttpResponseRedirect(reverse('index'))
 
 
-def view_CU(request, id):
+def index_CU(request, id):
     try:
         certificat_urbanism = CertificatUrbanism.objects.get(lucrare_id=id)
         avize = AvizeCU.objects.filter(certificat_urbanism=certificat_urbanism)

@@ -1,177 +1,233 @@
-{% extends "CU/base.html" %}
+{% load static %}
 
-{% block body %}
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="container-fluid">
-    <h3 class="m-4">Certificat de urbanism</h3>
-    <div class="row">
-        <div class="col-12">
-            {% if certificat_urbanism %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificat de urbanism</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> <!-- Bootstrap -->
+</head>
 
-            <div class="card bg-light ms-4 me-4 mb-4">
-                <div class="card-header">
-                    <i class="fa-solid fa-list fa-lg"></i> Certificat de urbanism pentru
-                    {{certificat_urbanism.lucrare.nume_intern}}
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div>
-                            {% if avize %}
-                            <div class="card bg-light ms-4 me-4 mb-4">
-                                <div class=" card-header">
-                                    <i class="fa-solid fa-list fa-lg"></i> Avize
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Aviz</th>
-                                                    <th scope="col">Depus</th>
-                                                    <th scope="col">Data depunerii</th>
-                                                    <th scope="col">Primit</th>
-                                                    <th scope="col">ACȚIUNI</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for aviz in avize %}
-                                                <tr>
-                                                    <td>{{aviz.nume_aviz}}</td>
-                                                    <td>{{aviz.depus}}</td>
-                                                    <td>{{aviz.data_depunere}}</td>
-                                                    <td>{{aviz.primit}}</td>
-                                                    <td>
-                                                        ACTIUNI
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fa-solid fa-plug-circle-bolt fa-lg"></i> Certificat de urbanism
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">
+                            <i class="fa-solid fa-list fa-lg"></i> Toate lucrările
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_lucrare' %}">
+                            <i class="fa-solid fa-plus fa-lg"></i> Adaugă lucrare
+                        </a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-sm-2" type="search" placeholder="Caută">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Caută</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <h3 class="m-4">Certificat de urbanism</h3>
+        <div class="row">
+            <div class="col-12">
+                {% if certificat_urbanism %}
+
+                <div class="card bg-light ms-4 me-4 mb-4">
+                    <div class="card-header">
+                        <i class="fa-solid fa-list fa-lg"></i> Certificat de urbanism pentru
+                        {{certificat_urbanism.lucrare.nume_intern}}
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div>
+                                {% if avize %}
+                                <div class="card bg-light ms-4 me-4 mb-4">
+                                    <div class=" card-header">
+                                        <i class="fa-solid fa-list fa-lg"></i> Avize
                                     </div>
-                                    </p>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Aviz</th>
+                                                        <th scope="col">Depus</th>
+                                                        <th scope="col">Data depunerii</th>
+                                                        <th scope="col">Primit</th>
+                                                        <th scope="col">ACȚIUNI</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for aviz in avize %}
+                                                    <tr>
+                                                        <td>{{aviz.nume_aviz}}</td>
+                                                        <td>{{aviz.depus}}</td>
+                                                        <td>{{aviz.data_depunere}}</td>
+                                                        <td>{{aviz.primit}}</td>
+                                                        <td>
+                                                            ACTIUNI
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        </p>
+                                    </div>
                                 </div>
+                                {% else %}
+                                <div class="alert alert-primary ms-4 me-4 mb-4"> Nu sunt avize asociate acestei lucrări
+                                </div>
+                                {% endif %}
                             </div>
-                            {% else %}
-                            <div class="alert alert-primary ms-4 me-4 mb-4"> Nu sunt avize asociate acestei lucrări
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6 p-3">
-                            <form>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4">
-                                        <div class="d-flex w-100">
-                                            <label for="staticNumar" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Număr CU</label>
-                                            <input type="text" readonly class="form-control-plaintext" id="staticNumar"
-                                                value="{{certificat_urbanism.numar}}">
+                            <div class="col-md-6 p-3">
+                                <form>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4">
+                                            <div class="d-flex w-100">
+                                                <label for="staticNumar" class="col-form-label me-2 mb-0"
+                                                    style="white-space: nowrap;">Număr CU</label>
+                                                <input type="text" readonly class="form-control-plaintext"
+                                                    id="staticNumar" value="{{certificat_urbanism.numar}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="d-flex w-100">
+                                                <label for="staticData" class="col-form-label me-2 mb-0"
+                                                    style="white-space: nowrap;">Data CU</label>
+                                                <input type="text" readonly class="form-control-plaintext"
+                                                    id="staticData" value="{{certificat_urbanism.data}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="d-flex w-100">
+                                                <label for="staticEmitent" class="col-form-label me-2 mb-0"
+                                                    style="white-space: nowrap;">Emitent CU</label>
+                                                <input type="text" readonly class="form-control-plaintext"
+                                                    id="staticEmitent" value="{{certificat_urbanism.emitent}}">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="d-flex w-100">
-                                            <label for="staticData" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Data CU</label>
-                                            <input type="text" readonly class="form-control-plaintext" id="staticData"
-                                                value="{{certificat_urbanism.data}}">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="d-flex w-100">
-                                            <label for="staticEmitent" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Emitent CU</label>
+                                    <div class="row mb-3">
+                                        <label for="staticValabilitate" class="col-sm-3 col-form-label">Valabilitate
+                                            CU</label>
+                                        <div class="col-sm-9">
                                             <input type="text" readonly class="form-control-plaintext"
-                                                id="staticEmitent" value="{{certificat_urbanism.emitent}}">
+                                                id="staticValabilitate" value="{{certificat_urbanism.valabilitate}}">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticValabilitate" class="col-sm-3 col-form-label">Valabilitate
-                                        CU</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticValabilitate" value="{{certificat_urbanism.valabilitate}}">
+                                    <div class="row mb-3">
+                                        <label for="staticNume" class="col-sm-3 col-form-label">Nume lucrare</label>
+                                        <div class="col-sm-9">
+                                            <textarea readonly class="form-control-plaintext" id="staticNume" rows="5"
+                                                style="resize: vertical;">{{certificat_urbanism.nume}}</textarea>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticNume" class="col-sm-3 col-form-label">Nume lucrare</label>
-                                    <div class="col-sm-9">
-                                        <textarea readonly class="form-control-plaintext" id="staticNume" rows="5"
-                                            style="resize: vertical;">{{certificat_urbanism.nume}}</textarea>
+                                    <div class="row mb-3">
+                                        <label for="staticInginerIntocmit" class="col-sm-3 col-form-label">Inginer
+                                            întocmit</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" readonly class="form-control-plaintext"
+                                                id="staticInginerIntocmit"
+                                                value="{{certificat_urbanism.inginer_intocmit}}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticInginerIntocmit" class="col-sm-3 col-form-label">Inginer
-                                        întocmit</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticInginerIntocmit" value="{{certificat_urbanism.inginer_intocmit}}">
+                                    <div class="row mb-3">
+                                        <label for="staticInginerVerificat" class="col-sm-3 col-form-label">Inginer
+                                            verificat</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" readonly class="form-control-plaintext"
+                                                id="staticInginerVerificat"
+                                                value="{{certificat_urbanism.inginer_verificat}}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticInginerVerificat" class="col-sm-3 col-form-label">Inginer
-                                        verificat</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticInginerVerificat"
-                                            value="{{certificat_urbanism.inginer_verificat}}">
+                                    <div class="row mb-3">
+                                        <label for="staticSuprafataOcupata" class="col-sm-3 col-form-label">Suprafața
+                                            ocupată
+                                            (m2)</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" readonly class="form-control-plaintext"
+                                                id="staticSuprafataOcupata"
+                                                value="{{certificat_urbanism.suprafata_ocupata}}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticSuprafataOcupata" class="col-sm-3 col-form-label">Suprafața
-                                        ocupată
-                                        (m2)</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticSuprafataOcupata"
-                                            value="{{certificat_urbanism.suprafata_ocupata}}">
+                                    <div class="row mb-3">
+                                        <label for="staticLungimeTraseu" class="col-sm-3 col-form-label">Lungime traseu
+                                            (m)</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" readonly class="form-control-plaintext"
+                                                id="staticLungimeTraseu" value="{{certificat_urbanism.lungime_traseu}}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticLungimeTraseu" class="col-sm-3 col-form-label">Lungime traseu
-                                        (m)</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticLungimeTraseu" value="{{certificat_urbanism.lungime_traseu}}">
+                                    <div class="row mb-3">
+                                        <label for="staticCaleCU" class="col-sm-3 col-form-label">Cale CU</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticCaleCU"
+                                                value="{{certificat_urbanism.cale_CU}}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">Cale CU</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="staticCaleCU"
-                                            value="{{certificat_urbanism.cale_CU}}">
+                                </form>
+                                <!-- aici pun avizele -->
+
+                            </div>
+                            <div class="col-md-6 p-3">
+                                <form>
+                                    <div class="row mb-3">
+                                        <label for="staticDescriereaProiectului" class="col-form-label">Descrierea
+                                            proiectului</label>
+                                        <div>
+                                            <textarea readonly class="form-control-plaintext"
+                                                id="staticDescriereaProiectului" rows="30"
+                                                style="resize: vertical;">{{certificat_urbanism.descrierea_proiectului}}</textarea>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                            <!-- aici pun avizele -->
+                                </form>
+                            </div>
+
 
                         </div>
-                        <div class="col-md-6 p-3">
-                            <form>
-                                <div class="row mb-3">
-                                    <label for="staticDescriereaProiectului" class="col-form-label">Descrierea
-                                        proiectului</label>
-                                    <div>
-                                        <textarea readonly class="form-control-plaintext"
-                                            id="staticDescriereaProiectului" rows="30"
-                                            style="resize: vertical;">{{certificat_urbanism.descrierea_proiectului}}</textarea>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
 
                     </div>
-
                 </div>
-            </div>
 
-            {% else %}
-            <div class="alert alert-primary ms-4 me-4 mb-4"> Nu avem Certificat de urbanism pentru aceasta lucrare
-            </div>
-            {% endif %}
+                {% else %}
+                <div class="alert alert-primary ms-4 me-4 mb-4"> Nu avem Certificat de urbanism pentru aceasta lucrare
+                </div>
+                {% endif %}
 
+            </div>
         </div>
     </div>
-</div>
 
-{% endblock %}
+    <footer class="mt-auto mb-4">
+        <div class="text-center">
+            <span>
+                Copyright &copy
+                <script>document.write(new Date().getFullYear())</script> - crstdanu
+            </span>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- jQuery -->
+</body>
+
+</html>
