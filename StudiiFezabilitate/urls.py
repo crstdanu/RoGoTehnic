@@ -9,4 +9,5 @@ urlpatterns = [
     path('delete/<int:id>/', views.delete, name='delete_lucrare'),
     # CU
     path('lucrare/<int:id>/index_CU/', views.index_CU, name='index_CU'),
+    path('lucrare/<int:id>/add_CU/', views.add_CU, name='add_CU'),
 ]

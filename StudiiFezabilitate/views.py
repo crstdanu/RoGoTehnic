@@ -1,9 +1,9 @@
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
 from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
-from StudiiFezabilitate.forms import LucrareForm
+from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm
 
 # Create your views here.
 
@@ -95,5 +95,36 @@ def index_CU(request, id):
         avize = []
     return render(request, 'CU/index.html', {
         'avize': avize,
-        'certificat_urbanism': certificat_urbanism
+        'certificat_urbanism': certificat_urbanism,
+        'lucrare': Lucrare.objects.get(pk=id),
+    })
+
+
+def add_CU(request, id):
+    lucrare = get_object_or_404(Lucrare, pk=id)
+    print(f"Lucrare ID în add_CU: {lucrare.id}")  # Debugging
+
+    if request.method == 'POST':
+        form = CertificatUrbanismForm(request.POST)
+        if form.is_valid():
+            # Crează obiectul dar nu îl salvează încă
+            certificat_urbanism = form.save(commit=False)
+            certificat_urbanism.lucrare = lucrare  # Asignează lucrarea existentă
+            certificat_urbanism.save()  # Salvează în baza de date
+
+            return render(request, 'CU/add.html', {
+                'form': CertificatUrbanismForm(),
+                'success': True,
+                'lucrare': lucrare
+            })
+        else:
+            return render(request, 'CU/add.html', {
+                'form': form,
+                'lucrare': lucrare,
+            })
+    else:
+        form = CertificatUrbanismForm()
+    return render(request, 'CU/add.html', {
+        'form': form,
+        'lucrare': lucrare,
     })
