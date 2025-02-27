@@ -225,9 +225,9 @@ class Lucrare(models.Model):
     lot = models.ForeignKey(Lot, on_delete=models.PROTECT,
                             blank=True, null=True, related_name='lucrari')
     firma_proiectare = models.ForeignKey(
-        FirmaProiectare, on_delete=models.PROTECT)
+        FirmaProiectare, on_delete=models.SET_NULL, null=True, default=1, related_name='lucrari')
     beneficiar = models.ForeignKey(
-        Beneficiar, on_delete=models.PROTECT)
+        Beneficiar, on_delete=models.SET_NULL, null=True, default=1, related_name='lucrari')
     persoana_contact = models.ForeignKey(
         PersoanaContact, on_delete=models.PROTECT)
     finalizata = models.BooleanField(default=False)
@@ -267,9 +267,9 @@ class CertificatUrbanism(models.Model):
     # Date obligatorii
     descrierea_proiectului = models.TextField()
     inginer_intocmit = models.ForeignKey(
-        Inginer, on_delete=models.PROTECT, related_name='certificat_urbanism_intocmit')
+        Inginer, on_delete=models.SET_NULL, default=2, null=True, related_name='certificat_urbanism_intocmit')
     inginer_verificat = models.ForeignKey(
-        Inginer, on_delete=models.PROTECT, related_name='certificat_urbanism_verificat')
+        Inginer, on_delete=models.PROTECT, default=1, null=True, related_name='certificat_urbanism_verificat')
     # Date optionale
     suprafata_ocupata = models.IntegerField(blank=True, null=True,)
     lungime_traseu = models.IntegerField(blank=True, null=True,)

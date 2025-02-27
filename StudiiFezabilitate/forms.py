@@ -66,6 +66,7 @@ class CertificatUrbanismForm(forms.ModelForm):
 
         widgets = {
             'numar': forms.TextInput(attrs={'class': 'form-control'}),
+            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'emitent': forms.Select(attrs={'class': 'form-control'}),
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele lucrării din Certificatul de Urbanism'}),
             'valabilitate': forms.DateInput(attrs={'class': 'form-control'}),
