@@ -12,14 +12,23 @@
                 <div class="card-header">
                     <i class="fa-solid fa-list fa-lg"></i> Certificat de urbanism pentru
                     {{certificat_urbanism.lucrare.nume_intern}}
+                    <p>Lucrare ID: {{ lucrare.id }}</p>
+                    <a class="btn btn-warning me-1" href="{% url 'edit_CU' lucrare.id %}">
+                        Editează CU
+                    </a>
                 </div>
+
                 <div class="card-body">
                     <div class="row">
                         <div>
                             {% if avize %}
-                            <div class="card bg-light ms-4 me-4 mb-4">
+                            <div class="card border-primary ms-4 me-4 mb-4">
                                 <div class=" card-header">
                                     <i class="fa-solid fa-list fa-lg"></i> Avize
+                                    <form action="{% url 'add_Avize' lucrare.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary">Adaugă aviz</button>
+                                    </form>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -41,7 +50,125 @@
                                                     <td>{{aviz.data_depunere}}</td>
                                                     <td>{{aviz.primit}}</td>
                                                     <td>
-                                                        ACTIUNI
+                                                        <button type="button" class="btn btn-success me-1"
+                                                            data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
+                                                            <i class="fa-solid fa-circle-info fa-lg"></i>
+                                                        </button>
+
+                                                        <!-- Modal - View Lucrare -->
+                                                        <div class="modal" id="myModal{{aviz.id}}" tabindex="-1"
+                                                            aria-labelledby="myModalLabel{{aviz.id}}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">
+                                                                            Aviz: {{aviz.nume_aviz}} pentru
+                                                                            {{aviz.certificat_urbanism.lucrare.nume_intern}}
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <ul class="list-unstyled">
+                                                                            <li> Depus: <strong>
+                                                                                    {% if aviz.depus == True %}✅
+                                                                                    Da
+                                                                                    {% else %} ❌ Nu
+                                                                                    {% endif %}
+                                                                                </strong>
+                                                                            </li>
+                                                                            <li> Data depunere:
+                                                                                <strong>{{aviz.data_depunere}}</strong>
+                                                                            </li>
+                                                                            <li> Primit: <strong>
+                                                                                    {% if aviz.primit == True %}✅
+                                                                                    Da
+                                                                                    {% else %} ❌ Nu
+                                                                                    {% endif %}
+                                                                                </strong>
+                                                                                </strong></li>
+                                                                            <li> Număr aviz:
+                                                                                <strong>{{aviz.numar_aviz}}</strong>
+                                                                            </li>
+                                                                            <li> Data aviz:
+                                                                                <strong>{{aviz.data_aviz}}</strong>
+                                                                            </li>
+                                                                            <li> Cost net:
+                                                                                <strong>{{ aviz.cost_net }}</strong>
+                                                                            </li>
+                                                                            <li> Cost TVA:
+                                                                                <strong>{{ aviz.cost_tva }}</strong>
+                                                                            </li>
+                                                                            <li> Cost Total:
+                                                                                <strong>{{ aviz.cost_total }}</strong>
+                                                                            </li>
+
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-primary"
+                                                                            data-bs-dismiss="modal">Închide</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- aici se termina modalul -->
+
+
+                                                        <!-- aici e butonul pentru a edita -->
+
+                                                        <a class="btn btn-warning me-1"
+                                                            href="{% url 'edit_aviz' lucrare.id aviz.id %}">Editează
+                                                        </a>
+
+                                                        <!-- aici e butonul pentru a sterge -->
+
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-bs-toggle="modal" data-bs-target="#delete{{aviz.id}}">
+                                                            <i class="fa-solid fa-trash-can fa-lg"></i>
+                                                        </button>
+
+                                                        <!-- Modal - Delete Lucrare -->
+                                                        <div class="modal" id="delete{{aviz.id}}" tabindex="-1"
+                                                            aria-labelledby="#myModalLabel1{{aviz.id}}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">
+                                                                            {{aviz.nume_aviz}} pentru
+                                                                            {{aviz.certificat_urbanism.lucrare.nume_intern}}
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Închide">
+                                                                            <span aria-hidden="true"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p> Ești sigur că vrei să ștergi avizul?
+
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <form
+                                                                            action="{% url 'delete_aviz' lucrare.id aviz.id %}"
+                                                                            method="POST">
+                                                                            {% csrf_token %}
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger">Șterge</button>
+                                                                        </form>
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Renunță</button>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
@@ -53,6 +180,10 @@
                             </div>
                             {% else %}
                             <div class="alert alert-primary ms-4 me-4 mb-4"> Nu sunt avize asociate acestei lucrări
+                                <form action="{% url 'add_Avize' lucrare.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Adaugă aviz</button>
+                                </form>
                             </div>
                             {% endif %}
                         </div>
@@ -167,7 +298,6 @@
 
             {% else %}
             <p>Lucrare ID: {{ lucrare.id }}</p>
-            <p>URL generat: {% url 'add_CU' lucrare.id %}</p>
             <div class="alert alert-primary ms-4 me-4 mb-4"> Nu avem Certificat de urbanism pentru aceasta lucrare
             </div>
             <form action="{% url 'add_CU' lucrare.id %}" method="POST">

@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
 from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
-from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm
+from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
 
 # Create your views here.
 
@@ -128,3 +128,80 @@ def add_CU(request, id):
         'form': form,
         'lucrare': lucrare,
     })
+
+
+def edit_CU(request, id):
+    lucrare = get_object_or_404(Lucrare, pk=id)
+    certificat_urbanism = CertificatUrbanism.objects.get(lucrare=lucrare)
+    if request.method == 'POST':
+        form = CertificatUrbanismForm(
+            request.POST, instance=certificat_urbanism)
+        if form.is_valid():
+            form.save()
+            return render(request, 'CU/edit.html', {
+                'form': form,
+                'success': True,
+                'lucrare': lucrare
+            })
+    else:
+        form = CertificatUrbanismForm(instance=certificat_urbanism)
+    return render(request, 'CU/edit.html', {
+        'form': form,
+        'lucrare': lucrare
+    })
+
+
+def add_Avize(request, id):
+    lucrare = get_object_or_404(Lucrare, pk=id)
+    certificat_urbanism = CertificatUrbanism.objects.get(lucrare=lucrare)
+    if request.method == 'POST':
+        form = AvizeCUForm(request.POST)
+        if form.is_valid():
+            aviz = form.save(commit=False)
+            aviz.certificat_urbanism = certificat_urbanism
+            aviz.save()
+            return render(request, 'CU/add_avize.html', {
+                'form': AvizeCUForm(),
+                'success': True,
+                'lucrare': lucrare
+            })
+        else:
+            return render(request, 'CU/add_avize.html', {
+                'form': form,
+                'lucrare': lucrare
+            })
+    else:
+        form = AvizeCUForm()
+
+    return render(request, 'CU/add_avize.html', {
+        'form': form,
+        'lucrare': lucrare
+    })
+
+
+def edit_Aviz(request, lucrare_id, id):
+    lucrare = Lucrare.objects.get(pk=lucrare_id)
+    aviz = AvizeCU.objects.get(pk=id)
+    if request.method == 'POST':
+        form = AvizeCUForm(request.POST, instance=aviz)
+        if form.is_valid():
+            form.save()
+            return render(request, 'CU/edit_avize.html', {
+                'form': form,
+                'success': True,
+                'lucrare': lucrare
+            })
+    else:
+        form = AvizeCUForm(instance=aviz)
+    return render(request, 'CU/edit_avize.html', {
+        'form': form,
+        'lucrare': lucrare
+    })
+
+
+def delete_aviz(request, lucrare_id, id_aviz):
+    if request.method == 'POST':
+        aviz = AvizeCU.objects.get(pk=id_aviz)
+        aviz.delete()
+
+    return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))

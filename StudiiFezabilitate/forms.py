@@ -1,5 +1,5 @@
 from django import forms
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, UAT
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
 from django.core.exceptions import ValidationError
 
 
@@ -79,27 +79,42 @@ class CertificatUrbanismForm(forms.ModelForm):
 
         }
 
-    def __init__(self, *args, **kwargs):
-        super(CertificatUrbanismForm, self).__init__(*args, **kwargs)
-        if 'lucrare' in self.data:
-            try:
-                lucrare_id = int(self.data.get('lucrare'))
-                lucrare = Lucrare.objects.get(id=lucrare_id)
-                self.fields['emitent'].queryset = UAT.objects.filter(
-                    judet=lucrare.judet)
-            except (ValueError, Lucrare.DoesNotExist):
-                self.fields['emitent'].queryset = UAT.objects.none()
-        elif self.instance.pk:
-            self.fields['emitent'].queryset = UAT.objects.filter(
-                judet=self.instance.lucrare.judet)
 
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     nume = cleaned_data.get("nume")
-    #     lucrare = cleaned_data.get("lucrare")
+class AvizeCUForm(forms.ModelForm):
+    class Meta:
+        model = AvizeCU
+        fields = ['nume_aviz', 'depus', 'data_depunere', 'primit', 'numar_aviz',
+                  'data_aviz', 'cale_aviz', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total']
+        labels = {
+            'nume_aviz': 'Nume aviz',
+            'depus': 'Depus',
+            'data_depunere': 'Data depunerii',
+            'primit': 'Primit',
+            'numar_aviz': 'Număr aviz',
+            'data_aviz': 'Data aviz',
+            'cale_aviz': 'Cale aviz',
+            'descriere_aviz': 'Descriere aviz',
+            'cost_net': 'Cost Net',
+            'cost_tva': 'Cost TVA',
+            'cost_total': 'Cost Total',
+        }
 
-    #     if nume and lucrare and nume.lucrare != lucrare:
-    #         self.add_error(
-    #             'nume', "Numele lucrării nu corespunde cu lucrarea selectată.")
+        widgets = {
+            'nume_aviz': forms.Select(attrs={'class': 'form-control'}),
+            'depus': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'data_depunere': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'primit': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'numar_aviz': forms.TextInput(attrs={'class': 'form-control'}),
+            'data_aviz': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'cale_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea avizului'}),
+            'descriere_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți descrierea avizului'}),
+            'cost_net': forms.NumberInput(attrs={'class': 'form-control'}),
+            'cost_tva': forms.NumberInput(attrs={'class': 'form-control'}),
+            'cost_total': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
 
-    #     return cleaned_data
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['cost_net'].required = False
+            self.fields['cost_tva'].required = False
+            self.fields['cost_total'].required = False

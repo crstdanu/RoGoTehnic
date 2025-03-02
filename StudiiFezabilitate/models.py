@@ -105,7 +105,7 @@ class Inginer(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nume} {self.prenume}"
+        return f"ing. {self.nume} {self.prenume}"
 
 
 class Lot(models.Model):
@@ -262,14 +262,14 @@ class CertificatUrbanism(models.Model):
     emitent = models.ForeignKey(UAT, on_delete=models.PROTECT)
     nume = models.CharField(max_length=2000, blank=True, null=True,)
     lucrare = models.OneToOneField(
-        Lucrare, on_delete=models.PROTECT, related_name='certificat_urbanism')
+        Lucrare, on_delete=models.CASCADE, related_name='certificat_urbanism')
     valabilitate = models.DateField()
     # Date obligatorii
     descrierea_proiectului = models.TextField()
     inginer_intocmit = models.ForeignKey(
         Inginer, on_delete=models.SET_NULL, default=2, null=True, related_name='certificat_urbanism_intocmit')
     inginer_verificat = models.ForeignKey(
-        Inginer, on_delete=models.PROTECT, default=1, null=True, related_name='certificat_urbanism_verificat')
+        Inginer, on_delete=models.SET_NULL, default=1, null=True, related_name='certificat_urbanism_verificat')
     # Date optionale
     suprafata_ocupata = models.IntegerField(blank=True, null=True,)
     lungime_traseu = models.IntegerField(blank=True, null=True,)
@@ -307,10 +307,10 @@ class CertificatUrbanism(models.Model):
 
 class AvizeCU(models.Model):
     certificat_urbanism = models.ForeignKey(
-        CertificatUrbanism, on_delete=models.PROTECT, related_name='avize_certificat')
+        CertificatUrbanism, on_delete=models.CASCADE, related_name='avize_certificat')
     nume_aviz = models.ForeignKey(
         Aviz, on_delete=models.PROTECT, related_name='certificat_avize')
-    depus = models.BooleanField(default=False)
+    depus = models.BooleanField(default=False,)
     data_depunere = models.DateField(blank=True, null=True,)
     primit = models.BooleanField(default=False)
     numar_aviz = models.CharField(max_length=100, blank=True, null=True,)
@@ -318,21 +318,16 @@ class AvizeCU(models.Model):
     cale_aviz = models.CharField(max_length=512, blank=True, null=True,)
     descriere_aviz = models.TextField(blank=True, null=True,)
     cost_net = models.DecimalField(
-        max_digits=8, decimal_places=2, default=0.00)
+        max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
     cost_tva = models.DecimalField(
-        max_digits=8, decimal_places=2, default=0.00)
+        max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
     cost_total = models.DecimalField(
-        max_digits=8, decimal_places=2, default=0.00)
+        max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
 
     class Meta:
         verbose_name = "AvizCU"
         verbose_name_plural = "AvizeCU"
         unique_together = ('certificat_urbanism', 'nume_aviz')
-
-    def save(self, *args, **kwargs):
-        # Setează automat cost_total înainte de a salva
-        self.cost_total = self.cost_net + self.cost_tva
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.nume_aviz.nume} pentru {self.certificat_urbanism.lucrare.nume_intern}"
