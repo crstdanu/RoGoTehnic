@@ -18,7 +18,7 @@
                 <form action="" method="POST">
                     {% csrf_token %}
                     {{form.as_p}}
-                    <button type="submit" class="btn btn-primary">Editează <p>Lucrare ID: {{ lucrare.id }}</p></button>
+                    <button type="submit" class="btn btn-primary">Editează</button>
                     <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary">Anulează</a>
                 </form>
             </div>

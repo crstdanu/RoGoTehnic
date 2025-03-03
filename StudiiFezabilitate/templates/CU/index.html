@@ -9,27 +9,42 @@
             {% if certificat_urbanism %}
 
             <div class="card bg-light ms-4 me-4 mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fa-solid fa-list fa-lg"></i>
+                    <span class="ms-2">Certificat de urbanism pentru {{certificat_urbanism.lucrare.nume_intern}}</span>
+                    <div class="flex-grow-1 d-flex justify-content-center">
+                        <a class="btn btn-warning" href="{% url 'edit_CU' lucrare.id %}">
+                            Editează Certificatul de urbanism
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- <div class="card-header">
                     <i class="fa-solid fa-list fa-lg"></i> Certificat de urbanism pentru
                     {{certificat_urbanism.lucrare.nume_intern}}
-                    <p>Lucrare ID: {{ lucrare.id }}</p>
                     <a class="btn btn-warning me-1" href="{% url 'edit_CU' lucrare.id %}">
                         Editează CU
                     </a>
-                </div>
+                </div> -->
 
                 <div class="card-body">
                     <div class="row">
                         <div>
                             {% if avize %}
                             <div class="card border-primary ms-4 me-4 mb-4">
-                                <div class=" card-header">
-                                    <i class="fa-solid fa-list fa-lg"></i> Avize
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa-solid fa-list fa-lg me-2"></i>
+                                        <span>Avize</span>
+                                    </div>
                                     <form action="{% url 'add_Avize' lucrare.id %}" method="POST">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-primary">Adaugă aviz</button>
                                     </form>
                                 </div>
+
+
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-hover">
@@ -297,13 +312,16 @@
             </div>
 
             {% else %}
-            <p>Lucrare ID: {{ lucrare.id }}</p>
-            <div class="alert alert-primary ms-4 me-4 mb-4"> Nu avem Certificat de urbanism pentru aceasta lucrare
+            <div class="alert alert-primary ms-4 me-4 mb-4 d-flex align-items-center justify-content-between">
+                <span>Nu avem Certificat de urbanism pentru aceasta lucrare</span>
+                <form action="{% url 'add_CU' lucrare.id %}" method="POST"
+                    class="flex-grow-1 d-flex justify-content-center">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Adaugă certificat de urbanism</button>
+                </form>
             </div>
-            <form action="{% url 'add_CU' lucrare.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Adaugă certificat de urbanism</button>
-            </form>
+
+
             {% endif %}
 
         </div>

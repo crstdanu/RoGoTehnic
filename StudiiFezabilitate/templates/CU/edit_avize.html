@@ -1,7 +1,8 @@
 {% extends "CU/base.html" %}
 
 {% block body %}
-<h3 class="text-center m-4">Editează Certificatul de urbanism</h3>
+<h3 class="text-center m-4">Editează <strong>{{aviz.nume_aviz}}</strong> pentru <strong>{{lucrare.nume_intern}}
+    </strong></h3>
 {% if success %}
 <script>
     window.location.href = "{% url 'index_CU' lucrare.id %}";
@@ -11,13 +12,13 @@
     <div class="col-6">
         <div class="card bg-light mb-3">
             <div class="card-header">
-                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează Avizul
+                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează - {{aviz.nume_aviz}}
             </div>
             <div class="card-body">
                 <form action="" method="POST">
                     {% csrf_token %}
                     {{form.as_p}}
-                    <button type="submit" class="btn btn-primary">Editează <p>Lucrare ID: {{ lucrare.id }}</p></button>
+                    <button type="submit" class="btn btn-primary">Editează</button>
                     <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary">Anulează</a>
                 </form>
             </div>

@@ -189,13 +189,15 @@ def edit_Aviz(request, lucrare_id, id):
             return render(request, 'CU/edit_avize.html', {
                 'form': form,
                 'success': True,
-                'lucrare': lucrare
+                'lucrare': lucrare,
+                'aviz': aviz,
             })
     else:
         form = AvizeCUForm(instance=aviz)
     return render(request, 'CU/edit_avize.html', {
         'form': form,
-        'lucrare': lucrare
+        'lucrare': lucrare,
+        'aviz': aviz,
     })
 
 
