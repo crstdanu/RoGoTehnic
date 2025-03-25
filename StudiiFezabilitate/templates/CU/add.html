@@ -15,7 +15,7 @@
                 <i class="fa-solid fa-address-card fa-lg"></i> Adaugă Certificat de urbanism
             </div>
             <div class="card-body">
-                <form action="{% url 'add_CU' lucrare.id %}" method="POST">
+                <form action="{% url 'add_CU' lucrare.id %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{form.as_p}}
 

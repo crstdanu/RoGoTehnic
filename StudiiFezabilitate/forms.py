@@ -49,7 +49,9 @@ class CertificatUrbanismForm(forms.ModelForm):
     class Meta:
         model = CertificatUrbanism
         fields = ['numar', 'data', 'emitent', 'nume', 'valabilitate', 'descrierea_proiectului',
-                  'inginer_intocmit', 'inginer_verificat', 'suprafata_ocupata', 'lungime_traseu', 'cale_CU']
+                  'inginer_intocmit', 'inginer_verificat', 'suprafata_ocupata', 'lungime_traseu',
+                  #   'cale_CU',
+                  ]
 
         labels = {'numar': 'Număr',
                   'data': 'Data',
@@ -61,7 +63,7 @@ class CertificatUrbanismForm(forms.ModelForm):
                   'inginer_verificat': 'Inginer Verificat',
                   'suprafata_ocupata': 'Suprafața ocupată (m2)',
                   'lungime_traseu': 'Lungime traseu (m)',
-                  'cale_CU': 'Cale Certificat de urbanism',
+                  #   'cale_CU': 'Cale Certificat de urbanism',
                   }
 
         widgets = {
@@ -75,8 +77,7 @@ class CertificatUrbanismForm(forms.ModelForm):
             'inginer_verificat': forms.Select(attrs={'class': 'form-control'}),
             'suprafata_ocupata': forms.NumberInput(attrs={'class': 'form-control'}),
             'lungime_traseu': forms.NumberInput(attrs={'class': 'form-control'}),
-            'cale_CU': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea Certificatului de Urbanism'}),
-
+            # 'cale_CU': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -84,7 +85,7 @@ class AvizeCUForm(forms.ModelForm):
     class Meta:
         model = AvizeCU
         fields = ['nume_aviz', 'depus', 'data_depunere', 'primit', 'numar_aviz',
-                  'data_aviz', 'cale_aviz', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total']
+                  'data_aviz', 'cale_aviz', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total',]
         labels = {
             'nume_aviz': 'Nume aviz',
             'depus': 'Depus',

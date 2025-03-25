@@ -1,6 +1,9 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator
+
+import os
+
 
 # Create your models here.
 
@@ -19,6 +22,10 @@ def validate_localitate(lucrare):
         raise ValidationError(
             "Localitatea aleasă nu aparține județului selectat."
         )
+
+
+def cale_upload_CU(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Certificat de urbanism.pdf'
 
 
 class Judet(models.Model):
@@ -263,7 +270,8 @@ class CertificatUrbanism(models.Model):
     nume = models.CharField(max_length=2000, blank=True, null=True,)
     lucrare = models.OneToOneField(
         Lucrare, on_delete=models.CASCADE, related_name='certificat_urbanism')
-    valabilitate = models.DateField()
+    valabilitate = models.PositiveIntegerField(
+        validators=[MaxValueValidator(99)], default=12,)
     # Date obligatorii
     descrierea_proiectului = models.TextField()
     inginer_intocmit = models.ForeignKey(
@@ -273,8 +281,9 @@ class CertificatUrbanism(models.Model):
     # Date optionale
     suprafata_ocupata = models.IntegerField(blank=True, null=True,)
     lungime_traseu = models.IntegerField(blank=True, null=True,)
-    # atasamente obligatorii
-    cale_CU = models.CharField(max_length=512, blank=True, null=True,)
+    # ATASAMENTE
+    cale_CU = models.FileField(
+        upload_to='SF', blank=True, null=True)
     cale_plan_incadrare_CU = models.CharField(
         max_length=512, blank=True, null=True,)
     cale_plan_situatie_CU = models.CharField(
@@ -285,7 +294,7 @@ class CertificatUrbanism(models.Model):
         max_length=512, blank=True, null=True,)
     cale_chitanta_APM = models.CharField(
         max_length=512, blank=True, null=True,)
-    # atasamente optionale
+
     cale_plan_situatie_PDF = models.CharField(
         max_length=512, blank=True, null=True,)
     cale_plan_topo_DWG = models.CharField(
@@ -303,6 +312,20 @@ class CertificatUrbanism(models.Model):
 
     def __str__(self):
         return f"CU pentru {self.lucrare.nume_intern}"
+
+    def save(self, *args, **kwargs):
+        if self.pk:  # Dacă obiectul există deja în DB
+            try:
+                old_instance = CertificatUrbanism.objects.get(pk=self.pk)
+                if old_instance.cale_CU and self.cale_CU and self.cale_CU != old_instance.cale_CU:
+                    old_file_path = old_instance.cale_CU.path
+                    if os.path.isfile(old_file_path):
+                        # Ștergem fișierul vechi înainte de a salva noul fișier
+                        os.remove(old_file_path)
+            except CertificatUrbanism.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
 
 
 class AvizeCU(models.Model):

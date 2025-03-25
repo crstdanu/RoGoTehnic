@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
@@ -9,7 +9,10 @@ from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeC
 
 
 def index(request):
-    return render(request, 'StudiiFezabilitate/index.html', {'lucrari': Lucrare.objects.all()})
+    context = {
+        'lucrari': Lucrare.objects.all(),
+    }
+    return render(request, 'StudiiFezabilitate/index.html', context)
 
 
 def view_lucrare(request, id):
@@ -102,10 +105,8 @@ def index_CU(request, id):
 
 def add_CU(request, id):
     lucrare = get_object_or_404(Lucrare, pk=id)
-    print(f"Lucrare ID în add_CU: {lucrare.id}")  # Debugging
-
     if request.method == 'POST':
-        form = CertificatUrbanismForm(request.POST)
+        form = CertificatUrbanismForm(request.POST, request.FILES)
         if form.is_valid():
             # Crează obiectul dar nu îl salvează încă
             certificat_urbanism = form.save(commit=False)
@@ -135,14 +136,21 @@ def edit_CU(request, id):
     certificat_urbanism = CertificatUrbanism.objects.get(lucrare=lucrare)
     if request.method == 'POST':
         form = CertificatUrbanismForm(
-            request.POST, instance=certificat_urbanism)
+            request.POST, request.FILES, instance=certificat_urbanism)
         if form.is_valid():
             form.save()
             return render(request, 'CU/edit.html', {
-                'form': form,
                 'success': True,
+                'form': form,
                 'lucrare': lucrare
             })
+        else:
+            print(form.errors)
+            return render(request, 'CU/edit.html', {
+                'form': form,
+                'lucrare': lucrare
+            })
+
     else:
         form = CertificatUrbanismForm(instance=certificat_urbanism)
     return render(request, 'CU/edit.html', {
