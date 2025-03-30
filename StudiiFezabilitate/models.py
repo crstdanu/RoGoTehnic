@@ -1,11 +1,21 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MaxValueValidator
+from django.core.validators import RegexValidator, MaxValueValidator, FileExtensionValidator
 
 import os
+import magic
 
 
 # Create your models here.
+
+extension_validator_pdf = FileExtensionValidator(
+    allowed_extensions=['pdf'],
+    message="Fișierul trebuie să fie în format PDF",
+)
+extension_validator_dwg = FileExtensionValidator(
+    allowed_extensions=['dwg'],
+    message="Fișierul trebuie să fie în format DWG"
+)
 
 cnp_validator = RegexValidator(
     regex=r'^[0-9]{13}$', message='CNP-ul trebuie să conțină exact 13 cifre')
@@ -24,8 +34,117 @@ def validate_localitate(lucrare):
         )
 
 
+def validate_file_mimetype_pdf(file):
+    accept = ['application/pdf']
+    file_mime_type = magic.from_buffer(file.read(1024), mime=True)
+    if file_mime_type not in accept:
+        raise ValidationError('Fișierul trebuie să fie în format PDF')
+
+
+def validate_file_mimetype_dwg(file):
+    """
+    Validează dacă fișierul este în format DWG folosind MIME type și semnătura binară.
+    """
+    # Lista extinsă de tipuri MIME posibile pentru fișiere DWG
+    accept_mime = [
+        'application/dwg',
+        'drawing/dwg',
+        'application/acad',
+        'application/x-acad',
+        'application/autocad',
+        'image/vnd.dwg',
+        'application/x-dwg',
+        'application/octet-stream'  # Mulți servere web clasifică DWG ca octet-stream
+    ]
+
+    # Citim primii bytes pentru detectarea MIME
+    file_content = file.read(1024)
+    file.seek(0)  # Resetăm poziția fișierului
+
+    file_mime_type = magic.from_buffer(file_content, mime=True)
+
+    # Verificare MIME
+    if file_mime_type in accept_mime:
+        return
+
+    # Dacă MIME type nu este în lista acceptată, verificăm semnătura DWG
+    # Semnăturile DWG încep cu "AC" urmat de versiunea
+    file_header = file.read(6)
+    file.seek(0)  # Resetăm din nou poziția
+
+    # O listă cu semnături DWG cunoscute (primele 6 bytes)
+    dwg_signatures = [
+        b'AC1009',  # AutoCAD R12
+        b'AC1010',  # AutoCAD R13
+        b'AC1012',  # AutoCAD R14
+        b'AC1014',  # AutoCAD 2000
+        b'AC1015',  # AutoCAD 2000i/2002
+        b'AC1018',  # AutoCAD 2004/2005/2006
+        b'AC1021',  # AutoCAD 2007/2008/2009
+        b'AC1024',  # AutoCAD 2010/2011/2012
+        b'AC1027',  # AutoCAD 2013/2014/2015/2016/2017
+        b'AC1032'   # AutoCAD 2018+
+    ]
+
+    # Verificăm dacă antetul fișierului începe cu una dintre semnăturile cunoscute
+    for signature in dwg_signatures:
+        if file_header.startswith(signature):
+            return
+
+    # Dacă nu am găsit o semnătură validă, ridicăm excepție
+    raise ValidationError('Fișierul nu este un format DWG valid')
+
+
 def cale_upload_CU(instance, filename):
     return f'SF/{instance.lucrare.nume_intern}/CU/Certificat de urbanism.pdf'
+
+
+def cale_upload_plan_incadrare_CU(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan de incadrare.pdf'
+
+
+def cale_upload_plan_situatie_CU(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan de situatie.pdf'
+
+
+def cale_upload_acte_beneficiar(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/Acte beneficiar/Acte beneficiar.pdf'
+
+
+def cale_upload_acte_facturare(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Acte facturare.pdf'
+
+
+def cale_upload_chitanta_APM(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta APM.pdf'
+
+
+def cale_upload_plan_situatie_la_scara(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan situatie - la scara.pdf'
+
+
+def cale_upload_plan_situatie_DWG(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan situatie.dwg'
+
+
+def cale_upload_extrase_CF(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Extrase CF.pdf'
+
+
+def cale_upload_aviz_GIS(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz GIS.pdf'
+
+
+def cale_upload_ATR(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/ATR.pdf'
+
+
+def cale_upload_aviz_CTE(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz CTE.pdf'
+
+
+def cale_upload_chitanta_DSP(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta DSP.pdf'
 
 
 class Judet(models.Model):
@@ -271,7 +390,11 @@ class CertificatUrbanism(models.Model):
     lucrare = models.OneToOneField(
         Lucrare, on_delete=models.CASCADE, related_name='certificat_urbanism')
     valabilitate = models.PositiveIntegerField(
-        validators=[MaxValueValidator(99)], default=12,)
+        validators=[MaxValueValidator(
+            limit_value=60,
+            message="Valoarea trebuie să fie mai mică sau egală cu 60.")],
+        default=12,
+        blank=True, null=True,)
     # Date obligatorii
     descrierea_proiectului = models.TextField()
     inginer_intocmit = models.ForeignKey(
@@ -283,28 +406,31 @@ class CertificatUrbanism(models.Model):
     lungime_traseu = models.IntegerField(blank=True, null=True,)
     # ATASAMENTE
     cale_CU = models.FileField(
-        upload_to='SF', blank=True, null=True)
-    cale_plan_incadrare_CU = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_plan_situatie_CU = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_acte_beneficiar = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_acte_facturare = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_chitanta_APM = models.CharField(
-        max_length=512, blank=True, null=True,)
-
-    cale_plan_situatie_PDF = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_plan_topo_DWG = models.CharField(
-        max_length=512, blank=True, null=True,)
-    cale_extrase_CF = models.CharField(max_length=512, blank=True, null=True,)
-    cale_aviz_GIS = models.CharField(max_length=512, blank=True, null=True,)
-    cale_ATR = models.CharField(max_length=512, blank=True, null=True,)
-    cale_aviz_CTE = models.CharField(max_length=512, blank=True, null=True,)
-    cale_chitanta_DSP = models.CharField(
-        max_length=512, blank=True, null=True,)
+        upload_to=cale_upload_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True)
+    cale_plan_incadrare_CU = models.FileField(
+        upload_to=cale_upload_plan_incadrare_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_plan_situatie_CU = models.FileField(
+        upload_to=cale_upload_plan_situatie_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_acte_beneficiar = models.FileField(
+        upload_to=cale_upload_acte_beneficiar, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_acte_facturare = models.FileField(
+        upload_to=cale_upload_acte_facturare, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_chitanta_APM = models.FileField(
+        upload_to=cale_upload_chitanta_APM, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_plan_situatie_la_scara = models.FileField(
+        upload_to=cale_upload_plan_situatie_la_scara, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_plan_situatie_DWG = models.FileField(
+        upload_to=cale_upload_plan_situatie_DWG, validators=[extension_validator_dwg, validate_file_mimetype_dwg], blank=True, null=True,)
+    cale_extrase_CF = models.FileField(
+        upload_to=cale_upload_extrase_CF, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_aviz_GIS = models.FileField(
+        upload_to=cale_upload_aviz_GIS, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_ATR = models.FileField(
+        upload_to=cale_upload_ATR, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_aviz_CTE = models.FileField(
+        upload_to=cale_upload_aviz_CTE, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_chitanta_DSP = models.FileField(
+        upload_to=cale_upload_chitanta_DSP, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
 
     class Meta:
         verbose_name = "Certificat de urbanism"

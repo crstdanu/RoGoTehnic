@@ -280,11 +280,37 @@
                                             id="staticLungimeTraseu" value="{{certificat_urbanism.lungime_traseu}}">
                                     </div>
                                 </div>
+                                <!-- Cale CU -->
                                 <div class="row mb-3">
                                     <label for="staticCaleCU" class="col-sm-3 col-form-label">Cale CU</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="staticCaleCU"
-                                            value="{{certificat_urbanism.cale_CU}}">
+                                        {% if certificat_urbanism.cale_CU %}
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_CU' lucrare.id %}"
+                                            class="text-decoration-none">
+                                            {{ certificat_urbanism.cale_CU }}
+                                            <i class="fas fa-download ms-1 small"></i>
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">Nu este fișier</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- Cale Plan încadrare CU -->
+                                <div class="row mb-3">
+                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">Cale Plan încadrare
+                                        CU</label>
+                                    <div class="col-sm-9">
+                                        {% if certificat_urbanism.cale_plan_incadrare_CU %}
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_plan_incadrare_CU' lucrare.id %}"
+                                            class="text-decoration-none">
+                                            {{ certificat_urbanism.cale_plan_incadrare_CU }}
+                                            <i class="fas fa-download ms-1 small"></i>
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">Nu este fișier</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </form>
