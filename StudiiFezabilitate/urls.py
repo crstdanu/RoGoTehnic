@@ -22,6 +22,8 @@ urlpatterns = [
          views.delete_aviz, name='delete_aviz'),
     path('download/<str:model_name>/<str:field_name>/<int:object_id>/',
          views.download_file, name='download_file'),
+    # în urls.py
+    path('ajax/get_localitati/', views.get_localitati, name='get_localitati'),
 ]
 
 if settings.DEBUG:

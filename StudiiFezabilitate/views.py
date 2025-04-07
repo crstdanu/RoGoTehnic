@@ -4,7 +4,7 @@ from django.urls import reverse
 
 import os
 
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate
 from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
 
 
@@ -292,3 +292,17 @@ def download_file(request, model_name, field_name, object_id):
         error_type, error_value, error_traceback = sys.exc_info()
         error_message = f"Eroare: {error_type.__name__}: {error_value}"
         raise Http404(error_message)
+
+
+def get_localitati(request):
+    judet_id = request.GET.get('judet_id')
+    localitati = Localitate.objects.filter(
+        judet_id=judet_id).values('id', 'nume', 'tip')
+    # Formatează rezultatele pentru a include tipul localității în nume
+    localitati_formatate = []
+    for loc in localitati:
+        localitati_formatate.append({
+            'id': loc['id'],
+            'text': f"{loc['tip']} {loc['nume']}" if loc['tip'] else loc['nume']
+        })
+    return JsonResponse(localitati_formatate, safe=False)

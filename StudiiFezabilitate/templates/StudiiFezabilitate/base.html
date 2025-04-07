@@ -56,6 +56,47 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- jQuery -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const judetSelect = document.getElementById('id_judet');
+            const localitateSelect = document.getElementById('id_localitate');
+
+            // Verifică dacă ambele elemente există
+            if (judetSelect && localitateSelect) {
+                // Funcție pentru a actualiza opțiunile pentru localități
+                function updateLocalitati() {
+                    const judetId = judetSelect.value;
+
+                    // Golește select-ul pentru localități
+                    localitateSelect.innerHTML = '<option value="">---------</option>';
+
+                    if (judetId) {
+                        // Fetch localitățile asociate județului
+                        fetch(`/ajax/get_localitati/?judet_id=${judetId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.id;
+                                    option.textContent = item.text;
+                                    localitateSelect.appendChild(option);
+                                });
+                            });
+                    }
+                }
+
+                // Inițializare
+                if (judetSelect.value) {
+                    updateLocalitati();
+                }
+
+                // Adaugă event listener pentru schimbarea județului
+                judetSelect.addEventListener('change', updateLocalitati);
+            }
+        });
+    </script>
+
 </body>
 
 </html>
