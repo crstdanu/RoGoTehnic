@@ -51,6 +51,7 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Aviz</th>
+                                                    <th scope="col">GENEREAZĂ</th>
                                                     <th scope="col">Depus</th>
                                                     <th scope="col">Data depunerii</th>
                                                     <th scope="col">Primit</th>
@@ -61,6 +62,12 @@
                                                 {% for aviz in avize %}
                                                 <tr>
                                                     <td>{{aviz.nume_aviz}}</td>
+                                                    <td>
+                                                        <a class="btn btn-primary me-1"
+                                                            href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
+                                                            Generează Aviz
+                                                        </a>
+                                                    </td>
                                                     <td>{{aviz.depus}}</td>
                                                     <td>{{aviz.data_depunere}}</td>
                                                     <td>{{aviz.primit}}</td>

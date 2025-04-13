@@ -1,11 +1,14 @@
 from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.urls import reverse
+from django.contrib import messages
 
 import os
 
 from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate
 from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
+
+import StudiiFezabilitate.utils as utils
 
 
 # Create your views here.
@@ -222,7 +225,7 @@ def download_file(request, model_name, field_name, object_id):
 
     Args:
         model_name: Numele modelului (ex: certificaturbanism)
-        field_name: Numele câmpului de fișier (ex: cale_CU, cale_plan_incadrare_CU, etc.)
+        field_name: Numele câmpului de fișier (ex: cale_CU, cale_plan_incadrare_CU, cale_plan_situatie_CU, etc.)
         object_id: ID-ul obiectului (pentru CertificatUrbanism este ID-ul lucrării)
     """
     try:
@@ -306,3 +309,52 @@ def get_localitati(request):
             'text': f"{loc['tip']} {loc['nume']}" if loc['tip'] else loc['nume']
         })
     return JsonResponse(localitati_formatate, safe=False)
+
+
+def genereaza_aviz(request, lucrare_id, id_aviz):
+    """
+    Generează un fișier docx pentru avizul specificat, îl oferă pentru descărcare și apoi îl șterge.
+
+    Args:
+        request: Cererea HTTP
+        lucrare_id: ID-ul lucrării
+        id_aviz: ID-ul avizului
+
+    Returns:
+        HttpResponse: Răspuns HTTP care conține fișierul pentru descărcare
+    """
+    try:
+        # Apelăm funcția din utils care generează documentul temporar
+        fisier_generat = utils.aviz_APM_iasi(lucrare_id, id_aviz)
+
+        # Obținem numele fișierului
+        nume_fisier = os.path.basename(fisier_generat)
+
+        # Pregătim fișierul pentru descărcare
+        with open(fisier_generat, 'rb') as f:
+            response = HttpResponse(f.read(
+            ), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+            response['Content-Disposition'] = f'attachment; filename="{nume_fisier}"'
+
+        # Ștergem fișierul temporar după ce l-am citit
+        os.remove(fisier_generat)
+
+        # Adăugăm mesaj de succes care va fi afișat după redirect
+        messages.success(
+            request, f"Fișierul {nume_fisier} a fost generat și descărcat.")
+
+        return response
+
+    except Exception as e:
+        # În caz de eroare, adăugăm un mesaj de eroare și redirecționăm
+        messages.error(
+            request, f"A apărut o eroare la generarea fișierului: {str(e)}")
+
+        # Ne asigurăm că fișierul temporar este șters în caz de eroare
+        if 'fisier_generat' in locals() and os.path.exists(fisier_generat):
+            try:
+                os.remove(fisier_generat)
+            except:
+                pass
+
+        return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))

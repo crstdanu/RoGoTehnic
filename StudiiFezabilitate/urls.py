@@ -24,6 +24,8 @@ urlpatterns = [
          views.download_file, name='download_file'),
     # în urls.py
     path('ajax/get_localitati/', views.get_localitati, name='get_localitati'),
+    path('lucrare/<int:lucrare_id>/index_CU/genereaza_aviz/<int:id_aviz>/',
+         views.genereaza_aviz, name='genereaza_aviz'),
 ]
 
 if settings.DEBUG:
