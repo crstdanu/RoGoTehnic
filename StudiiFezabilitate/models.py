@@ -36,7 +36,13 @@ def validate_localitate(lucrare):
 
 def validate_file_mimetype_pdf(file):
     accept = ['application/pdf']
+    # Salvăm poziția curentă
+    original_position = file.tell()
+    # Citim primii 1024 bytes pentru a determina tipul MIME
     file_mime_type = magic.from_buffer(file.read(1024), mime=True)
+    # Resetăm poziția fișierului la poziția inițială
+    file.seek(original_position)
+
     if file_mime_type not in accept:
         raise ValidationError('Fișierul trebuie să fie în format PDF')
 
@@ -96,43 +102,47 @@ def validate_file_mimetype_dwg(file):
 
 
 def cale_upload_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Certificat de urbanism.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Certificat_de_urbanism.pdf'
 
 
 def cale_upload_plan_incadrare_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan de incadrare.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_de_incadrare.pdf'
 
 
 def cale_upload_plan_situatie_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan de situatie.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_de_situatie.pdf'
+
+
+def cale_upload_memoriu_tehnic_CU(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Memoriu_tehnic.pdf'
 
 
 def cale_upload_acte_beneficiar(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/Acte beneficiar/Acte beneficiar.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/Acte beneficiar/Acte_beneficiar.pdf'
 
 
 def cale_upload_acte_facturare(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Acte facturare.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Acte_facturare.pdf'
 
 
 def cale_upload_chitanta_APM(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta APM.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_APM.pdf'
 
 
 def cale_upload_plan_situatie_la_scara(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan situatie - la scara.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_situatie_-_la_scara.pdf'
 
 
 def cale_upload_plan_situatie_DWG(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan situatie.dwg'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_situatie.dwg'
 
 
 def cale_upload_extrase_CF(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Extrase CF.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Extrase_CF.pdf'
 
 
 def cale_upload_aviz_GIS(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz GIS.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz_GIS.pdf'
 
 
 def cale_upload_ATR(instance, filename):
@@ -140,11 +150,11 @@ def cale_upload_ATR(instance, filename):
 
 
 def cale_upload_aviz_CTE(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz CTE.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz_CTE.pdf'
 
 
 def cale_upload_chitanta_DSP(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta DSP.pdf'
+    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_DSP.pdf'
 
 
 class Judet(models.Model):
@@ -411,6 +421,8 @@ class CertificatUrbanism(models.Model):
         upload_to=cale_upload_plan_incadrare_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_plan_situatie_CU = models.FileField(
         upload_to=cale_upload_plan_situatie_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_memoriu_tehnic_CU = models.FileField(
+        upload_to=cale_upload_memoriu_tehnic_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_acte_beneficiar = models.FileField(
         upload_to=cale_upload_acte_beneficiar, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_acte_facturare = models.FileField(

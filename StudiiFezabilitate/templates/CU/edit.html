@@ -243,6 +243,43 @@
                             <!-- Separator -->
                             <hr class="my-4">
 
+                            <!-- Cale Memoriu tehnic CU -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_memoriu_tehnic_CU.id_for_label }}" class="form-label">
+                                    {{ form.cale_memoriu_tehnic_CU.label }}
+                                </label>
+
+                                {% if form.instance.cale_memoriu_tehnic_CU %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_memoriu_tehnic_CU.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_memoriu_tehnic_CU.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_memoriu_tehnic_CU }}
+                                    {% if form.cale_memoriu_tehnic_CU.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_memoriu_tehnic_CU.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
                             <!-- Cale Acte beneficiar -->
                             <div class="form-group mb-4">
                                 <label for="{{ form.cale_acte_beneficiar.id_for_label }}" class="form-label">

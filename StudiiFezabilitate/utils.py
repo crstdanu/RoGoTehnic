@@ -7,7 +7,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
     avizCU = AvizeCU.objects.get(pk=id_aviz)
 
     if lucrare.judet.nume == "Iași":
-        if avizCU.nume_aviz.nume == "Aviz APM Iași":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_iasi(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
@@ -16,7 +16,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         else:
             return "Avizul nu poate fi generat - tipul avizului APM nu este valid"
     elif lucrare.judet.nume == "Neamț":
-        if avizCU.nume_aviz.nume == "Aviz APM Neamț":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_neamt(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
@@ -25,7 +25,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         else:
             return "Avizul nu poate fi generat - tipul avizului nu este valid"
     elif lucrare.judet.nume == "Bacău":
-        if avizCU.nume_aviz.nume == "Aviz APM Bacău":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_bacau(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
@@ -34,7 +34,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         else:
             return "Avizul nu poate fi generat - tipul avizului nu este valid"
     elif lucrare.judet.nume == "Suceava":
-        if avizCU.nume_aviz.nume == "Aviz APM Suceava":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_suceava(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
@@ -43,7 +43,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         else:
             return "Avizul nu poate fi generat - tipul avizului nu este valid"
     elif lucrare.judet.nume == "Botoșani":
-        if avizCU.nume_aviz.nume == "Aviz APM Botoșani":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_botosani(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
@@ -52,7 +52,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         else:
             return "Avizul nu poate fi generat - tipul avizului nu este valid"
     elif lucrare.judet.nume == "Vaslui":
-        if avizCU.nume_aviz.nume == "Aviz APM Vaslui":
+        if avizCU.nume_aviz.nume == "Aviz APM":
             output_path = a.aviz_APM_vaslui(lucrare_id, id_aviz)
             return output_path
         elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
