@@ -1,18 +1,21 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificat de urbanism</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"> <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
+
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'index' %}">
@@ -24,13 +27,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
-
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'index' %}">
                             <i class="fa-solid fa-list fa-lg"></i> Toate lucrările
                         </a>
                     </li>
-
                 </ul>
                 <form class="d-flex">
                     <input class="form-control me-sm-2" type="search" placeholder="Caută">
@@ -39,8 +40,8 @@
             </div>
         </div>
     </nav>
-    
-    <!-- Sistem de afișare a mesajelor -->
+
+    <!-- Mesaje -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -51,21 +52,28 @@
         {% endfor %}
     </div>
     {% endif %}
-    
-    {% block body %}
-    {% endblock %}
 
-    <footer class="mt-auto mb-4">
-        <div class="text-center">
-            <span>
-                Copyright &copy
-                <script>document.write(new Date().getFullYear())</script> - crstdanu
-            </span>
-        </div>
+    <!-- Conținut din pagini -->
+    {% block body %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="mt-auto mb-4 text-center">
+        <span>
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear())</script> - crstdanu
+        </span>
     </footer>
+
+    <!-- Scripturi -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'js/init_uat.js' %}"></script>
+
+    {% if lucrare and lucrare.judet %}
+    <script>
+        window.lucrareJudetId = "{{ lucrare.judet.id }}";
+    </script>
+    {% endif %}
 </body>
 
 </html>

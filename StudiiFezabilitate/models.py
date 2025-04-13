@@ -436,10 +436,33 @@ class CertificatUrbanism(models.Model):
         verbose_name = "Certificat de urbanism"
         verbose_name_plural = "Certificate de urbanism"
 
+    def clean(self):
+        # Validează că UAT-ul (emitent) aparține aceluiași județ ca lucrarea
+        # Verificăm mai întâi dacă avem emitent_id pentru a evita eroarea RelatedObjectDoesNotExist
+        if hasattr(self, 'emitent_id') and self.emitent_id and self.lucrare_id:
+            # Încărcăm explicit obiectele pentru a asigura că există
+            try:
+                emitent = UAT.objects.get(pk=self.emitent_id)
+                lucrare = Lucrare.objects.get(pk=self.lucrare_id)
+
+                # Verificăm județele
+                if emitent.judet and lucrare.judet and emitent.judet != lucrare.judet:
+                    raise ValidationError({
+                        'emitent': "UAT-ul emitent trebuie să aparțină aceluiași județ ca lucrarea."
+                    })
+            except (UAT.DoesNotExist, Lucrare.DoesNotExist):
+                # Dacă unul dintre obiecte nu există, nu validăm această regulă
+                pass
+
+        super().clean()
+
     def __str__(self):
         return f"CU pentru {self.lucrare.nume_intern}"
 
     def save(self, *args, **kwargs):
+        # Apelăm metoda clean() pentru a asigura validarea înainte de salvare
+        self.full_clean()
+
         if self.pk:  # Dacă obiectul există deja în DB
             try:
                 old_instance = CertificatUrbanism.objects.get(pk=self.pk)
@@ -477,6 +500,25 @@ class AvizeCU(models.Model):
         verbose_name = "AvizCU"
         verbose_name_plural = "AvizeCU"
         unique_together = ('certificat_urbanism', 'nume_aviz')
+
+    def clean(self):
+        # Validează că avizul aparține aceluiași județ ca lucrarea
+        if hasattr(self, 'nume_aviz_id') and self.nume_aviz_id and hasattr(self, 'certificat_urbanism_id') and self.certificat_urbanism_id:
+            try:
+                aviz = Aviz.objects.get(pk=self.nume_aviz_id)
+                certificat = CertificatUrbanism.objects.get(
+                    pk=self.certificat_urbanism_id)
+
+                # Verificăm județele
+                if aviz.judet and certificat.lucrare.judet and aviz.judet != certificat.lucrare.judet:
+                    raise ValidationError({
+                        'nume_aviz': "Avizul trebuie să aparțină aceluiași județ ca lucrarea."
+                    })
+            except (Aviz.DoesNotExist, CertificatUrbanism.DoesNotExist):
+                # Dacă unul dintre obiecte nu există, nu validăm această regulă
+                pass
+
+        super().clean()
 
     def __str__(self):
         return f"{self.nume_aviz.nume} pentru {self.certificat_urbanism.lucrare.nume_intern}"

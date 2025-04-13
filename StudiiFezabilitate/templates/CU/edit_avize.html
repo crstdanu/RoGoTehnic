@@ -1,8 +1,11 @@
 {% extends "CU/base.html" %}
+{% load static %}
 
 {% block body %}
-<h3 class="text-center m-4">Editează <strong>{{aviz.nume_aviz}}</strong> pentru <strong>{{lucrare.nume_intern}}
-    </strong></h3>
+<h3 class="text-center m-4">
+    Editează <strong>{{ aviz.nume_aviz }}</strong> pentru <strong>{{ lucrare.nume_intern }}</strong>
+</h3>
+
 {% if success %}
 <script>
     window.location.href = "{% url 'index_CU' lucrare.id %}";
@@ -10,20 +13,22 @@
 {% else %}
 <div class="row justify-content-center">
     <div class="col-6">
-        <div class="card bg-light mb-3">
+        <div class="card bg-light mb-3" id="aviz-form" data-judet-id="{{ lucrare.judet.id|default:'' }}">
             <div class="card-header">
-                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează - {{aviz.nume_aviz}}
+                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează - {{ aviz.nume_aviz }}
             </div>
             <div class="card-body">
                 <form action="" method="POST">
                     {% csrf_token %}
-                    {{form.as_p}}
-                    <button type="submit" class="btn btn-primary">Editează</button>
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Salvează modificările</button>
                     <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary">Anulează</a>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script src="{% static 'js/init_avize.js' %}"></script>
 {% endif %}
 {% endblock %}

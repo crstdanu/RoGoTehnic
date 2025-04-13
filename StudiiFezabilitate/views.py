@@ -5,7 +5,7 @@ from django.contrib import messages
 
 import os
 
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate, UAT, Aviz
 from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
 
 import StudiiFezabilitate.utils as utils
@@ -311,6 +311,32 @@ def get_localitati(request):
     return JsonResponse(localitati_formatate, safe=False)
 
 
+def get_uat(request):
+    judet_id = request.GET.get('judet_id')
+    uaturi = UAT.objects.filter(judet_id=judet_id).values('id', 'nume')
+    # Formatează rezultatele
+    uaturi_formatate = []
+    for uat in uaturi:
+        uaturi_formatate.append({
+            'id': uat['id'],
+            'text': uat['nume']
+        })
+    return JsonResponse(uaturi_formatate, safe=False)
+
+
+def get_avize(request):
+    judet_id = request.GET.get('judet_id')
+    avize = Aviz.objects.filter(judet_id=judet_id).values('id', 'nume')
+    # Formatează rezultatele
+    avize_formatate = []
+    for aviz in avize:
+        avize_formatate.append({
+            'id': aviz['id'],
+            'text': aviz['nume']
+        })
+    return JsonResponse(avize_formatate, safe=False)
+
+
 def genereaza_aviz(request, lucrare_id, id_aviz):
     """
     Generează un fișier docx pentru avizul specificat, îl oferă pentru descărcare și apoi îl șterge.
@@ -325,7 +351,7 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
     """
     try:
         # Apelăm funcția din utils care generează documentul temporar
-        fisier_generat = utils.aviz_APM_iasi(lucrare_id, id_aviz)
+        fisier_generat = utils.creeaza_fisier(lucrare_id, id_aviz)
 
         # Obținem numele fișierului
         nume_fisier = os.path.basename(fisier_generat)
