@@ -45,35 +45,39 @@
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% if message.tags == 'error' %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {% else %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {% endif %}
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+        {% endif %}
 
-    <!-- Conținut din pagini -->
-    {% block body %}{% endblock %}
+        <!-- Conținut din pagini -->
+        {% block body %}{% endblock %}
 
-    <!-- Footer -->
-    <footer class="mt-auto mb-4 text-center">
-        <span>
-            Copyright &copy;
-            <script>document.write(new Date().getFullYear())</script> - crstdanu
-        </span>
-    </footer>
+        <!-- Footer -->
+        <footer class="mt-auto mb-4 text-center">
+            <span>
+                Copyright &copy;
+                <script>document.write(new Date().getFullYear())</script> - crstdanu
+            </span>
+        </footer>
 
-    <!-- Scripturi -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="{% static 'js/init_uat.js' %}"></script>
+        <!-- Scripturi -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="{% static 'js/init_uat.js' %}"></script>
 
-    {% if lucrare and lucrare.judet %}
-    <script>
-        window.lucrareJudetId = "{{ lucrare.judet.id }}";
-    </script>
-    {% endif %}
+        {% if lucrare and lucrare.judet %}
+        <script>
+            window.lucrareJudetId = "{{ lucrare.judet.id }}";
+        </script>
+        {% endif %}
 </body>
 
 </html>

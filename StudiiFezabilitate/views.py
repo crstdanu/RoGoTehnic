@@ -353,6 +353,10 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
         HttpResponse: Răspuns HTTP care conține arhiva ZIP cu fișierele
     """
     try:
+        # Obținem informații despre aviz și lucrare pentru mesaje
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+
         # Apelăm funcția din utils care generează documentele
         result = utils.creeaza_fisier(lucrare_id, id_aviz)
 
@@ -361,23 +365,22 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
             messages.error(request, result.get_error())
             return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
-        # Obținem fișierele generate
+        # Obținem fișierele generate - nu mai afișăm mesaj de succes
         fisiere_generate = result.get_files()
 
         # Verificăm dacă avem cel puțin un fișier generat
         if not fisiere_generate:
-            messages.warning(
+            messages.error(
                 request, "Nu s-au generat fișiere pentru acest aviz.")
             return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
         # Validăm fiecare fișier
         valid_files = []
         for fisier in fisiere_generate:
-            print(fisier)  # Debugging output
             if os.path.exists(fisier) and os.path.getsize(fisier) > 0:
                 valid_files.append(fisier)
             else:
-                messages.warning(
+                messages.error(
                     request, f"Fișierul {os.path.basename(fisier)} nu a putut fi găsit sau este gol.")
 
         if not valid_files:
@@ -385,12 +388,8 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
                 request, "Nu există fișiere valide pentru a crea arhiva ZIP.")
             return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
-        # Obținem informații despre aviz pentru a numi fișierul ZIP
-        avizCU = AvizeCU.objects.get(pk=id_aviz)
-        lucrare = Lucrare.objects.get(pk=lucrare_id)
-
         # Creăm un nume unic pentru arhiva ZIP
-        zip_filename = f"Documentatie_{avizCU.nume_aviz}_{lucrare.beneficiar.nume}.zip"
+        zip_filename = f"Documentatie_{avizCU.nume_aviz.nume}_{lucrare.beneficiar.nume}.zip"
         temp_dir = tempfile.gettempdir()
         zip_path = os.path.join(temp_dir, zip_filename)
 
@@ -400,17 +399,12 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
                 for fisier in valid_files:
                     fisier_nume = os.path.basename(fisier)
                     zipf.write(fisier, fisier_nume)
-                    print(f"Added to ZIP: {fisier_nume}")  # Debugging output
 
             # Pregătim arhiva ZIP pentru descărcare
             with open(zip_path, 'rb') as f:
                 response = HttpResponse(
                     f.read(), content_type='application/zip')
                 response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
-
-            # Adăugăm mesaj de succes
-            messages.success(
-                request, f"Arhiva {zip_filename} cu {len(valid_files)} fișiere a fost generată și descărcată.")
 
             return response
 
