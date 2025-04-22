@@ -60,6 +60,16 @@
                                 </div>
                                 {% endif %}
                             </div>
+                            <!-- Adresa lucrare -->
+                            <div class="form-group">
+                                <label for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}</label>
+                                {{ form.adresa }}
+                                {% if form.adresa.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.adresa.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
                             <!-- Valabilitate -->
                             <div class="form-group">
                                 <label for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}</label>

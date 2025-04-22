@@ -101,6 +101,16 @@ def validate_file_mimetype_dwg(file):
     raise ValidationError('Fișierul nu este un format DWG valid')
 
 
+def cale_upload_inginer_semnatura(instance, filename):
+    """Salveaza semnatura inginerului in folderul corespunzator."""
+    return f'ingineri/{instance.nume}/semnatura/{filename}'
+
+
+def cale_upload_reprezentant_semnatura(instance, filename):
+    """Salveaza semnatura reprezentantului in folderul corespunzator."""
+    return f'reprezentanti/{instance.nume}/semnatura/{filename}'
+
+
 def cale_upload_CU(instance, filename):
     return f'SF/{instance.lucrare.nume_intern}/CU/Certificat_de_urbanism.pdf'
 
@@ -214,7 +224,6 @@ class UAT(models.Model):
 
 class Inginer(models.Model):
     nume = models.CharField(max_length=100)
-    prenume = models.CharField(max_length=100)
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, blank=True, null=True, related_name='ingineri',)
     localitate = models.ForeignKey(
@@ -229,11 +238,13 @@ class Inginer(models.Model):
         max_length=6, blank=True, null=True, validators=[numar_ci_validator])
     data_ci = models.DateField(blank=True, null=True,)
     cale_ci = models.CharField(max_length=512, blank=True, null=True,)
-    cale_semnatura = models.CharField(max_length=512, blank=True, null=True,)
+    cale_semnatura = models.FileField(
+        upload_to=cale_upload_inginer_semnatura, max_length=512, blank=True, null=True,)
 
     class Meta:
         verbose_name = "Inginer"
         verbose_name_plural = "Ingineri"
+        ordering = ['nume']
 
     def save(self, *args, **kwargs):
         if self.serie_ci:  # Dacă este completat
@@ -241,15 +252,17 @@ class Inginer(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"ing. {self.nume} {self.prenume}"
+        return f"ing. {self.nume}"
 
 
 class Lot(models.Model):
     nume = models.CharField(max_length=100)
+    data_contractarii = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Lot"
         verbose_name_plural = "Loturi"
+        ordering = ['data_contractarii']
 
     def __str__(self):
         return self.nume
@@ -257,7 +270,6 @@ class Lot(models.Model):
 
 class PersoanaContact(models.Model):
     nume = models.CharField(max_length=100)
-    prenume = models.CharField(max_length=100)
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, related_name='persoane_contact', blank=True, null=True,)
     localitate = models.ForeignKey(
@@ -271,8 +283,9 @@ class PersoanaContact(models.Model):
     numar_ci = models.CharField(
         max_length=6, blank=True, null=True, validators=[numar_ci_validator])
     data_ci = models.DateField(blank=True, null=True,)
-    cale_ci = models.CharField(max_length=512, blank=True, null=True,)
-    cale_semnatura = models.CharField(max_length=512, blank=True, null=True,)
+    cale_ci = models.FileField(max_length=512, blank=True, null=True,)
+    cale_semnatura = models.FileField(
+        upload_to=cale_upload_reprezentant_semnatura, max_length=512, blank=True, null=True,)
 
     class Meta:
         verbose_name = "Persoană de contact"
@@ -284,7 +297,39 @@ class PersoanaContact(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nume} {self.prenume}"
+        return f"{self.nume}"
+
+
+class Reprezentant(models.Model):
+    nume = models.CharField(max_length=100)
+    judet = models.ForeignKey(
+        Judet, on_delete=models.PROTECT, related_name='reprezentanti', blank=True, null=True,)
+    localitate = models.ForeignKey(
+        Localitate, on_delete=models.PROTECT, related_name='reprezentanti', blank=True, null=True,)
+    adresa = models.CharField(max_length=512, blank=True, null=True,)
+    telefon = models.CharField(max_length=20)
+    cnp = models.CharField(max_length=13, unique=True,
+                           blank=True, null=True, validators=[cnp_validator])
+    serie_ci = models.CharField(
+        max_length=2, blank=True, null=True, validators=[serie_ci_validator])
+    numar_ci = models.CharField(
+        max_length=6, blank=True, null=True, validators=[numar_ci_validator])
+    data_ci = models.DateField(blank=True, null=True,)
+    cale_ci = models.FileField(max_length=512, blank=True, null=True,)
+    cale_semnatura = models.FileField(
+        upload_to=cale_upload_reprezentant_semnatura, max_length=512, blank=True, null=True,)
+
+    class Meta:
+        verbose_name = "Reprezentant"
+        verbose_name_plural = "Reprezentanți"
+
+    def save(self, *args, **kwargs):
+        if self.serie_ci:  # Dacă este completat
+            self.serie_ci = self.serie_ci.upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.nume}"
 
 
 class FirmaProiectare(models.Model):
@@ -299,9 +344,9 @@ class FirmaProiectare(models.Model):
     email = models.EmailField()
     telefon = models.CharField(max_length=20, blank=True, null=True,)
     reprezentant = models.ForeignKey(
-        PersoanaContact, on_delete=models.PROTECT, related_name='firme_proiectare', blank=True, null=True,)
-    cale_stampila = models.CharField(max_length=512, blank=True, null=True,)
-    cale_certificat = models.CharField(max_length=512, blank=True, null=True,)
+        Reprezentant, on_delete=models.PROTECT, related_name='firme_proiectare', blank=True, null=True,)
+    cale_stampila = models.FileField(max_length=512, blank=True, null=True,)
+    cale_certificat = models.FileField(max_length=512, blank=True, null=True,)
 
     class Meta:
         verbose_name = "Firmă de proiectare"
@@ -323,10 +368,8 @@ class Beneficiar(models.Model):
         max_length=20, unique=True, blank=True, null=True,)
     email = models.EmailField(blank=True, null=True,)
     telefon = models.CharField(max_length=20, blank=True, null=True,)
-    persoana_contact = models.ForeignKey(
-        PersoanaContact, on_delete=models.PROTECT, related_name='beneficiari', blank=True, null=True,)
-    cale_stampila = models.CharField(max_length=512, blank=True, null=True,)
-    cale_certificat = models.CharField(max_length=512, blank=True, null=True,)
+    persoana_contact = models.CharField(max_length=100, blank=True, null=True,)
+    cale_certificat = models.FileField(max_length=512, blank=True, null=True,)
 
     class Meta:
         verbose_name = "Beneficiar"
@@ -397,6 +440,7 @@ class CertificatUrbanism(models.Model):
     data = models.DateField()
     emitent = models.ForeignKey(UAT, on_delete=models.PROTECT)
     nume = models.CharField(max_length=2000, blank=True, null=True,)
+    adresa = models.CharField(max_length=2000, blank=True, null=True,)
     lucrare = models.OneToOneField(
         Lucrare, on_delete=models.CASCADE, related_name='certificat_urbanism')
     valabilitate = models.PositiveIntegerField(
@@ -499,7 +543,8 @@ class AvizeCU(models.Model):
     primit = models.BooleanField(default=False)
     numar_aviz = models.CharField(max_length=100, blank=True, null=True,)
     data_aviz = models.DateField(blank=True, null=True,)
-    cale_aviz = models.CharField(max_length=512, blank=True, null=True,)
+    cale_aviz_eliberat = models.FileField(
+        max_length=512, blank=True, null=True,)
     descriere_aviz = models.TextField(blank=True, null=True,)
     cost_net = models.DecimalField(
         max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)

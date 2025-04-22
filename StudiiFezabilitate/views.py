@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.contrib import messages
 
 import os
+import tempfile
+import zipfile
 
 from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate, UAT, Aviz
 from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
@@ -339,7 +341,8 @@ def get_avize(request):
 
 def genereaza_aviz(request, lucrare_id, id_aviz):
     """
-    Generează un fișier docx pentru avizul specificat, îl oferă pentru descărcare și apoi îl șterge.
+    Comprimă fișierele generate într-o arhivă ZIP și o oferă pentru descărcare.
+    Toate fișierele temporare sunt șterse după descărcare.
 
     Args:
         request: Cererea HTTP
@@ -347,40 +350,88 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
         id_aviz: ID-ul avizului
 
     Returns:
-        HttpResponse: Răspuns HTTP care conține fișierul pentru descărcare
+        HttpResponse: Răspuns HTTP care conține arhiva ZIP cu fișierele
     """
     try:
-        # Apelăm funcția din utils care generează documentul temporar
-        fisier_generat = utils.creeaza_fisier(lucrare_id, id_aviz)
+        # Apelăm funcția din utils care generează documentele
+        result = utils.creeaza_fisier(lucrare_id, id_aviz)
 
-        # Obținem numele fișierului
-        nume_fisier = os.path.basename(fisier_generat)
+        # Verificăm dacă generarea a fost cu succes
+        if not result.is_success():
+            messages.error(request, result.get_error())
+            return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
-        # Pregătim fișierul pentru descărcare
-        with open(fisier_generat, 'rb') as f:
-            response = HttpResponse(f.read(
-            ), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-            response['Content-Disposition'] = f'attachment; filename="{nume_fisier}"'
+        # Obținem fișierele generate
+        fisiere_generate = result.get_files()
 
-        # Ștergem fișierul temporar după ce l-am citit
-        os.remove(fisier_generat)
+        # Verificăm dacă avem cel puțin un fișier generat
+        if not fisiere_generate:
+            messages.warning(
+                request, "Nu s-au generat fișiere pentru acest aviz.")
+            return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
-        # Adăugăm mesaj de succes care va fi afișat după redirect
-        messages.success(
-            request, f"Fișierul {nume_fisier} a fost generat și descărcat.")
+        # Validăm fiecare fișier
+        valid_files = []
+        for fisier in fisiere_generate:
+            print(fisier)  # Debugging output
+            if os.path.exists(fisier) and os.path.getsize(fisier) > 0:
+                valid_files.append(fisier)
+            else:
+                messages.warning(
+                    request, f"Fișierul {os.path.basename(fisier)} nu a putut fi găsit sau este gol.")
 
-        return response
+        if not valid_files:
+            messages.error(
+                request, "Nu există fișiere valide pentru a crea arhiva ZIP.")
+            return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
+
+        # Obținem informații despre aviz pentru a numi fișierul ZIP
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+
+        # Creăm un nume unic pentru arhiva ZIP
+        zip_filename = f"Documentatie_{avizCU.nume_aviz}_{lucrare.beneficiar.nume}.zip"
+        temp_dir = tempfile.gettempdir()
+        zip_path = os.path.join(temp_dir, zip_filename)
+
+        try:
+            # Creăm arhiva ZIP
+            with zipfile.ZipFile(zip_path, 'w') as zipf:
+                for fisier in valid_files:
+                    fisier_nume = os.path.basename(fisier)
+                    zipf.write(fisier, fisier_nume)
+                    print(f"Added to ZIP: {fisier_nume}")  # Debugging output
+
+            # Pregătim arhiva ZIP pentru descărcare
+            with open(zip_path, 'rb') as f:
+                response = HttpResponse(
+                    f.read(), content_type='application/zip')
+                response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
+
+            # Adăugăm mesaj de succes
+            messages.success(
+                request, f"Arhiva {zip_filename} cu {len(valid_files)} fișiere a fost generată și descărcată.")
+
+            return response
+
+        finally:
+            # Ștergem toate fișierele temporare
+            for fisier in fisiere_generate:
+                if os.path.exists(fisier):
+                    try:
+                        os.remove(fisier)
+                    except:
+                        pass
+
+            if os.path.exists(zip_path):
+                try:
+                    os.remove(zip_path)
+                except:
+                    pass
 
     except Exception as e:
         # În caz de eroare, adăugăm un mesaj de eroare și redirecționăm
         messages.error(
-            request, f"A apărut o eroare la generarea fișierului: {str(e)}")
-
-        # Ne asigurăm că fișierul temporar este șters în caz de eroare
-        if 'fisier_generat' in locals() and os.path.exists(fisier_generat):
-            try:
-                os.remove(fisier_generat)
-            except:
-                pass
+            request, f"A apărut o eroare la generarea fișierelor: {str(e)}")
 
         return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))

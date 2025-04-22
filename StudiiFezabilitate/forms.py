@@ -61,7 +61,7 @@ class LucrareForm(BaseForm):
 class CertificatUrbanismForm(BaseForm):
     class Meta:
         model = CertificatUrbanism
-        fields = ['numar', 'data', 'emitent', 'nume', 'valabilitate', 'descrierea_proiectului',
+        fields = ['numar', 'data', 'emitent', 'nume', 'adresa', 'valabilitate', 'descrierea_proiectului',
                   'inginer_intocmit', 'inginer_verificat', 'suprafata_ocupata', 'lungime_traseu',
                   'cale_CU', 'cale_plan_incadrare_CU', 'cale_plan_situatie_CU', 'cale_memoriu_tehnic_CU', 'cale_acte_beneficiar',
                   'cale_acte_facturare', 'cale_chitanta_APM', 'cale_plan_situatie_la_scara',
@@ -73,7 +73,8 @@ class CertificatUrbanismForm(BaseForm):
                   'data': 'Data',
                   'emitent': 'Emitent CU',
                   'nume': 'Denumire lucrare',
-                  'valabilitate': 'Data valabilitate',
+                  'adresa': 'Adresa lucrare',
+                  'valabilitate': 'Valabilitate',
                   'descrierea_proiectului': 'Descrierea proiectului',
                   'inginer_intocmit': 'Inginer Întocmit',
                   'inginer_verificat': 'Inginer Verificat',
@@ -100,6 +101,7 @@ class CertificatUrbanismForm(BaseForm):
             'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'emitent': forms.Select(attrs={'class': 'form-control'}),
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele lucrării din Certificatul de Urbanism'}),
+            'adresa': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți adresa lucrării din Certificatul de Urbanism'}),
             'valabilitate': forms.DateInput(attrs={'class': 'form-control'}),
             'descrierea_proiectului': forms.Textarea(attrs={'class': 'form-control', 'rows': 20, 'placeholder': 'Introduceți descrierea proiectului din Memoriul tehnic'}),
             'inginer_intocmit': forms.Select(attrs={'class': 'form-control'}),
@@ -128,7 +130,7 @@ class AvizeCUForm(BaseForm):
     class Meta:
         model = AvizeCU
         fields = ['nume_aviz', 'depus', 'data_depunere', 'primit', 'numar_aviz',
-                  'data_aviz', 'cale_aviz', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total',]
+                  'data_aviz', 'cale_aviz_eliberat', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total',]
         labels = {
             'nume_aviz': 'Nume aviz',
             'depus': 'Depus',
@@ -136,7 +138,7 @@ class AvizeCUForm(BaseForm):
             'primit': 'Primit',
             'numar_aviz': 'Număr aviz',
             'data_aviz': 'Data aviz',
-            'cale_aviz': 'Cale aviz',
+            'cale_aviz_eliberat': 'Cale aviz',
             'descriere_aviz': 'Descriere aviz',
             'cost_net': 'Cost Net',
             'cost_tva': 'Cost TVA',
@@ -150,7 +152,7 @@ class AvizeCUForm(BaseForm):
             'primit': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'numar_aviz': forms.TextInput(attrs={'class': 'form-control'}),
             'data_aviz': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'cale_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea avizului'}),
+            'cale_aviz_eliberat': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea avizului'}),
             'descriere_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți descrierea avizului'}),
             'cost_net': forms.NumberInput(attrs={'class': 'form-control'}),
             'cost_tva': forms.NumberInput(attrs={'class': 'form-control'}),
