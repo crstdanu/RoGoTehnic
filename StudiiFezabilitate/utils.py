@@ -1,4 +1,5 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
+from StudiiFezabilitate.Avize.Common import avize as common
 from StudiiFezabilitate.Avize import avize_iasi as iasi
 from StudiiFezabilitate.result import DocumentGenerationResult
 
@@ -8,10 +9,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
 
+        if "Aviz APM" in avizCU.nume_aviz.nume:
+            return common.aviz_APM(lucrare_id, id_aviz)
+
         # IASI
-        if lucrare.judet.nume == "Iași":
+        elif lucrare.judet.nume == "Iași":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM(lucrare_id, id_aviz)
+                return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
 
@@ -27,7 +31,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         # NEAMȚ
         elif lucrare.judet.nume == "Neamț":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM(lucrare.id, id_aviz)
+                return common.aviz_APM(lucrare.id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz_neamt(lucrare_id, id_aviz)
 
@@ -43,7 +47,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         # BACĂU
         elif lucrare.judet.nume == "Bacău":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM_bacau(lucrare_id, id_aviz)
+                return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz_bacau(lucrare_id, id_aviz)
 
@@ -59,7 +63,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             # SUCEAVA
         elif lucrare.judet.nume == "Suceava":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM(lucrare_id, id_aviz)
+                return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
 
@@ -75,7 +79,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         # BOTOȘANI
         elif lucrare.judet.nume == "Botoșani":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM(lucrare_id, id_aviz)
+                return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
 
@@ -91,7 +95,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
         # VASLUI
         elif lucrare.judet.nume == "Vaslui":
             if avizCU.nume_aviz.nume == "Aviz APM":
-                return iasi.aviz_APM(lucrare_id, id_aviz)
+                return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
                 output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
 

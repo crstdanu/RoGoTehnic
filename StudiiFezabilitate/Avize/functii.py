@@ -18,6 +18,74 @@ def check_required_fields(fields):
     return None
 
 
+def copy_file(file_path, temp_dir):
+    """
+    Copiază un fișier într-un director temporar și returnează calea completă a fișierului copiat.
+
+    Args:
+        file_path (str): Calea către fișierul original
+        temp_dir (str): Directorul în care va fi copiat fișierul
+
+    Returns:
+        str: Calea completă a fișierului copiat
+
+    Raises:
+        ValueError: Dacă parametrii nu sunt valizi
+        FileNotFoundError: Dacă fișierul sursă sau directorul destinație nu există
+        PermissionError: Dacă nu există permisiuni pentru copiere
+        Exception: Pentru alte erori în timpul copierii
+    """
+    try:
+        # Verificăm dacă parametrii sunt valizi
+        if not file_path or not isinstance(file_path, str):
+            raise ValueError("Calea fișierului sursă nu este validă")
+
+        if not temp_dir or not isinstance(temp_dir, str):
+            raise ValueError("Directorul destinație nu este valid")
+
+        # Curățăm path-ul de ghilimele
+        file = file_path.strip('"')
+
+        # Verificăm dacă fișierul sursă există
+        if not os.path.exists(file):
+            raise FileNotFoundError(f"Fișierul sursă nu a fost găsit: {file}")
+
+        if os.path.getsize(file) == 0:
+            print(f"Avertisment: Fișierul sursă este gol: {file}")
+
+        # Verificăm dacă directorul destinație există
+        if not os.path.exists(temp_dir):
+            raise FileNotFoundError(
+                f"Directorul destinație nu există: {temp_dir}")
+
+        # Verificăm dacă avem permisiuni de scriere în directorul destinație
+        if not os.access(temp_dir, os.W_OK):
+            raise PermissionError(
+                f"Nu există permisiuni de scriere în directorul destinație: {temp_dir}")
+
+        # Construim calea de destinație și copiem fișierul
+        file_name = os.path.basename(file)
+        destination_path = os.path.join(temp_dir, file_name)
+
+        # Verificăm dacă fișierul există deja la destinație
+        if os.path.exists(destination_path):
+            print(
+                f"Avertisment: Fișierul există deja la destinație și va fi suprascris: {destination_path}")
+
+        shutil.copy(file, destination_path)
+
+        # Verificăm dacă copierea a reușit
+        if not os.path.exists(destination_path):
+            raise Exception(
+                f"Fișierul nu a fost copiat la destinație: {destination_path}")
+
+        return destination_path
+    except Exception as e:
+        error_message = f"Eroare la copierea fișierului: {str(e)}"
+        print(error_message)
+        raise Exception(error_message)
+
+
 def count_pages(pdf_path):
     with open(pdf_path, 'rb') as file:
         reader = PyPDF2.PdfReader(file)
@@ -199,6 +267,58 @@ def create_document(model_path, context, final_destination, stampila=None, semna
                         f"Nu s-a putut șterge fișierul temporar: {temp_file}")
 
 
+def copy_doc_to_pdf(model_path, final_destination):
+    """
+    Copiază un document DOCX și îl convertește în format PDF.
+
+    Args:
+        model_path (str): Calea către documentul DOCX sursă
+        final_destination (str): Directorul destinație unde va fi copiat și convertit documentul
+
+    Returns:
+        str: Calea către documentul PDF generat
+
+    Raises:
+        ValueError: Dacă parametrii nu sunt valizi
+        FileNotFoundError: Dacă documentul sursă sau directorul destinație nu există
+        Exception: Pentru alte erori în timpul procesării documentului
+    """
+    try:
+        # Verificăm dacă parametrii sunt valizi
+        if not model_path or not isinstance(model_path, str):
+            raise ValueError("Calea documentului sursă nu este validă")
+
+        if not final_destination or not isinstance(final_destination, str):
+            raise ValueError("Directorul destinație nu este valid")
+
+        # Verificăm dacă documentul sursă există și este un fișier DOCX
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(
+                f"Documentul sursă nu a fost găsit: {model_path}")
+
+        if not model_path.lower().endswith('.docx'):
+            raise ValueError(
+                f"Documentul sursă trebuie să fie în format DOCX: {model_path}")
+
+        # Copiem documentul în directorul destinație
+        path_doc = copy_file(model_path, final_destination)
+
+        # Convertim documentul în PDF
+        readme_pdf_path = convert_to_pdf(path_doc)
+
+        # Verificăm dacă PDF-ul a fost generat cu succes
+        if not os.path.exists(readme_pdf_path) or os.path.getsize(readme_pdf_path) == 0:
+            raise Exception(
+                f"PDF-ul a fost generat, dar fișierul este gol: {readme_pdf_path}")
+
+        return readme_pdf_path
+
+    except Exception as e:
+        error_message = f"Eroare la copierea și conversia documentului: {str(e)}"
+        print(error_message)
+        raise Exception(error_message)
+
+
 def merge_pdfs(pdf_list, output_path):
     """
     Combină mai multe fișiere PDF într-un singur document.
@@ -340,73 +460,5 @@ def merge_pdfs_print(pdf_list, output_path):
         return output_path
     except Exception as e:
         error_message = f"Eroare la combinarea PDF-urilor pentru imprimare: {str(e)}"
-        print(error_message)
-        raise Exception(error_message)
-
-
-def copy_file(file_path, temp_dir):
-    """
-    Copiază un fișier într-un director temporar și returnează calea completă a fișierului copiat.
-
-    Args:
-        file_path (str): Calea către fișierul original
-        temp_dir (str): Directorul în care va fi copiat fișierul
-
-    Returns:
-        str: Calea completă a fișierului copiat
-
-    Raises:
-        ValueError: Dacă parametrii nu sunt valizi
-        FileNotFoundError: Dacă fișierul sursă sau directorul destinație nu există
-        PermissionError: Dacă nu există permisiuni pentru copiere
-        Exception: Pentru alte erori în timpul copierii
-    """
-    try:
-        # Verificăm dacă parametrii sunt valizi
-        if not file_path or not isinstance(file_path, str):
-            raise ValueError("Calea fișierului sursă nu este validă")
-
-        if not temp_dir or not isinstance(temp_dir, str):
-            raise ValueError("Directorul destinație nu este valid")
-
-        # Curățăm path-ul de ghilimele
-        file = file_path.strip('"')
-
-        # Verificăm dacă fișierul sursă există
-        if not os.path.exists(file):
-            raise FileNotFoundError(f"Fișierul sursă nu a fost găsit: {file}")
-
-        if os.path.getsize(file) == 0:
-            print(f"Avertisment: Fișierul sursă este gol: {file}")
-
-        # Verificăm dacă directorul destinație există
-        if not os.path.exists(temp_dir):
-            raise FileNotFoundError(
-                f"Directorul destinație nu există: {temp_dir}")
-
-        # Verificăm dacă avem permisiuni de scriere în directorul destinație
-        if not os.access(temp_dir, os.W_OK):
-            raise PermissionError(
-                f"Nu există permisiuni de scriere în directorul destinație: {temp_dir}")
-
-        # Construim calea de destinație și copiem fișierul
-        file_name = os.path.basename(file)
-        destination_path = os.path.join(temp_dir, file_name)
-
-        # Verificăm dacă fișierul există deja la destinație
-        if os.path.exists(destination_path):
-            print(
-                f"Avertisment: Fișierul există deja la destinație și va fi suprascris: {destination_path}")
-
-        shutil.copy(file, destination_path)
-
-        # Verificăm dacă copierea a reușit
-        if not os.path.exists(destination_path):
-            raise Exception(
-                f"Fișierul nu a fost copiat la destinație: {destination_path}")
-
-        return destination_path
-    except Exception as e:
-        error_message = f"Eroare la copierea fișierului: {str(e)}"
         print(error_message)
         raise Exception(error_message)

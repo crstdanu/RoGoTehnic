@@ -383,6 +383,11 @@ class Aviz(models.Model):
     nume = models.CharField(max_length=100)
     judet = models.ForeignKey(
         Judet, on_delete=models.PROTECT, related_name='avize')
+    localitate = models.ForeignKey(
+        Localitate, on_delete=models.PROTECT, blank=True, null=True, related_name='avize')
+    adresa = models.CharField(max_length=512, blank=True, null=True,)
+    email = models.EmailField(blank=True, null=True,)
+    telefon = models.CharField(max_length=12, blank=True, null=True,)
     descriere = models.TextField(blank=True, null=True,)
 
     class Meta:
