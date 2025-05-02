@@ -10,9 +10,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         if "Aviz APM" in avizCU.nume_aviz.nume:
             return common.aviz_APM(lucrare_id, id_aviz)
-
         elif "Aviz EE Delgaz" in avizCU.nume_aviz.nume:
             return common.aviz_EE_Delgaz(lucrare_id, id_aviz)
+        elif "Aviz GN Delgaz" in avizCU.nume_aviz.nume:
+            return common.aviz_GN_Delgaz(lucrare_id, id_aviz)
 
         # IASI
         elif lucrare.judet.nume == "Iași":
