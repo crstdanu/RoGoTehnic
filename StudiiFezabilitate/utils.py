@@ -1,6 +1,5 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.Avize.Common import avize as common
-from StudiiFezabilitate.Avize import avize_iasi as iasi
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 
@@ -12,12 +11,15 @@ def creeaza_fisier(lucrare_id, id_aviz):
         if "Aviz APM" in avizCU.nume_aviz.nume:
             return common.aviz_APM(lucrare_id, id_aviz)
 
+        elif "Aviz EE Delgaz" in avizCU.nume_aviz.nume:
+            return common.aviz_EE_Delgaz(lucrare_id, id_aviz)
+
         # IASI
         elif lucrare.judet.nume == "Iași":
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
@@ -33,7 +35,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare.id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz_neamt(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz_neamt(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
@@ -49,7 +51,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz_bacau(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz_bacau(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
@@ -65,7 +67,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
@@ -81,7 +83,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
@@ -97,7 +99,7 @@ def creeaza_fisier(lucrare_id, id_aviz):
             if avizCU.nume_aviz.nume == "Aviz APM":
                 return common.aviz_APM(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = iasi.aviz_EE_delgaz(lucrare_id, id_aviz)
+                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
 
                 # Verificăm dacă output_path este un mesaj de eroare
                 if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
