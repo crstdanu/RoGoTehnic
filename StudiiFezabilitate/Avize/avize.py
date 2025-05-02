@@ -1,5 +1,5 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
-import StudiiFezabilitate.services.functii as x
+import StudiiFezabilitate.Avize.functii as x
 from StudiiFezabilitate.result import DocumentGenerationResult
 from docxtpl import DocxTemplate
 import os

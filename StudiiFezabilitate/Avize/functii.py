@@ -93,7 +93,7 @@ def convert_to_pdf(doc):
         pythoncom.CoUninitialize()
 
 
-def create_document(model_path, context, final_destination, stampila_1=None, stampila_2=None, stampila_3=None):
+def create_document(model_path, context, final_destination, stampila=None, semnatura_1=None, semnatura_2=None):
     """
     Creează un document DOCX din șablon și îl convertește în PDF.
 
@@ -101,9 +101,9 @@ def create_document(model_path, context, final_destination, stampila_1=None, sta
         model_path (str): Calea către șablonul DOCX
         context (dict): Contextul pentru renderizarea șablonului
         final_destination (str): Directorul pentru documentul final
-        stampila_1 (str, optional): Calea către prima ștampilă/semnătură
-        stampila_2 (str, optional): Calea către a doua ștampilă/semnătură
-        stampila_3 (str, optional): Calea către a treia ștampilă/semnătură
+        stampila (str, optional): Calea către ștampilă
+        semnatura_1 (str, optional): Calea către prima semnătură
+        semnatura_2 (str, optional): Calea către a doua semnătură
 
     Returns:
         str: Calea către documentul PDF generat
@@ -114,9 +114,6 @@ def create_document(model_path, context, final_destination, stampila_1=None, sta
     temp_files = []
 
     try:
-        # Verificăm existența șablonului
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Șablonul nu a fost găsit: {model_path}")
 
         # Verificăm dacă directorul final există
         if not os.path.exists(final_destination):
@@ -124,17 +121,17 @@ def create_document(model_path, context, final_destination, stampila_1=None, sta
                 f"Directorul destinație nu există: {final_destination}")
 
         # Verificăm existența ștampilelor/semnăturilor dacă sunt furnizate
-        if stampila_1 and not os.path.exists(stampila_1):
+        if stampila and not os.path.exists(stampila):
             raise FileNotFoundError(
-                f"Prima ștampilă/semnătură nu a fost găsită: {stampila_1}")
+                f":tampila nu a fost găsită: {stampila}")
 
-        if stampila_2 and not os.path.exists(stampila_2):
+        if semnatura_1 and not os.path.exists(semnatura_1):
             raise FileNotFoundError(
-                f"A doua ștampilă/semnătură nu a fost găsită: {stampila_2}")
+                f"Prima semnătură nu a fost găsită: {semnatura_1}")
 
-        if stampila_3 and not os.path.exists(stampila_3):
+        if semnatura_2 and not os.path.exists(semnatura_2):
             raise FileNotFoundError(
-                f"A treia ștampilă/semnătură nu a fost găsită: {stampila_3}")
+                f"A doua semnătură nu a fost găsită: {semnatura_2}")
 
         # Încărcăm șablonul
         try:
@@ -144,14 +141,14 @@ def create_document(model_path, context, final_destination, stampila_1=None, sta
 
         # Înlocuim placeholder-urile pentru imagini
         try:
-            if stampila_1:
-                doc.replace_pic("Placeholder_1.png", stampila_1)
+            if stampila:
+                doc.replace_pic("Placeholder_1.png", stampila)
 
-            if stampila_2:
-                doc.replace_pic("Placeholder_2.png", stampila_2)
+            if semnatura_1:
+                doc.replace_pic("Placeholder_2.png", semnatura_1)
 
-            if stampila_3:
-                doc.replace_pic("Placeholder_3.png", stampila_3)
+            if semnatura_2:
+                doc.replace_pic("Placeholder_3.png", semnatura_2)
         except Exception as e:
             raise Exception(
                 f"Eroare la înlocuirea imaginilor în șablon: {str(e)}")
