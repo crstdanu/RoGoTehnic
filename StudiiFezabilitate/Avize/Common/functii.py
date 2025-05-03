@@ -563,3 +563,108 @@ def genereaza_email_GN_Delgaz(lucrare, avizCU, beneficiar, cu, contact, temp_dir
             f"Emailul a fost generat, dar fișierul este gol: {email_pdf_path}")
 
     return email_pdf_path
+
+
+# ----------------------------------------------                   Aviz Orange
+
+def verifica_campuri_necesare_Orange(firma, reprezentant, cu, beneficiar, contact):
+    """
+    Verifică dacă toate câmpurile necesare pentru generarea avizului Orange sunt prezente
+    """
+    errors = x.check_required_fields([
+        (firma.cale_stampila,
+            "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura.path,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU.path,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona"),
+        (cu.cale_plan_situatie_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de situatie"),
+        (cu.cale_memoriu_tehnic_CU.path,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic"),
+        (cu.cale_acte_facturare.path,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+
+        # Cțmpuri necesae
+        (firma.nume,
+         "Nu se poate genera avizul - lipsește Firma de proiectare"),
+        (firma.cui,
+         "Nu se poate genera avizul - lipsește CUI-ul firmei de proiectare"),
+        (firma.nr_reg_com,
+         "Nu se poate genera avizul - lipsește numărul de înregistrare la Registrul Comerțului"),
+        (firma.adresa,
+         "Nu se poate genera avizul - lipsește Adresa firmei de proiectare"),
+        (firma.localitate,
+         "Nu se poate genera avizul - lipsește Localitatea firmei de proiectare"),
+        (firma.judet,
+         "Nu se poate genera avizul - lipsește Județul firmei de proiectare"),
+        (reprezentant.nume,
+            "Nu se poate genera avizul - lipsește numele reprezentantului firmei de proiectare"),
+        (beneficiar.nume,
+         "Nu se poate genera avizul - lipsește Beneficiarul"),
+        (contact.telefon,
+         "Nu se poate genera avizul - lipsește Telefonul persoanei de contact"),
+        (firma.email,
+         "Nu se poate genera avizul - lipsește Email-ul firmei de proiectare"),
+        (cu.nume,
+         "Nu se poate genera avizul - lipsește Numele lucrarii din Certificatul de urbanism"),
+        (cu.adresa,
+         "Nu se poate genera avizul - lipsește Adresa lucrarii din Certificatul de urbanism"),
+    ])
+
+    # Verificăm existența modelelor pentru toate documentele de la început
+    model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\04. Aviz Orange\Cerere Orange.docx"
+    model_readme = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\04. Aviz Orange\Citeste-ma.docx"
+
+    if not os.path.exists(model_cerere):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc modelul pentru Cererea Orange")
+
+    if not os.path.exists(model_readme):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc șablonul pentru Citeste-ma Orange")
+
+    return errors
+
+
+def genereaza_cerere_Orange(firma, reprezentant, beneficiar, contact, cu, temp_dir):
+    """
+    Generează cererea pentru Orange
+    """
+    model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\04. Aviz Orange\01.Cerere Orange.docx"
+
+    context_cerere = {
+        'nume_firma_proiectare': firma.nume,
+        'localitate_firma_proiectare': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma_proiectare': firma.adresa,
+        'judet_firma_proiectare': firma.judet.nume,
+        'reprezentant_firma_proiectare': firma.reprezentant.nume,
+        'nume_beneficiar': beneficiar.nume,
+        'email_firma_proiectare': firma.email,
+        'cui_firma_proiectare': firma.cui,
+        'telefon_contact': contact.telefon,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'data': datetime.now().strftime("%d.%m.%Y"),
+    }
+
+    cerere_pdf_path = x.create_document(
+        model_cerere, context_cerere, temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,
+    )
+
+    return cerere_pdf_path
+
+
+def genereaza_readme_Orange(temp_dir):
+
+    model_readme = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\04. Aviz Orange\Citeste-ma.docx"
+
+    readme_pdf_path = x.copy_doc_to_pdf(model_readme, temp_dir)
+
+    return readme_pdf_path

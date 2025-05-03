@@ -18,13 +18,14 @@ def check_required_fields(fields):
     return None
 
 
-def copy_file(file_path, temp_dir):
+def copy_file(file_path, temp_dir, new_filename=None):
     """
     Copiază un fișier într-un director temporar și returnează calea completă a fișierului copiat.
 
     Args:
         file_path (str): Calea către fișierul original
         temp_dir (str): Directorul în care va fi copiat fișierul
+        new_filename (str, optional): Numele nou al fișierului copiat. Dacă nu este specificat, se folosește numele original
 
     Returns:
         str: Calea completă a fișierului copiat
@@ -64,8 +65,16 @@ def copy_file(file_path, temp_dir):
                 f"Nu există permisiuni de scriere în directorul destinație: {temp_dir}")
 
         # Construim calea de destinație și copiem fișierul
-        file_name = os.path.basename(file)
-        destination_path = os.path.join(temp_dir, file_name)
+        if new_filename:
+            # Dacă s-a specificat un nume nou, folosim extensia fișierului original
+            original_extension = os.path.splitext(file)[1]
+            if not new_filename.endswith(original_extension):
+                new_filename += original_extension
+            destination_path = os.path.join(temp_dir, new_filename)
+        else:
+            # Altfel, folosim numele original
+            file_name = os.path.basename(file)
+            destination_path = os.path.join(temp_dir, file_name)
 
         # Verificăm dacă fișierul există deja la destinație
         if os.path.exists(destination_path):
