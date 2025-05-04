@@ -8,7 +8,7 @@ import PyPDF2
 from PyPDF2 import PdfMerger
 
 
-pagina_goala = r"StudiiFezabilitate\services\modele_cereri\pagina_goala.pdf"
+pagina_goala = r"StudiiFezabilitate\Avize\modele_cereri\pagina_goala.pdf"
 
 
 def check_required_fields(fields):
@@ -116,23 +116,37 @@ def convert_to_pdf(doc):
     Raises:
         Exception: Dacă apare o eroare în timpul conversiei
     """
-    # Inițializăm COM pentru thread-ul curent
-    pythoncom.CoInitialize()
-
-    if not doc or not isinstance(doc, str):
-        raise ValueError("Calea documentului nu este validă")
-
-    if not os.path.exists(doc):
-        raise FileNotFoundError(f"Documentul nu a fost găsit: {doc}")
-
-    if not doc.lower().endswith('.docx'):
-        raise ValueError(f"Fișierul trebuie să fie în format DOCX: {doc}")
-
     word = None
     try:
+        # Inițializăm COM pentru thread-ul curent
+        pythoncom.CoInitialize()
+
+        if not doc or not isinstance(doc, str):
+            raise ValueError("Calea documentului nu este validă")
+
+        if not os.path.exists(doc):
+            raise FileNotFoundError(f"Documentul nu a fost găsit: {doc}")
+
+        if not doc.lower().endswith('.docx'):
+            raise ValueError(f"Fișierul trebuie să fie în format DOCX: {doc}")
+
+        # Convertim calea la absolută pentru Word COM API
+        doc = os.path.abspath(doc)
+
+        # Gestionăm calea cu spații incluzând-o între ghilimele
+        if ' ' in doc:
+            doc_path_for_open = f'"{doc}"'
+        else:
+            doc_path_for_open = doc
+
         word = win32.DispatchEx("Word.Application")
         new_name = doc.replace(".docx", r".pdf")
-        worddoc = word.Documents.Open(doc)
+
+        # Pentru siguranță, eliminăm ghilimelele din calea nouă pentru SaveAs
+        new_name = new_name.strip('"')
+
+        # Deschidem documentul Word
+        worddoc = word.Documents.Open(doc_path_for_open)
         worddoc.SaveAs(new_name, FileFormat=17)
         worddoc.Close()
 
@@ -159,7 +173,7 @@ def convert_to_pdf(doc):
 
         # Ștergem fișierul DOCX indiferent de rezultat
         try:
-            if os.path.exists(doc):
+            if doc and os.path.exists(doc):
                 os.remove(doc)
                 print(f"Fișierul temporar DOCX a fost șters: {doc}")
         except Exception as e:
@@ -167,7 +181,10 @@ def convert_to_pdf(doc):
                 f"Nu s-a putut șterge fișierul DOCX: {doc}, eroare: {str(e)}")
 
         # Eliberăm resursele COM indiferent dacă funcția a reușit sau a eșuat
-        pythoncom.CoUninitialize()
+        try:
+            pythoncom.CoUninitialize()
+        except:
+            pass
 
 
 def create_document(model_path, context, final_destination, stampila=None, semnatura_1=None, semnatura_2=None):
@@ -471,3 +488,18 @@ def merge_pdfs_print(pdf_list, output_path):
         error_message = f"Eroare la combinarea PDF-urilor pentru imprimare: {str(e)}"
         print(error_message)
         raise Exception(error_message)
+
+
+def multiply_by_3(value: int):
+    """
+    Înmulțește o valoare cu 3 și returnează rezultatul ca string cu două zecimale.
+
+    Args:
+        value (int): Valoarea care trebuie înmulțită cu 3
+
+    Returns:
+        str: Rezultatul înmulțirii, formatat ca string cu două zecimale
+    """
+    result = value * 3 if value else 0
+    # Returnăm direct string-ul formatat cu 2 zecimale
+    return f"{result:.2f}"

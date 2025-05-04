@@ -52,6 +52,27 @@ def genereaza_document_final(avizCU, cerere_pdf_path, cu, beneficiar, temp_dir):
 
     return path_document_final
 
+
+def genereaza_document_final_print(avizCU, cerere_pdf_path, cu, temp_dir):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie aviz {avizCU.nume_aviz.nume} - de printat.pdf"
+    )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_chitanta_APM.path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_acte_facturare.path,
+    ]
+
+    x.merge_pdfs_print(pdf_list, path_document_final)
+
+    return path_document_final
 # -----------------------------------------------                            Aviz APM
 
 
@@ -566,7 +587,6 @@ def genereaza_email_GN_Delgaz(lucrare, avizCU, beneficiar, cu, contact, temp_dir
 
 
 # ----------------------------------------------                   Aviz Orange
-
 def verifica_campuri_necesare_Orange(firma, reprezentant, cu, beneficiar, contact):
     """
     Verifică dacă toate câmpurile necesare pentru generarea avizului Orange sunt prezente
@@ -668,3 +688,161 @@ def genereaza_readme_Orange(temp_dir):
     readme_pdf_path = x.copy_doc_to_pdf(model_readme, temp_dir)
 
     return readme_pdf_path
+
+# ----------------------------------------------                   Aviz Cultura
+
+
+def verifica_campuri_necesare_Cultura(lucrare, firma, reprezentant, cu, beneficiar, contact):
+    """
+    Verifică dacă toate câmpurile necesare pentru generarea avizului Cultura sunt prezente
+    """
+    errors = x.check_required_fields([
+        (lucrare.judet.nume,
+            "Nu se poate genera avizul - lipsește numele județului lucrării"),
+        (firma.cale_stampila,
+            "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura.path,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fișiere necesare
+        (cu.cale_CU.path,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona"),
+        (cu.cale_plan_situatie_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de situatie"),
+        (cu.cale_memoriu_tehnic_CU.path,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic"),
+        (cu.cale_acte_facturare.path,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+
+        # Câmpuri necesare
+        (firma.nume,
+         "Nu se poate genera avizul - lipsește Firma de proiectare"),
+        (firma.adresa,
+         "Nu se poate genera avizul - lipsește Adresa firmei de proiectare"),
+        (firma.localitate,
+         "Nu se poate genera avizul - lipsește Localitatea firmei de proiectare"),
+        (firma.judet,
+         "Nu se poate genera avizul - lipsește Județul firmei de proiectare"),
+        (reprezentant.nume,
+            "Nu se poate genera avizul - lipsește numele reprezentantului firmei de proiectare"),
+        (beneficiar.nume,
+         "Nu se poate genera avizul - lipsește Beneficiarul"),
+        (contact.telefon,
+         "Nu se poate genera avizul - lipsește Telefonul persoanei de contact"),
+        (firma.email,
+         "Nu se poate genera avizul - lipsește Email-ul firmei de proiectare"),
+        (cu.nume,
+         "Nu se poate genera avizul - lipsește Numele lucrarii din Certificatul de urbanism"),
+        (cu.adresa,
+         "Nu se poate genera avizul - lipsește Adresa lucrarii din Certificatul de urbanism"),
+        (cu.numar,
+         "Nu se poate genera emailul - lipsește numărul certificatului de urbanism"),
+        (cu.data,
+         "Nu se poate genera emailul - lipsește data certificatului de urbanism"),
+        (cu.emitent,
+         "Nu se poate genera emailul - lipsește emitentul certificatului de urbanism"),
+    ])
+
+    # Verificăm existența modelelor pentru toate documentele de la început
+    if lucrare.judet.nume == "Iași":
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Iasi.docx"
+    elif lucrare.judet.nume == "Neamț":
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Neamt.docx"
+    elif lucrare.judet.nume == "Botoșani":
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Botosani.docx"
+    else:
+        return DocumentGenerationResult.error_result("Nu găsesc modelul pentru Cerere Cultura")
+
+    if lucrare.judet.nume == "Iași":
+        model_email = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Model email - Iasi.docx"
+    elif lucrare.judet.nume == "Neamț":
+        model_email = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Model email - Neamt.docx"
+    elif lucrare.judet.nume == "Botoșani":
+        model_email = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Model email - Botosani.docx"
+    else:
+        return DocumentGenerationResult.error_result("Nu găsesc modelul pentru Emailul catre Cultura")
+
+    if not os.path.exists(model_cerere):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc modelul pentru Cerere Cultura")
+
+    if not os.path.exists(model_email):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc șablonul pentru Emailul catre Cultura")
+
+    return errors
+
+
+def genereaza_cerere_Cultura(lucrare, firma, reprezentant, beneficiar, contact, cu, temp_dir):
+    """
+    Generează cererea pentru Avizul Cultura
+    """
+    if lucrare.judet.nume == "Iași":
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Iasi.docx"
+    elif lucrare.judet.nume == "Neamț":
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Neamt.docx"
+    else:
+        model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Botosani.docx"
+
+    context_cerere = {
+        'nume_firma_proiectare': firma.nume,
+        'localitate_firma_proiectare': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma_proiectare': firma.adresa,
+        'judet_firma_proiectare': firma.judet.nume,
+        'nume_beneficiar': beneficiar.nume,
+        'cui_firma_proiectare': firma.cui,
+        'telefon_contact': contact.telefon,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'data': datetime.now().strftime("%d.%m.%Y"),
+        'nr_cu': cu.numar,
+        'data_cu': cu.data,
+        'emitent_cu': cu.emitent,
+        'suprafata_mp': cu.suprafata_ocupata,
+        'total_aviz': x.multiply_by_3(cu.suprafata_ocupata),
+    }
+
+    cerere_pdf_path = x.create_document(
+        model_cerere, context_cerere, temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,
+    )
+
+    return cerere_pdf_path
+
+
+def genereaza_email_Cultura(lucrare, avizCU, beneficiar, cu, contact, firma, temp_dir):
+    """
+    Generează emailul pentru EE Delgaz și îl pregătește pentru a fi livrat
+    """
+    if lucrare.judet.nume == "Botoșani":
+        model_email = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Model email - Botosani.docx"
+    else:
+        model_email = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Model email.docx"
+
+    context_email = {
+        'email': avizCU.nume_aviz.email,
+        'nume_beneficiar': beneficiar.nume,
+        'nr_cu': cu.numar,
+        'data_cu': cu.data,
+        'emitent_cu': cu.emitent,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'persoana_contact': contact.nume,
+        'telefon_contact': contact.telefon,
+        'firma_facturare': firma.nume,
+        'cui_firma_facturare': firma.cui,
+    }
+
+    email_pdf_path = x.create_document(
+        model_email, context_email, temp_dir,
+    )
+
+    # Verifică dacă PDF-ul emailului există și are conținut
+    if not os.path.exists(email_pdf_path) or os.path.getsize(email_pdf_path) == 0:
+        raise Exception(
+            f"Emailul a fost generat, dar fișierul este gol: {email_pdf_path}")
+
+    return email_pdf_path

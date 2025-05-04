@@ -16,6 +16,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
             return common.aviz_GN_Delgaz(lucrare_id, id_aviz)
         elif "Aviz Orange" in avizCU.nume_aviz.nume:
             return common.aviz_Orange(lucrare_id, id_aviz)
+        elif "Aviz Cultura" in avizCU.nume_aviz.nume:
+            return common.aviz_Cultura(lucrare_id, id_aviz)
 
         # IASI
         elif lucrare.judet.nume == "Iași":
