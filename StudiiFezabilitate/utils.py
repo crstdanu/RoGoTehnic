@@ -1,5 +1,6 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.Avize.Common import avize as common
+from StudiiFezabilitate.Avize.Iasi import avize as iasi
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 
@@ -21,16 +22,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # IASI
         elif lucrare.judet.nume == "Iași":
-            if avizCU.nume_aviz.nume == "Aviz APM":
-                return common.aviz_APM(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
-
-                # Verificăm dacă output_path este un mesaj de eroare
-                if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
-                    return DocumentGenerationResult.error_result(output_path)
-                else:
-                    return DocumentGenerationResult.success_result(output_path)
+            if avizCU.nume_aviz.nume == "Aviz Apavital":
+                return iasi.aviz_Apavital(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz GN Gazmir":
+                return iasi.aviz_GN_Gazmir(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație nu poate fi generată (...încă)")

@@ -786,6 +786,9 @@ def genereaza_cerere_Cultura(lucrare, firma, reprezentant, beneficiar, contact, 
     else:
         model_cerere = r"StudiiFezabilitate\Avize\modele_cereri\00. Common\05. Aviz Cultura\Cerere Cultura - Botosani.docx"
 
+    # Format data certificat urbanism în format românesc (ZZ-LL-AAAA)
+    data_cu_formatata = cu.data.strftime('%d-%m-%Y') if cu.data else ""
+
     context_cerere = {
         'nume_firma_proiectare': firma.nume,
         'localitate_firma_proiectare': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
@@ -798,7 +801,7 @@ def genereaza_cerere_Cultura(lucrare, firma, reprezentant, beneficiar, contact, 
         'adresa_lucrare': cu.adresa,
         'data': datetime.now().strftime("%d.%m.%Y"),
         'nr_cu': cu.numar,
-        'data_cu': cu.data,
+        'data_cu': data_cu_formatata,  # Utilizăm data formatată în stil românesc
         'emitent_cu': cu.emitent,
         'suprafata_mp': cu.suprafata_ocupata,
         'total_aviz': x.multiply_by_3(cu.suprafata_ocupata),

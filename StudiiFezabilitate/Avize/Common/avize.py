@@ -353,3 +353,39 @@ def aviz_Cultura(lucrare_id, id_aviz):
     except Exception as e:
         print(f"Eroare în aviz_Cultura: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_Politia_Rutiera(lucrare_id, id_aviz):
+    pass
+
+
+def aviz_HCL(lucrare_id, id_aviz):
+    pass
+
+
+def aviz_MAI(lucrare_id, id_aviz):
+    pass
+
+
+def aviz_CFR(lucrare_id, id_aviz):
+    pass
+
+
+def aviz_ISU(lucrare_id, id_aviz):
+    pass
+
+
+def punct_de_vedere_ISU(lucrare_id, id_aviz):
+    pass
+
+
+def aviz_DSP(lucrare_id, id_aviz):
+    pass
+
+
+def punct_de_vedere_DSP(lucrare_id, id_aviz):
+    pass
+
+
+def punct_de_vedere_OAR(lucrare_id, id_aviz):
+    pass

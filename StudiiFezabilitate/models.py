@@ -493,6 +493,13 @@ class CertificatUrbanism(models.Model):
     cale_chitanta_DSP = models.FileField(
         upload_to=cale_upload_chitanta_DSP, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
 
+    @property
+    def data_formatata(self):
+        """Returnează data în format românesc: ZZ-LL-AAAA"""
+        if self.data:
+            return self.data.strftime('%d-%m-%Y')
+        return ""
+
     class Meta:
         verbose_name = "Certificat de urbanism"
         verbose_name_plural = "Certificate de urbanism"

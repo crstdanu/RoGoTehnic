@@ -1,0 +1,147 @@
+import StudiiFezabilitate.Avize.functii as x
+from StudiiFezabilitate.result import DocumentGenerationResult
+import os
+from datetime import datetime
+
+# ------------------------------------------------------------------ Aviz Apavital
+
+
+def verifica_campuri_necesare(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere=None, model_detalii=None):
+    """
+    Verifică dacă toate câmpurile necesare pentru generarea avizului sunt prezente
+    """
+    errors = x.check_required_fields([
+        (lucrare.judet.nume,
+            "Nu se poate genera avizul - lipsește numele județului lucrării"),
+        (firma.cale_stampila,
+            "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura.path,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU.path,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona"),
+        (cu.cale_plan_situatie_CU.path,
+            "Nu se poate genera avizul - lipsește Planul de situatie"),
+        (cu.cale_memoriu_tehnic_CU.path,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic"),
+        (cu.cale_acte_facturare.path,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+
+        # Cțmpuri necesae
+        (firma.nume, "Nu se poate genera avizul - lipsește numele firmei de proiectare"),
+        (firma.adresa, "Nu se poate genera avizul - lipsește Adresa firmei de proiectare"),
+        (firma.localitate, "Nu se poate genera avizul - lipsește Localitatea firmei de proiectare"),
+        (firma.judet, "Nu se poate genera avizul - lipsește Județul firmei de proiectare"),
+        (firma.cui, "Nu se poate genera avizul - lipsește CUI-ul firmei de proiectare"),
+        (firma.nr_reg_com, "Nu se poate genera avizul - lipsește numărul de înregistrare la Registrul Comerțului"),
+        (reprezentant.nume,
+         "Nu se poate genera avizul - lipsește Reprezentantul firmei de proiectare"),
+        (beneficiar.nume, "Nu se poate genera avizul - lipsește numele beneficiarului"),
+        (beneficiar.adresa, "Nu se poate genera avizul - lipsește Adresa beneficiarului"),
+        (beneficiar.localitate,
+         "Nu se poate genera avizul - lipsește Localitatea beneficiarului"),
+        (beneficiar.judet, "Nu se poate genera avizul - lipsește Județul beneficiarului"),
+        (contact.nume, "Nu se poate genera avizul - lipsește Persoana de contact"),
+        (contact.telefon, "Nu se poate genera avizul - lipsește Telefonul persoanei de contact"),
+        (firma.email, "Nu se poate genera avizul - lipsește Email-ul firmei de proiectare"),
+        (cu.nume, "Nu se poate genera avizul - lipsește Numele lucrarii din Certificatul de urbanism"),
+        (cu.adresa, "Nu se poate genera avizul - lipsește Adresa lucrarii din Certificatul de urbanism"),
+        (cu.numar, "Nu se poate genera emailul - lipsește numărul certificatului de urbanism"),
+        (cu.data, "Nu se poate genera emailul - lipsește data certificatului de urbanism"),
+        (cu.emitent, "Nu se poate genera emailul - lipsește emitentul certificatului de urbanism"),
+    ])
+
+    # Verificăm existența modelelor pentru toate documentele de la început
+
+    if not os.path.exists(model_cerere):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc modelul pentru Cerere")
+
+    if not os.path.exists(model_detalii):
+        return DocumentGenerationResult.error_result(
+            "Nu găsesc șablonul pentru Detalii")
+
+    return errors
+
+
+def genereaza_cerere(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
+    """
+    Generează cererea pentru Aviz
+    """
+    context_cerere = {
+        'nume_firma_proiectare': firma.nume,
+        'localitate_firma_proiectare': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma_proiectare': firma.adresa,
+        'judet_firma_proiectare': firma.judet.nume,
+        'reprezentant_firma_proiectare': firma.reprezentant.nume,
+        'nume_beneficiar': beneficiar.nume,
+        'cui_firma_proiectare': firma.cui,
+        'telefon_contact': contact.telefon,
+        'persoana_contact': contact.nume,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'data': datetime.now().strftime("%d.%m.%Y"),
+    }
+
+    cerere_pdf_path = x.create_document(
+        model_cerere, context_cerere, temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,
+    )
+    return cerere_pdf_path
+
+
+def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir):
+    """
+    Generează emailul pentru Aviz
+    """
+    context_email = {
+        'email': avizCU.nume_aviz.email,
+        'nume_beneficiar': beneficiar.nume,
+        'nr_cu': cu.numar,
+        'data_cu': cu.data,
+        'emitent_cu': cu.emitent,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'persoana_contact': contact.nume,
+        'telefon_contact': contact.telefon,
+        'firma_facturare': firma.nume,
+        'cui_firma_facturare': firma.cui,
+    }
+
+    email_pdf_path = x.create_document(
+        model_detalii, context_email, temp_dir,
+    )
+    return email_pdf_path
+
+
+def genereaza_document_final(avizCU, cerere_pdf_path, cu, beneficiar, temp_dir):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - {beneficiar.nume}.pdf"
+    )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_memoriu_tehnic_CU.path,
+        cu.cale_acte_facturare.path,
+    ]
+
+    x.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+
+def genereaza_readme(temp_dir, model_readme):
+
+    readme_pdf_path = x.copy_doc_to_pdf(model_readme, temp_dir)
+
+    return readme_pdf_path
