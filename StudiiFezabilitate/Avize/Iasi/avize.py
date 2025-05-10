@@ -2,6 +2,7 @@ from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 import tempfile
+import os
 
 import StudiiFezabilitate.Avize.functii as x
 import StudiiFezabilitate.Avize.Common.functii as common
@@ -9,6 +10,11 @@ import StudiiFezabilitate.Avize.Iasi.functii as iasi
 
 
 def aviz_Apavital(lucrare_id, id_aviz):
+    """
+    Acest aviz se depune online pe platforma Apavital
+    De aceea este nevoie sa generam fisierele separate
+    Fisierul 'Citeste-ma' contine informatii cu privire la modul de depunere a documentatiei
+    """
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -86,6 +92,10 @@ def aviz_Apavital(lucrare_id, id_aviz):
 
 
 def aviz_GN_Gazmir(lucrare_id, id_aviz):
+    """
+    Acest aviz se depune pe email astefel ca documentatia este in format pdf pentru a fi atasata emailului
+    Fisierul 'Model email' contine informatii cu privire la adresa de email și continutul mesajului din email
+    """
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -116,7 +126,6 @@ def aviz_GN_Gazmir(lucrare_id, id_aviz):
             cerere_pdf_path = iasi.genereaza_cerere(
                 lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
-            # Nu adăugăm cerere_pdf_path în fisiere_generate deoarece va fi parte din documentul final
 
             # 3. Generare document final
             path_document_final = iasi.genereaza_document_final(
@@ -149,19 +158,298 @@ def aviz_GN_Gazmir(lucrare_id, id_aviz):
 
 
 def aviz_Termoficare(lucrare_id, id_aviz):
-    pass
+    """
+    Avizul Termoficare se depune fizic la adresa institutiei astfel ca documentatia va trebui printata. 
+    De aceea folosesc o functie care introduce pagini goale precum si documente in doua exemplare acolo unde e cazul
+    Fisierul 'Citeste-ma' contine informatii cu privire la adresa de depunere a documentatiei si programul de lucru al institutiei.
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/03. Aviz Termoficare/Cerere Termoficare.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/03. Aviz Termoficare/Citeste-ma.docx"
+
+        # Lista pentru a ține evidența fișierelor generate temporar și finale
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        # 1. Verificare câmpuri necesare
+        errors = iasi.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        if errors:
+            return errors
+
+        temp_dir = tempfile.gettempdir()
+
+        try:
+            # 2. Generare cerere
+            cerere_pdf_path = iasi.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # 3. Generare document final
+            path_document_final = iasi.genereaza_document_final_print(
+                avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            # Adăugăm în temp_files pentru curățare în caz de eroare
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 4. Generare Readme
+            readme_pdf_path = iasi.genereaza_readme(temp_dir, model_detalii)
+            temp_files.append(readme_pdf_path)
+            fisiere_generate.append(readme_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            common.curata_fisierele_temporare(
+                temp_files, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        print(f"Eroare în aviz_Termoficare: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
 def aviz_CTP(lucrare_id, id_aviz):
-    pass
+    """
+    Avizul CTP (Compania de Transport Public) se depune fizic la adresa institutiei astfel ca documentatia va trebui printata. 
+    De aceea folosesc o functie care introduce pagini goale precum si documente in doua exemplare acolo unde e cazul.
+    Fisierul 'Citeste-ma' contine informatii cu privire la adresa de depunere a documentatiei si programul de lucru al institutiei.
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/04. Aviz CTP/Cerere CTP.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/04. Aviz CTP/Citeste-ma.docx"
+
+        # Lista pentru a ține evidența fișierelor generate temporar și finale
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        # 1. Verificare câmpuri necesare
+        errors = iasi.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        if errors:
+            return errors
+
+        temp_dir = tempfile.gettempdir()
+
+        try:
+            # 2. Generare cerere
+            cerere_pdf_path = iasi.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # 3. Generare document final
+            path_document_final = iasi.genereaza_document_final_print(
+                avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            # Adăugăm în temp_files pentru curățare în caz de eroare
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 4. Generare Readme
+            readme_pdf_path = iasi.genereaza_readme(temp_dir, model_detalii)
+            temp_files.append(readme_pdf_path)
+            fisiere_generate.append(readme_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            common.curata_fisierele_temporare(
+                temp_files, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        print(f"Eroare în aviz_CTP: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
 def aviz_Salubris(lucrare_id, id_aviz):
-    pass
+    """
+    Avizul Salubris se depune fizic la adresa institutiei astfel ca documentatia va trebui printata. 
+    De aceea folosesc o functie care introduce pagini goale precum si documente in doua exemplare acolo unde e cazul.
+    Spre deosebire de restul avizelor de pana acum documentatia pentru acest aviz este diferita (sunt mai putine documente de depus) asa ca voi folosi o functie separata pentru generarea documentatiei
+    Fisierul 'Citeste-ma' contine informatii cu privire la adresa de depunere a documentatiei si programul de lucru al institutiei.
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/05. Aviz Salubris/Cerere Salubris.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/05. Aviz Salubris/Citeste-ma.docx"
+
+        # Lista pentru a ține evidența fișierelor generate temporar și finale
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        # 1. Verificare câmpuri necesare
+        errors = iasi.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        if errors:
+            return errors
+
+        temp_dir = tempfile.gettempdir()
+
+        try:
+            # 2. Generare cerere
+            cerere_pdf_path = iasi.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # 3. Generare document final
+            path_document_final = iasi.genereaza_document_Salubris_print(
+                avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            # Adăugăm în temp_files pentru curățare în caz de eroare
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 4. Generare Readme
+            readme_pdf_path = iasi.genereaza_readme(temp_dir, model_detalii)
+            temp_files.append(readme_pdf_path)
+            fisiere_generate.append(readme_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            common.curata_fisierele_temporare(
+                temp_files, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        print(f"Eroare în aviz_Salubris: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
 def aviz_PMI_Mediu(lucrare_id, id_aviz):
-    pass
+    """
+    Acest aviz se depune pe email astefel ca documentatia este in format pdf pentru a fi atasata emailului
+    Spre deosebire de celelalte functii de generare a documentatiei pentru avize, aceasta mai adauga un Plan Mediu PMI
+    Fisierul 'Model email' contine informatii cu privire la adresa de email și continutul mesajului din email
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/06. Aviz PMI-Mediu/Cerere Aviz Mediu PMI.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/06. Aviz PMI-Mediu/Model email.docx"
+        model_anexa = "StudiiFezabilitate/Avize/modele_cereri/01. iasi/06. Aviz PMI-Mediu/Plan Mediu PMI.docx"
+
+        # Lista pentru a ține evidența fișierelor generate temporar și finale
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        # 1. Verificare câmpuri necesare
+        errors = iasi.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        if errors:
+            return errors
+
+        # Verificăm existența tuturor modelelor de documente simultan
+        for model_path, descriere in [
+            (model_cerere, "Cerere Aviz Mediu PMI"),
+            (model_detalii, "Model email"),
+            (model_anexa, "Plan Mediu PMI")
+        ]:
+            if not os.path.exists(model_path):
+                return DocumentGenerationResult.error_result(
+                    f"Nu găsesc modelul pentru {descriere}: {model_path}")
+
+        temp_dir = tempfile.gettempdir()
+
+        try:
+            # 2. Generare cerere
+            cerere_pdf_path = iasi.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # 3. Genereaza Plan Mediu PMI
+            plan_pdf_path = iasi.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_anexa, temp_dir)
+            temp_files.append(plan_pdf_path)
+
+            # 4. Generare document final
+            path_document_final = iasi.genereaza_document_final_PMI_Mediu(
+                avizCU, cerere_pdf_path, plan_pdf_path, cu, beneficiar, temp_dir)
+            # Adăugăm în temp_files pentru curățare în caz de eroare
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 5. Generare email
+            email_pdf_path = iasi.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
+            # Adăugăm și în temp_files pentru curățare
+            temp_files.append(email_pdf_path)
+            fisiere_generate.append(email_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            common.curata_fisierele_temporare(
+                temp_files, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        print(f"Eroare în aviz_PMI_Mediu: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
 def aviz_PMI_BSM(lucrare_id, id_aviz):

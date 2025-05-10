@@ -119,7 +119,7 @@ def verifica_campuri_necesare_APM(lucrare, firma, reprezentant, cu, beneficiar, 
         # Verificări pentru generarea emailului
         (cu.numar, "Nu se poate genera emailul - lipsește numărul certificatului de urbanism"),
         (cu.data, "Nu se poate genera emailul - lipsește data certificatului de urbanism"),
-        (cu.emitent, "Nu se poate genera emailul - lipsește emitentul certificatului de urbanism"),
+        (cu.emitent.nume, "Nu se poate genera emailul - lipsește numele emitentului certificatului de urbanism"),
     ])
 
     # Verificăm existența modelelor pentru toate documentele de la început
