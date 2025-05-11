@@ -65,8 +65,7 @@ class CertificatUrbanismForm(BaseForm):
                   'inginer_intocmit', 'inginer_verificat', 'suprafata_ocupata', 'lungime_traseu',
                   'cale_CU', 'cale_plan_incadrare_CU', 'cale_plan_situatie_CU', 'cale_memoriu_tehnic_CU', 'cale_acte_beneficiar',
                   'cale_acte_facturare', 'cale_chitanta_APM', 'cale_plan_situatie_la_scara',
-                  'cale_plan_situatie_DWG', 'cale_extrase_CF', 'cale_aviz_GIS', 'cale_ATR',
-                  'cale_aviz_CTE', 'cale_chitanta_DSP',
+                  'cale_plan_situatie_DWG', 'cale_extrase_CF', 'cale_aviz_GIS', 'cale_chitanta_DSP',
                   ]
 
         labels = {'numar': 'Număr',
@@ -91,8 +90,6 @@ class CertificatUrbanismForm(BaseForm):
                   'cale_plan_situatie_DWG': 'Cale plan situație DWG',
                   'cale_extrase_CF': 'Cale extrase CF',
                   'cale_aviz_GIS': 'Cale aviz GIS',
-                  'cale_ATR': 'Cale ATR',
-                  'cale_aviz_CTE': 'Cale aviz CTE',
                   'cale_chitanta_DSP': 'Cale chitanță DSP',
                   }
 
@@ -119,8 +116,6 @@ class CertificatUrbanismForm(BaseForm):
             'cale_plan_situatie_DWG': forms.FileInput(attrs={'class': 'form-control', 'accept': '.dwg'}),
             'cale_extrase_CF': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
             'cale_aviz_GIS': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
-            'cale_ATR': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
-            'cale_aviz_CTE': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
             'cale_chitanta_DSP': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
 
         }

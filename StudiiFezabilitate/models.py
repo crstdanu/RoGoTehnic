@@ -486,10 +486,6 @@ class CertificatUrbanism(models.Model):
         upload_to=cale_upload_extrase_CF, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_aviz_GIS = models.FileField(
         upload_to=cale_upload_aviz_GIS, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
-    cale_ATR = models.FileField(
-        upload_to=cale_upload_ATR, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
-    cale_aviz_CTE = models.FileField(
-        upload_to=cale_upload_aviz_CTE, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_chitanta_DSP = models.FileField(
         upload_to=cale_upload_chitanta_DSP, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
 

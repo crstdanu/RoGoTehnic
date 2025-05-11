@@ -504,44 +504,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Cale ATR -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale ATR
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_ATR %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_ATR' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_ATR }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <!-- Cale Aviz CTE -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Aviz CTE
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_aviz_CTE %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_aviz_CTE' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_aviz_CTE }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
                                 <!-- Cale Chitanță DSP -->
                                 <div class="row mb-3">
                                     <label for="staticCaleCU" class="col-sm-3 col-form-label">

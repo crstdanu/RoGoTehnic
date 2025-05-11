@@ -49,9 +49,9 @@ def verifica_campuri_necesare(lucrare, firma, reprezentant, cu, beneficiar, cont
         (firma.email, "Nu se poate genera avizul - lipsește Email-ul firmei de proiectare"),
         (cu.nume, "Nu se poate genera avizul - lipsește Numele lucrarii din Certificatul de urbanism"),
         (cu.adresa, "Nu se poate genera avizul - lipsește Adresa lucrarii din Certificatul de urbanism"),
-        (cu.numar, "Nu se poate genera emailul - lipsește numărul certificatului de urbanism"),
-        (cu.data, "Nu se poate genera emailul - lipsește data certificatului de urbanism"),
-        (cu.emitent, "Nu se poate genera emailul - lipsește emitentul certificatului de urbanism"),
+        (cu.numar, "Nu se poate genera cererea - lipsește numărul certificatului de urbanism"),
+        (cu.data, "Nu se poate genera cererea - lipsește data certificatului de urbanism"),
+        (cu.emitent, "Nu se poate genera cererea - lipsește emitentul certificatului de urbanism"),
     ])
 
     # Verificăm existența modelelor pentru toate documentele de la început
@@ -64,6 +64,19 @@ def verifica_campuri_necesare(lucrare, firma, reprezentant, cu, beneficiar, cont
         return DocumentGenerationResult.error_result(
             "Nu găsesc șablonul pentru Detalii")
 
+    return errors
+
+
+def verifica_campuri_necesare_nomenclatura_urbana(cu):
+    """
+    Verifică dacă toate câmpurile necesare pentru generarea avizului sunt prezente
+    """
+    errors = x.check_required_fields([
+        (cu.suprafata_ocupata,
+         "Nu se poate genera cererea - lipsește SPRAFATA OCUPATA de rețea"),
+        (cu.lungime_traseu,
+         "Nu se poate genera cererea - lipsește LUNGIMEA TRASEULUI de retea"),
+    ])
     return errors
 
 
@@ -90,6 +103,8 @@ def genereaza_cerere(lucrare, firma, reprezentant, cu, beneficiar, contact, mode
         'nr_cu': cu.numar,
         'data_cu': data_cu_formatata,
         'emitent_cu': cu.emitent.nume,
+        'suprafata_ocupata': cu.suprafata_ocupata,
+        'lungime_traseu': cu.lungime_traseu,
         'data': datetime.now().strftime("%d.%m.%Y"),
     }
 
@@ -105,11 +120,12 @@ def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contac
     """
     Generează emailul pentru Aviz
     """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
     context_email = {
         'email': avizCU.nume_aviz.email,
         'nume_beneficiar': beneficiar.nume,
         'nr_cu': cu.numar,
-        'data_cu': cu.data,
+        'data_cu': data_cu_formatata,
         'emitent_cu': cu.emitent,
         'nume_lucrare': cu.nume,
         'adresa_lucrare': cu.adresa,
