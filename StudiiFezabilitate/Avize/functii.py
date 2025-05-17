@@ -13,7 +13,8 @@ pagina_goala = r"StudiiFezabilitate\Avize\modele_cereri\pagina_goala.pdf"
 
 def check_required_fields(fields):
     for value, error_msg in fields:
-        if not value:
+        # Check for None or empty string (''), but allow zero values (0, 0.0)
+        if value is None or (isinstance(value, str) and value.strip() == ''):
             return DocumentGenerationResult.error_result(error_msg)
     return None
 

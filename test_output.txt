@@ -1,0 +1,16 @@
+Test with None value: No error returned
+Result1 type: <class 'StudiiFezabilitate.result.DocumentGenerationResult'>, value: <StudiiFezabilitate.result.DocumentGenerationResult object at 0x0000025D5C4FA660>
+Test with empty string: No error returned
+Result2 type: <class 'StudiiFezabilitate.result.DocumentGenerationResult'>, value: <StudiiFezabilitate.result.DocumentGenerationResult object at 0x0000025D5C5325D0>
+Test with zero value: No error returned
+Result3 type: <class 'NoneType'>, value: None
+Test with float zero value: No error returned
+Result4 type: <class 'NoneType'>, value: None
+
+Source code of check_required_fields:
+def check_required_fields(fields):
+    for value, error_msg in fields:
+        # Check for None or empty string (''), but allow zero values (0, 0.0)
+        if value is None or (isinstance(value, str) and value.strip() == ''):
+            return DocumentGenerationResult.error_result(error_msg)
+    return None

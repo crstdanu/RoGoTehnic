@@ -67,7 +67,7 @@ def verifica_campuri_necesare(lucrare, firma, reprezentant, cu, beneficiar, cont
     return errors
 
 
-def verifica_campuri_necesare_nomenclatura_urbana(cu):
+def verifica_campuri_necesare_evidenta_patrimoniu(cu):
     """
     Verifică dacă toate câmpurile necesare pentru generarea avizului sunt prezente
     """
