@@ -13,8 +13,14 @@ pagina_goala = r"StudiiFezabilitate\Avize\modele_cereri\pagina_goala.pdf"
 
 def check_required_fields(fields):
     for value, error_msg in fields:
+        # Handle Django FileField objects
+        from django.db.models.fields.files import FieldFile
+        if isinstance(value, FieldFile):
+            # If it's a file field, check if a file is associated with it
+            if not value:
+                return DocumentGenerationResult.error_result(error_msg)
         # Check for None or empty string (''), but allow zero values (0, 0.0)
-        if value is None or (isinstance(value, str) and value.strip() == ''):
+        elif value is None or (isinstance(value, str) and value.strip() == ''):
             return DocumentGenerationResult.error_result(error_msg)
     return None
 

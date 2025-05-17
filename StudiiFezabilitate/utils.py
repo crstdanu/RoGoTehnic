@@ -1,6 +1,7 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.Avize.Common import avize as common
 from StudiiFezabilitate.Avize.Iasi import avize as iasi
+from StudiiFezabilitate.Avize.Neamt import avize as neamt
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 
@@ -50,23 +51,27 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_Evidenta_patrimoniu(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
-                    "Aceasta documentație nu poate fi generată (...încă)")
+                    "Aceasta documentație din Iași nu poate fi generată (...încă)")
 
         # NEAMȚ
         elif lucrare.judet.nume == "Neamț":
-            if avizCU.nume_aviz.nume == "Aviz APM":
-                return common.aviz_APM(lucrare.id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = common.aviz_EE_delgaz_neamt(lucrare_id, id_aviz)
-
-                # Verificăm dacă output_path este un mesaj de eroare
-                if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
-                    return DocumentGenerationResult.error_result(output_path)
-                else:
-                    return DocumentGenerationResult.success_result(output_path)
+            if avizCU.nume_aviz.nume == "Aviz ApaServ":
+                return neamt.aviz_ApaServ(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Luxten":
+                return neamt.aviz_Luxten(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMPN Trafic":
+                return neamt.aviz_PMPN_Trafic(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMPN Protocol HCL":
+                return neamt.aviz_PMPN_Protocol_HCL(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Publiserv":
+                return neamt.aviz_Publiserv(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz GN PrismaServ":
+                return neamt.aviz_GN_PrismaServ(lucrare.id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Salubritate - Edil Industry":
+                return neamt.aviz_Salubritate_EdilIndustry(lucrare.id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
-                    "Avizul nu poate fi generat - tipul avizului nu este valid")
+                    "Aceasta documentație din Neamț nu poate fi generată (...încă)")
 
         # BACĂU
         elif lucrare.judet.nume == "Bacău":

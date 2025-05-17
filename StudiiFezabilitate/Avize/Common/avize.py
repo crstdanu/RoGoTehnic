@@ -42,7 +42,7 @@ def aviz_APM(lucrare_id, id_aviz):
             if lucrare.judet.nume == "Bacău":
                 # 4. Generare document final
                 path_document_final = y.genereaza_document_final_APM_print(
-                    lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir
+                    cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir
                 )
                 fisiere_generate.append(path_document_final)
 
