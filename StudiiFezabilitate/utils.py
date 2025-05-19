@@ -2,6 +2,7 @@ from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.Avize.Common import avize as common
 from StudiiFezabilitate.Avize.Iasi import avize as iasi
 from StudiiFezabilitate.Avize.Neamt import avize as neamt
+from StudiiFezabilitate.Avize.Bacau import avize as bacau
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 
@@ -75,19 +76,23 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # BACĂU
         elif lucrare.judet.nume == "Bacău":
-            if avizCU.nume_aviz.nume == "Aviz APM":
-                return common.aviz_APM(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = common.aviz_EE_delgaz_bacau(lucrare_id, id_aviz)
-
-                # Verificăm dacă output_path este un mesaj de eroare
-                if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
-                    return DocumentGenerationResult.error_result(output_path)
-                else:
-                    return DocumentGenerationResult.success_result(output_path)
+            if avizCU.nume_aviz.nume == "Aviz RAJA":
+                return bacau.aviz_RAJA(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Romprest":
+                return bacau.aviz_Romprest(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Acord Birou Tehnic Onesti":
+                return bacau.acord_Birou_Tehnic_Onesti(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Acord Administrator Drum":
+                return bacau.acord_administrator_drum(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Apa CRAB":
+                return bacau.aviz_Apa_CRAB(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz ChimComplex":
+                return bacau.aviz_Chimcomplex(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Drumuri Judetene Bacau":
+                return bacau.aviz_Drumuri_Judetene_Bacau(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
-                    "Avizul nu poate fi generat - tipul avizului nu este valid")
+                    "Aceasta documentație din Bacău nu poate fi generată (...încă)")
 
             # SUCEAVA
         elif lucrare.judet.nume == "Suceava":
