@@ -4,6 +4,7 @@ from StudiiFezabilitate.Avize.Iasi import avize as iasi
 from StudiiFezabilitate.Avize.Neamt import avize as neamt
 from StudiiFezabilitate.Avize.Bacau import avize as bacau
 from StudiiFezabilitate.Avize.Botosani import avize as botosani
+from StudiiFezabilitate.Avize.Suceava import avize as suceava
 from StudiiFezabilitate.result import DocumentGenerationResult
 
 
@@ -97,19 +98,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
             # SUCEAVA
         elif lucrare.judet.nume == "Suceava":
-            if avizCU.nume_aviz.nume == "Aviz APM":
-                return common.aviz_APM(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz EE Delgaz":
-                output_path = common.aviz_EE_delgaz(lucrare_id, id_aviz)
-
-                # Verificăm dacă output_path este un mesaj de eroare
-                if isinstance(output_path, str) and output_path.startswith("Nu") or output_path.startswith("Avizul nu"):
-                    return DocumentGenerationResult.error_result(output_path)
-                else:
-                    return DocumentGenerationResult.success_result(output_path)
+            if avizCU.nume_aviz.nume == "Aviz ACET":
+                return suceava.aviz_ACET(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz NeoGas":
+                return suceava.aviz_NeoGas(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
-                    "Avizul nu poate fi generat - tipul avizului nu este valid")
+                    "Aceasta documentație din Suceava nu poate fi generată (...încă)")
 
         # BOTOȘANI
         elif lucrare.judet.nume == "Botoșani":

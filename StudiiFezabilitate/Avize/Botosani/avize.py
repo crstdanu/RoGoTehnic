@@ -13,7 +13,6 @@ def aviz_ApaServ(lucrare_id, id_aviz):
     """
     Acest aviz se depune pe email astefel ca documentatia este in format pdf pentru a fi atasata emailului
     Fisierul 'Model email' contine informatii cu privire la adresa de email și continutul mesajului din email
-    La aceasta documentatie se adauga si CI-ul reprezentantului firmei de proiectare
     """
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
