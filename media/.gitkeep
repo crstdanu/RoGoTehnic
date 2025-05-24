@@ -1,0 +1,2 @@
+# Acest fișier păstrează folderul media în Git
+# dar tot conținutul din media este exclus prin .gitignore

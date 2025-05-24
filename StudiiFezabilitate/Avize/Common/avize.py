@@ -2,10 +2,17 @@ from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.result import DocumentGenerationResult
 import StudiiFezabilitate.Avize.Common.functii as y
 import StudiiFezabilitate.Avize.functii as x
+import StudiiFezabilitate.Avize.utils as utils
 import tempfile
+import os
 
 
 def aviz_APM(lucrare_id, id_aviz):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul APM din 6 judete diferite.
+    Pentru toate judetele, cu exceptia judetului Bacau, documentatia se depune pe email in format PDF, un singur fișier.
+    Pentru Bacau, documentatia se depune in fizic, adica printata si expediata prin posta."""
+
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -20,45 +27,62 @@ def aviz_APM(lucrare_id, id_aviz):
         fisiere_generate = []
         path_document_final = None
 
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/01. APM/Cerere_APM.docx"
+        model_notificare = "StudiiFezabilitate/Avize/modele_cereri/00. Common/01. APM/Notificare.docx"
+        if lucrare.judet.nume == "Bacău":
+            model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/01. APM/Readme_bacau.docx"
+        else:
+            model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/01. APM/Model email.docx"
+
         # 1. Verificare câmpuri necesare
-        errors = y.verifica_campuri_necesare_APM(
-            lucrare, firma, reprezentant, cu, beneficiar, contact)
-        if errors:
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
             return errors
+
+        # Verificăm existența tuturor modelelor de documente simultan
+        for model_path, descriere in [
+            (model_cerere, "Cerere Aviz APM"),
+            (model_detalii, "Model email"),
+            (model_notificare, "Notificare APM")
+        ]:
+            if not os.path.exists(model_path):
+                return DocumentGenerationResult.error_result(
+                    f"Nu găsesc modelul pentru {descriere}: {model_path}")
 
         temp_dir = tempfile.gettempdir()
 
         try:
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_APM(
-                lucrare, firma, reprezentant, beneficiar, contact, cu, temp_dir)
+            cerere_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
 
             # 3. Generare notificare
-            notificare_pdf_path = y.genereaza_notificare_APM(
-                lucrare, firma, reprezentant, cu, beneficiar, contact, temp_dir)
+            notificare_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(notificare_pdf_path)
 
             if lucrare.judet.nume == "Bacău":
                 # 4. Generare document final
                 path_document_final = y.genereaza_document_final_APM_print(
-                    cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir
-                )
+                    lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir)
                 fisiere_generate.append(path_document_final)
 
                 # 5. Generare email
-                email_pdf_path = y.genereaza_readme_APM_bacau(temp_dir)
+                email_pdf_path = utils.genereaza_readme(
+                    temp_dir, model_detalii)
                 fisiere_generate.append(email_pdf_path)
             else:
                 # 4. Generare document final
                 path_document_final = y.genereaza_document_final_APM(
-                    lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir
-                )
+                    lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir)
                 fisiere_generate.append(path_document_final)
 
                 # 5. Generare email
-                email_pdf_path = y.genereaza_email_APM(
-                    lucrare, avizCU, beneficiar, cu, contact, temp_dir)
+                email_pdf_path = utils.genereaza_email(
+                    lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
                 fisiere_generate.append(email_pdf_path)
 
             # Toate documentele au fost generate cu succes
@@ -82,6 +106,14 @@ def aviz_APM(lucrare_id, id_aviz):
 
 
 def aviz_EE_Delgaz(lucrare_id, id_aviz):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul EE Delgaz din 6 judete diferite:
+    Iasi, Bacau, Suceava, Botosani, Vaslui si Neamt.
+    Modelul de cerere este același pentru toate cele 6 județe.
+    Documentația generata este inaiantata pe email in format PDF, un singur fișier.
+    Fișierul "Model email" conține informațiile necesare cu privire la conținutul emailului și adresa de email la care trebuie înaintată documentația.
+    Adresade email este specifică fiecărui județ în parte, iar modelul de email este același pentru toate cele 6 județe.
+    """
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -96,29 +128,33 @@ def aviz_EE_Delgaz(lucrare_id, id_aviz):
         fisiere_generate = []
         path_document_final = None
 
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/02. EE Delgaz/Cerere EE Delgaz.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/02. EE Delgaz/Model email - EE Delgaz.docx"
+
         # 1. Verificare câmpuri necesare
-        errors = y.verifica_campuri_necesare_EE_Delgaz(
-            lucrare, firma, reprezentant, cu, beneficiar, contact)
-        if errors:
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
             return errors
 
         temp_dir = tempfile.gettempdir()
 
         try:
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_EE_Delgaz(
-                lucrare, firma, reprezentant, beneficiar, contact, cu, temp_dir)
+            cerere_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
 
             # 3. Generare document final
-            path_document_final = y.genereaza_document_final(
+            path_document_final = utils.genereaza_document_final(
                 avizCU, cerere_pdf_path, cu, beneficiar, temp_dir
             )
             fisiere_generate.append(path_document_final)
 
             # 4. Generare email
-            email_pdf_path = y.genereaza_email_EE_Delgaz(
-                lucrare, avizCU, beneficiar, cu, contact, temp_dir)
+            email_pdf_path = utils.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
 
             # Toate documentele au fost generate cu succes
@@ -142,6 +178,14 @@ def aviz_EE_Delgaz(lucrare_id, id_aviz):
 
 
 def aviz_GN_Delgaz(lucrare_id, id_aviz):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul GN Delgaz din 6 judete diferite:
+    Iasi, Bacau, Suceava, Botosani, Vaslui si Neamt.
+    Modelul de cerere este același pentru toate cele 6 județe.
+    Documentația generata este inaiantata pe email in format PDF, un singur fișier.
+    Fișierul "Model email" conține informațiile necesare cu privire la conținutul emailului și adresa de email la care trebuie înaintată documentația.
+    Adresade email este specifică fiecărui județ în parte, iar modelul de email este același pentru toate cele 6 județe.
+    """
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -156,29 +200,32 @@ def aviz_GN_Delgaz(lucrare_id, id_aviz):
         fisiere_generate = []
         path_document_final = None
 
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/03. GN Delgaz/Cerere GN Delgaz.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/03. GN Delgaz/Model email - GN Delgaz.docx"
+
         # 1. Verificare câmpuri necesare
-        errors = y.verifica_campuri_necesare_GN_Delgaz(
-            lucrare, firma, reprezentant, cu, beneficiar, contact)
-        if errors:
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
             return errors
 
         temp_dir = tempfile.gettempdir()
 
         try:
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_GN_Delgaz(
-                lucrare, firma, reprezentant, beneficiar, contact, cu, temp_dir)
-            temp_files.append(cerere_pdf_path)
-
+            cerere_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             # 3. Generare document final
-            path_document_final = y.genereaza_document_final(
+            temp_files.append(cerere_pdf_path)
+            path_document_final = utils.genereaza_document_final(
                 avizCU, cerere_pdf_path, cu, beneficiar, temp_dir
             )
             fisiere_generate.append(path_document_final)
 
             # 4. Generare email
-            email_pdf_path = y.genereaza_email_GN_Delgaz(
-                lucrare, avizCU, beneficiar, cu, contact, temp_dir)
+            email_pdf_path = utils.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
 
             # Toate documentele au fost generate cu succes
@@ -197,11 +244,18 @@ def aviz_GN_Delgaz(lucrare_id, id_aviz):
         return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
 
     except Exception as e:
-        print(f"Eroare în aviz_GN_delgaz: {e}")
+        print(f"Eroare în aviz_GN_Delgaz: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
 def aviz_Orange(lucrare_id, id_aviz):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul Orange.
+    Modelul de cerere este același pentru toate județele.
+    Documentația se depune pe portalul Orange.
+    Fisierele se depun separat, nu într-un singur fișier PDF. 
+    Se depune: Cererea gnerată, Certificatul de urbanism, Planul de incadrare, Planul de situație, Memoriul tehnic și Actele de facturare.
+    Fisierul README contine informatii cu privire la pasii de urmat pentru depunerea documentației pe portalul Orange."""
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -216,10 +270,14 @@ def aviz_Orange(lucrare_id, id_aviz):
         fisiere_generate = []
         path_document_final = None
 
+        model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/04. Aviz Orange/01. Cerere Orange.docx"
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/04. Aviz Orange/Citeste-ma.docx"
+
         # 1. Verificare câmpuri necesare
-        errors = y.verifica_campuri_necesare_Orange(
-            firma, reprezentant, cu, beneficiar, contact)
-        if errors:
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
             return errors
 
         temp_dir = tempfile.gettempdir()
@@ -230,8 +288,8 @@ def aviz_Orange(lucrare_id, id_aviz):
             # (pentru a fi returnate utilizatorului)
 
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_Orange(
-                firma, reprezentant, beneficiar, contact, cu, temp_dir)
+            cerere_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
             fisiere_generate.append(cerere_pdf_path)
 
@@ -266,7 +324,7 @@ def aviz_Orange(lucrare_id, id_aviz):
             fisiere_generate.append(acte_facturare_path)
 
             # 8. Generare Readme
-            readme_pdf_path = y.genereaza_readme_Orange(temp_dir)
+            readme_pdf_path = utils.genereaza_readme(temp_dir, model_detalii)
             temp_files.append(readme_pdf_path)
             fisiere_generate.append(readme_pdf_path)
 
@@ -291,6 +349,10 @@ def aviz_Orange(lucrare_id, id_aviz):
 
 
 def aviz_Cultura(lucrare_id, id_aviz):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul Cultura.
+    Aceasta functie se deosebeste prin faptul ca, pentru fiecare judet in parte, avem un model diferit de cerere.
+    Totodata, la unele judete documentatia se depune doar in fizic, adica printata si expediata prin posta, iar la altele se depune atat fizic cat si pe email"""
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
         avizCU = AvizeCU.objects.get(pk=id_aviz)
@@ -305,34 +367,59 @@ def aviz_Cultura(lucrare_id, id_aviz):
         fisiere_generate = []
         path_document_final = None
 
+        if lucrare.judet.nume == "Iași":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Cerere Cultura - Iasi.docx"
+        elif lucrare.judet.nume == "Neamț":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Cerere Cultura - Neamt.docx"
+        elif lucrare.judet.nume == "Botoșani":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Cerere Cultura - Botosani.docx"
+        else:
+            return DocumentGenerationResult.error_result("Nu găsesc modelul pentru Cerere Cultura")
+
+        if lucrare.judet.nume == "Iași":
+            model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Model email - Iasi.docx"
+        elif lucrare.judet.nume == "Neamț":
+            model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Model email - Neamt.docx"
+        elif lucrare.judet.nume == "Botoșani":
+            model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/05. Aviz Cultura/Model email - Botosani.docx"
+        else:
+            return DocumentGenerationResult.error_result("Nu găsesc modelul pentru Emailul catre Cultura")
+
         # 1. Verificare câmpuri necesare
-        errors = y.verifica_campuri_necesare_Cultura(
-            lucrare, firma, reprezentant, cu, beneficiar, contact)
-        if errors:
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
             return errors
+
+        # 1. Verificare câmpuri necesare speciale pentru avizul Cultura
+        errors_cultura = y.verifica_campuri_necesare_EXTRA(cu, avizCU)
+        # Check if errors_cultura is a DocumentGenerationResult and if it's an error result
+        if errors_cultura is not None and not errors_cultura.is_success():
+            return errors_cultura
 
         temp_dir = tempfile.gettempdir()
 
         try:
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_Cultura(
-                lucrare, firma, reprezentant, beneficiar, contact, cu, temp_dir)
+            cerere_pdf_path = y.genereaza_cerere_CULTURA(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
 
             # 3. Generare document final
-            path_document_final = y.genereaza_document_final(
+            path_document_final = utils.genereaza_document_final(
                 avizCU, cerere_pdf_path, cu, beneficiar, temp_dir
             )
             fisiere_generate.append(path_document_final)
 
             if lucrare.judet.nume == "Iași" or lucrare.judet.nume == "Neamț":
-                cerere_printabila_pdf_path = y.genereaza_document_final_print(
-                    avizCU, cerere_pdf_path, cu, temp_dir)
+                cerere_printabila_pdf_path = utils.genereaza_document_final_print(
+                    avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
                 fisiere_generate.append(cerere_printabila_pdf_path)
 
             # 4. Generare email
-            email_pdf_path = y.genereaza_email_Cultura(
-                lucrare, avizCU, beneficiar, cu, contact, firma, temp_dir)
+            email_pdf_path = utils.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
 
             # Toate documentele au fost generate cu succes

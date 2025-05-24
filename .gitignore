@@ -6,11 +6,12 @@ __pycache__
 
 imbunatatiri.txt
 
+# Exclude tot conținutul din media dar păstrează folderul
+media/*
+!media/.gitkeep
 SF
 
 ingineri
-
-media/reprezentanti
 
 
 test.html
