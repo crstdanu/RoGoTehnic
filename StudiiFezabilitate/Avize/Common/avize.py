@@ -1,6 +1,6 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.result import DocumentGenerationResult
-import StudiiFezabilitate.Avize.Common.functii as y
+import StudiiFezabilitate.Avize.Common.functii as common
 import StudiiFezabilitate.Avize.functii as x
 import StudiiFezabilitate.Avize.utils as utils
 import tempfile
@@ -66,7 +66,7 @@ def aviz_APM(lucrare_id, id_aviz):
 
             if lucrare.judet.nume == "Bacău":
                 # 4. Generare document final
-                path_document_final = y.genereaza_document_final_APM_print(
+                path_document_final = common.genereaza_document_final_APM_print(
                     lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir)
                 fisiere_generate.append(path_document_final)
 
@@ -76,7 +76,7 @@ def aviz_APM(lucrare_id, id_aviz):
                 fisiere_generate.append(email_pdf_path)
             else:
                 # 4. Generare document final
-                path_document_final = y.genereaza_document_final_APM(
+                path_document_final = common.genereaza_document_final_APM(
                     lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir)
                 fisiere_generate.append(path_document_final)
 
@@ -90,7 +90,7 @@ def aviz_APM(lucrare_id, id_aviz):
 
         except Exception as e:
             # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
-            y.curata_fisierele_temporare(
+            common.curata_fisierele_temporare(
                 temp_files, path_document_final, fisiere_generate)
             return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
 
@@ -162,7 +162,7 @@ def aviz_EE_Delgaz(lucrare_id, id_aviz):
 
         except Exception as e:
             # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
-            y.curata_fisierele_temporare(
+            common.curata_fisierele_temporare(
                 temp_files, path_document_final, fisiere_generate)
             return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
 
@@ -233,7 +233,7 @@ def aviz_GN_Delgaz(lucrare_id, id_aviz):
 
         except Exception as e:
             # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
-            y.curata_fisierele_temporare(
+            common.curata_fisierele_temporare(
                 temp_files, path_document_final, fisiere_generate)
             return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
 
@@ -333,7 +333,7 @@ def aviz_Orange(lucrare_id, id_aviz):
 
         except Exception as e:
             # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
-            y.curata_fisierele_temporare(
+            common.curata_fisierele_temporare(
                 temp_files, path_document_final, fisiere_generate)
             return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
 
@@ -393,7 +393,7 @@ def aviz_Cultura(lucrare_id, id_aviz):
             return errors
 
         # 1. Verificare câmpuri necesare speciale pentru avizul Cultura
-        errors_cultura = y.verifica_campuri_necesare_EXTRA(cu, avizCU)
+        errors_cultura = common.verifica_campuri_necesare_EXTRA(cu, avizCU)
         # Check if errors_cultura is a DocumentGenerationResult and if it's an error result
         if errors_cultura is not None and not errors_cultura.is_success():
             return errors_cultura
@@ -402,7 +402,7 @@ def aviz_Cultura(lucrare_id, id_aviz):
 
         try:
             # 2. Generare cerere
-            cerere_pdf_path = y.genereaza_cerere_CULTURA(
+            cerere_pdf_path = common.genereaza_cerere_CULTURA(
                 lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
             temp_files.append(cerere_pdf_path)
 
@@ -427,7 +427,7 @@ def aviz_Cultura(lucrare_id, id_aviz):
 
         except Exception as e:
             # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
-            y.curata_fisierele_temporare(
+            common.curata_fisierele_temporare(
                 temp_files, path_document_final, fisiere_generate)
             return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
 
@@ -442,11 +442,97 @@ def aviz_Cultura(lucrare_id, id_aviz):
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
-def aviz_Politia_Rutiera(lucrare_id, id_aviz):
-    pass
-
-
 def aviz_HCL(lucrare_id, id_aviz):
+    """
+    Documentația pentru Avizul HCL se depune la instituția aferenta. In functie de fiecare UAT în parte aceasta se depune fizic sau online.
+    Sunt foarte multe UAT-uri și nu stiu procedura de depunere la fiecare în parte astfel ca voi genera o documentație pentru depus online si una pentru depus fizic (cu pagini goale pentru a facilita printarea)
+    Fisierul 'Citeste-ma' contine informatii cu privire la adresa de depunere a documentatiei si programul de lucru al institutiei.
+    Spre deosebire de celelelte functii de generare a documentatiei pentru avize, modelul de cerere pentru acest aviz difera in functie de firma de proiectare
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        if firma.nume == "S.C. ROGOTEHNIC S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/06. Aviz HCL/Cerere HCL - ROGOTEHNIC.docx"
+        elif firma.nume == "S.C. GENERAL TEHNIC S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/06. Aviz HCL/Cerere HCL - GENERAL TEHNIC.docx"
+        elif firma.nume == "S.C. PROING SERV S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize/modele_cereri/00. Common/06. Aviz HCL/Cerere HCL - PROING SERV.docx"
+        else:
+            return DocumentGenerationResult.error_result(
+                "Nu am gasit modelul de cerere pentru firma de proiectare selectata")
+
+        model_detalii = "StudiiFezabilitate/Avize/modele_cereri/00. Common/06. Aviz HCL/Citeste-ma.docx"
+
+        # Lista pentru a ține evidența fișierelor generate temporar și finale
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        # 1. Verificare câmpuri necesare
+        errors = utils.verifica_campuri_necesare(
+            lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, model_detalii)
+        # Check if errors is a DocumentGenerationResult and if it's an error result
+        if errors is not None and not errors.is_success():
+            return errors        # 2. Verificare câmpuri necesare pentru Evidenta patrimoniu
+        # Acest aviz are câmpuri necesare diferite față de celelalte avize
+        extra_errors = common.verifica_campuri_necesare_HCL(cu)
+        # Check if extra_errors is a DocumentGenerationResult and if it's an error result
+        if extra_errors is not None and not extra_errors.is_success():
+            return extra_errors
+
+        temp_dir = tempfile.gettempdir()
+
+        try:
+            # 3. Generare cerere
+            cerere_pdf_path = utils.genereaza_cerere(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # 4. Generare document final - de printat
+            path_document_final = utils.genereaza_document_final_print(
+                avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 4. Generare document final - de trimis fizic
+            path_document_final = utils.genereaza_document_final(
+                avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            temp_files.append(path_document_final)
+            fisiere_generate.append(path_document_final)
+
+            # 5. Generare Readme
+            readme_pdf_path = utils.genereaza_readme(temp_dir, model_detalii)
+            temp_files.append(readme_pdf_path)
+            fisiere_generate.append(readme_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            common.curata_fisierele_temporare(
+                temp_files, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        print(f"Eroare în aviz_HCL: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_Politia_Rutiera(lucrare_id, id_aviz):
     pass
 
 

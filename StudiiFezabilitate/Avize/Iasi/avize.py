@@ -980,5 +980,5 @@ def aviz_Evidenta_patrimoniu(lucrare_id, id_aviz):
         return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
 
     except Exception as e:
-        print(f"Eroare în aviz_Nomenclatura_urbana: {e}")
+        print(f"Eroare în aviz_Evidenta_patrimoniu: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")

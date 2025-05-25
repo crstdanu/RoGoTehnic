@@ -66,6 +66,19 @@ def verifica_campuri_necesare_EXTRA(cu, avizCU):
     return errors
 
 
+def verifica_campuri_necesare_HCL(cu):
+    """
+    Verifică dacă toate câmpurile necesare pentru generarea avizului sunt prezente
+    """
+    errors = x.check_required_fields([
+        (cu.suprafata_ocupata,
+         "Nu se poate genera cererea - lipsește SPRAFATA OCUPATA de rețea"),
+        (cu.lungime_traseu,
+         "Nu se poate genera cererea - lipsește LUNGIMEA TRASEULUI de retea"),
+    ])
+    return errors
+
+
 def genereaza_cerere_CULTURA(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
     """
     Generează cererea pentru Aviz
