@@ -166,6 +166,53 @@ def genereaza_cerere(lucrare, firma, reprezentant, cu, beneficiar, contact, mode
     return cerere_pdf_path
 
 
+def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
+    """
+    Generează cererea pentru Aviz
+    """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
+
+    context_cerere = {
+        'nume_firma_proiectare': firma.nume,
+        'localitate_firma_proiectare': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma_proiectare': firma.adresa,
+        'judet_firma_proiectare': firma.judet.nume,
+        'email_firma_proiectare': firma.email,
+        # la ApaServ se cer multe date despre REPREZENTANT in Cerere
+        'reprezentant_firma_proiectare': reprezentant.nume,
+        'localitate_repr': reprezentant.localitate,
+        'adresa_repr': reprezentant.adresa,
+        'judet_repr': reprezentant.judet,
+        'cnp_repr': reprezentant.cnp,
+        'seria_CI': reprezentant.serie_ci,
+        'nr_CI': reprezentant.numar_ci,
+        'data_CI': reprezentant.data_ci.strftime('%d.%m.%Y') if reprezentant.data_ci else "",
+
+        'nume_beneficiar': beneficiar.nume,
+        'cui_firma_proiectare': firma.cui,
+        'nr_reg_com': firma.nr_reg_com,
+        'telefon_contact': contact.telefon,
+        'persoana_contact': contact.nume,
+        'nume_lucrare': cu.nume,
+        'adresa_lucrare': cu.adresa,
+        'judet_lucrare': lucrare.judet.nume,
+        'nr_cu': cu.numar,
+        'data_cu': data_cu_formatata,
+        'emitent_cu': cu.emitent.nume,
+        'suprafata_ocupata': cu.suprafata_ocupata,
+        'lungime_traseu': cu.lungime_traseu,
+        'data': datetime.now().strftime("%d.%m.%Y"),
+    }
+
+    cerere_pdf_path = x.create_document(
+        model_cerere, context_cerere, temp_dir,
+        cu.inginer_verificat.cale_stampila.path,
+        cu.inginer_intocmit.cale_stampila.path,
+
+    )
+    return cerere_pdf_path
+
+
 def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir):
     """
     Generează emailul pentru Aviz

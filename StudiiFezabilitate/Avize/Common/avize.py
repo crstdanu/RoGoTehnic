@@ -60,8 +60,8 @@ def aviz_APM(lucrare_id, id_aviz):
             temp_files.append(cerere_pdf_path)
 
             # 3. Generare notificare
-            notificare_pdf_path = utils.genereaza_cerere(
-                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            notificare_pdf_path = utils.genereaza_notificare_APM(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_notificare, temp_dir)
             temp_files.append(notificare_pdf_path)
 
             if lucrare.judet.nume == "Bacău":
