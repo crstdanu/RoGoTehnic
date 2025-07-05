@@ -6,7 +6,7 @@ import pythoncom
 from docxtpl import DocxTemplate
 import PyPDF2
 from PyPDF2 import PdfMerger
-
+from django.db.models.fields.files import FieldFile
 
 pagina_goala = r"StudiiFezabilitate\Avize\modele_cereri\pagina_goala.pdf"
 
@@ -16,6 +16,32 @@ def check_required_fields(fields):
         if not value:
             return DocumentGenerationResult.error_result(error_msg)
     return None
+
+
+def curata_fisierele_temporare(temp_files, path_document_final=None, fisiere_generate=None):
+    """
+    Curăță fișierele temporare generate în timpul procesului
+    """
+    for path in temp_files:
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except:
+                pass
+
+    if path_document_final and os.path.exists(path_document_final):
+        try:
+            os.remove(path_document_final)
+        except:
+            pass
+
+    if fisiere_generate:
+        for path in fisiere_generate:
+            if os.path.exists(path):
+                try:
+                    os.remove(path)
+                except:
+                    pass
 
 
 def copy_file(file_path, temp_dir, new_filename=None):
@@ -503,3 +529,100 @@ def multiply_by_3(value: int):
     result = value * 3 if value else 0
     # Returnăm direct string-ul formatat cu 2 zecimale
     return f"{result:.2f}"
+
+
+def safe_access_file_path(file_field, error_msg=None, raise_error=False):
+    """
+    Safely access the path attribute of a file field.
+    Returns the path if the file exists, or None if it doesn't.
+    This avoids the 'The X attribute has no file associated with it' error.
+
+    Args:
+        file_field: The file field to check.
+        error_msg: Optional error message to return as a DocumentGenerationResult if file doesn't exist.
+        raise_error: If True, raise a ValueError with the error message instead of returning None.
+
+    Returns:
+        - The file path if the file exists
+        - DocumentGenerationResult with error if error_msg is provided and file doesn't exist
+        - None if the file doesn't exist and no error options are provided
+    """
+    if file_field and hasattr(file_field, 'path'):
+        try:
+            return file_field.path
+        except Exception as e:
+            if error_msg:
+                if raise_error:
+                    raise ValueError(error_msg)
+                return DocumentGenerationResult.error_result(error_msg)
+            return None
+    else:
+        if error_msg:
+            if raise_error:
+                raise ValueError(error_msg)
+            return DocumentGenerationResult.error_result(error_msg)
+        return None
+
+
+def valideaza_date_obligatorii(lista_campuri):
+    """
+    primeste argumente de tipul LISTĂ DE TUPLE, fiecare conținând o valoare și un mesaj de eroare.
+    Verifică dacă valorile câmpurilor de date simple specificate sunt prezente.
+    Se așteaptă ca valorile să fie deja extrase (ex: obiect.atribut).
+    """
+    erori = []
+    for valoare, mesaj_eroare in lista_campuri:
+        if not valoare:  # Acoperă None, string/listă/dicționar gol, 0 etc.
+            erori.append(mesaj_eroare)
+
+    if erori:
+        return DocumentGenerationResult.error_result("\n".join(erori))
+    return None
+
+
+def valideaza_fisiere_incarcate(lista_fisiere):
+    """
+    Primeste argumente de tipul LISTĂ DE TUPLE, fiecare conținând un obiect FieldFile și un mesaj de eroare.
+
+    Verifică dacă fișierele specificate (obiecte FieldFile) au fost încărcate 
+    de utilizator și dacă există fizic pe disc.
+    """
+    erori = []
+    # Folosim safe_access_file_path care verifică atât existența fișierului în DB, cât și pe disc.
+    for field_file, mesaj_eroare in lista_fisiere:
+        # safe_access_file_path returnează string (cale) dacă succces, sau DocumentGenerationResult dacă error_msg e specificat
+        result = safe_access_file_path(field_file, mesaj_eroare)
+
+        # Dacă result este un DocumentGenerationResult, înseamnă că a fost o eroare
+        if isinstance(result, DocumentGenerationResult):
+            erori.append(result.error_message)
+        # Dacă result este None, înseamnă că fișierul nu există (dar nu s-a specificat error_msg)
+        elif result is None:
+            erori.append(mesaj_eroare)
+        # Dacă result este string, fișierul există și e OK
+
+    if erori:
+        return DocumentGenerationResult.error_result("\n".join(erori))
+    return None
+
+
+def valideaza_existenta_modele(lista_cai):
+    """
+    primeste argumente de tipul LISTĂ DE TUPLE, fiecare conținând o cale string către un model/template și un mesaj de eroare.
+
+    Verifică dacă fișierele specificate (căi string către modele/template-uri) 
+    există pe disc.
+    """
+    erori = []
+    for cale_fisier, mesaj_eroare in lista_cai:
+        if not isinstance(cale_fisier, str) or not cale_fisier:
+            # Adăugăm eroarea dacă calea nu este un string valid
+            erori.append(mesaj_eroare)
+        elif not os.path.exists(cale_fisier):
+            # Adăugăm eroarea dacă fișierul nu există la calea specificată
+            erori.append(
+                f"{mesaj_eroare}: Fișierul nu a fost găsit la '{cale_fisier}'")
+
+    if erori:
+        return DocumentGenerationResult.error_result("\n".join(erori))
+    return None
