@@ -1,7 +1,12 @@
 from StudiiFezabilitate.models import AvizeCU, Lucrare
 from StudiiFezabilitate.result import DocumentGenerationResult
 
+from StudiiFezabilitate.Avize_refactor import avize_bacau as bacau
+from StudiiFezabilitate.Avize_refactor import avize_botosani as botosani
 from StudiiFezabilitate.Avize_refactor import avize_iasi as iasi
+from StudiiFezabilitate.Avize_refactor import avize_neamt as neamt
+from StudiiFezabilitate.Avize_refactor import avize_suceava as suceava
+from StudiiFezabilitate.Avize_refactor import avize_vaslui as vaslui
 
 
 def creeaza_fisier(lucrare_id, id_aviz):
@@ -19,28 +24,42 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # NEAMȚ
         elif lucrare.judet.nume == "Neamț":
-            return DocumentGenerationResult.error_result(
-                "Aceasta documentație din Neamț nu poate fi generată (...încă)")
+            if avizCU.nume_aviz.nume == "Aviz APM Neamt":
+                return neamt.aviz_APM_Neamt(lucrare_id, id_aviz)
+            else:
+                return DocumentGenerationResult.error_result(
+                    "Aceasta documentație din Neamț nu poate fi generată (...încă)")
 
         # BACĂU
         elif lucrare.judet.nume == "Bacău":
-            return DocumentGenerationResult.error_result(
-                "Aceasta documentație din Bacău nu poate fi generată (...încă)")
+            if avizCU.nume_aviz.nume == "Aviz APM Bacau":
+                return bacau.aviz_APM_Bacau(lucrare_id, id_aviz)
+            else:
+                return DocumentGenerationResult.error_result(
+                    "Aceasta documentație din Bacău nu poate fi generată (...încă)")
 
             # SUCEAVA
         elif lucrare.judet.nume == "Suceava":
-            return DocumentGenerationResult.error_result(
-                "Aceasta documentație din Suceava nu poate fi generată (...încă)")
+            if avizCU.nume_aviz.nume == "Aviz APM Suceava":
+                return suceava.aviz_APM_Suceava(lucrare_id, id_aviz)
+            else:
+                return DocumentGenerationResult.error_result(
+                    "Aceasta documentație din Suceava nu poate fi generată (...încă)")
 
         # BOTOȘANI
         elif lucrare.judet.nume == "Botoșani":
-            return DocumentGenerationResult.error_result(
-                "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
+            if avizCU.nume_aviz.nume == "Aviz APM Botosani":
+                return botosani.aviz_APM_Botosani(lucrare_id, id_aviz)
+            else:
+                return DocumentGenerationResult.error_result(
+                    "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
 
         # VASLUI
         elif lucrare.judet.nume == "Vaslui":
+            if avizCU.nume_aviz.nume == "Aviz APM Vaslui":
+                return vaslui.aviz_APM_Vaslui(lucrare_id, id_aviz)
             return DocumentGenerationResult.error_result(
-                "Avizul nu poate fi generat - tipul avizului nu este valid")
+                "Aceasta documentație din Vaslui nu poate fi generată (...încă)")
         else:
             return DocumentGenerationResult.error_result(
                 "Documentația nu poate fi generată - nu am documentatii pentru avize din județul lucrării")
