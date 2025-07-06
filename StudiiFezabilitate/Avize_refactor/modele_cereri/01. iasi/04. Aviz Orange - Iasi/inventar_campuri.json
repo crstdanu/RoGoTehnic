@@ -1,0 +1,64 @@
+{
+  "director_analizat": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\04. Aviz Orange - Iasi",
+  "numar_fisiere": 2,
+  "fisiere_analizate": {
+    "Cerere Orange - Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\04. Aviz Orange - Iasi\\Cerere Orange - Iasi.docx",
+      "campuri_jinja": [
+        "adresa_firma",
+        "adresa_lucrare_CU",
+        "cui_firma",
+        "data",
+        "email_firma",
+        "judet_firma",
+        "localitate_firma",
+        "nume_beneficiar",
+        "nume_firma",
+        "nume_lucrare_CU",
+        "persoana_contact",
+        "reprezentant_firma",
+        "telefon_contact"
+      ],
+      "numar_campuri": 13
+    },
+    "Citeste-ma.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\04. Aviz Orange - Iasi\\Citeste-ma.docx",
+      "campuri_jinja": [],
+      "numar_campuri": 0
+    }
+  },
+  "campuri_unice_per_fisier": {
+    "Cerere Orange - Iasi.docx": [
+      "adresa_firma",
+      "adresa_lucrare_CU",
+      "cui_firma",
+      "data",
+      "email_firma",
+      "judet_firma",
+      "localitate_firma",
+      "nume_beneficiar",
+      "nume_firma",
+      "nume_lucrare_CU",
+      "persoana_contact",
+      "reprezentant_firma",
+      "telefon_contact"
+    ],
+    "Citeste-ma.docx": []
+  },
+  "toate_campurile_unice": [
+    "adresa_firma",
+    "adresa_lucrare_CU",
+    "cui_firma",
+    "data",
+    "email_firma",
+    "judet_firma",
+    "localitate_firma",
+    "nume_beneficiar",
+    "nume_firma",
+    "nume_lucrare_CU",
+    "persoana_contact",
+    "reprezentant_firma",
+    "telefon_contact"
+  ],
+  "numar_total_campuri_unice": 13
+}
