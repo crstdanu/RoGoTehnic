@@ -1,0 +1,132 @@
+{
+  "director_analizat": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\01. Aviz APM - Iasi",
+  "numar_fisiere": 3,
+  "fisiere_analizate": {
+    "Cerere_APM_Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\01. Aviz APM - Iasi\\Cerere_APM_Iasi.docx",
+      "campuri_jinja": [
+        "adresa_firma",
+        "adresa_lucrare_CU",
+        "data",
+        "email_firma",
+        "judet_firma",
+        "localitate_firma",
+        "nume_beneficiar",
+        "nume_firma",
+        "nume_lucrare_CU",
+        "persoana_contact",
+        "telefon_contact"
+      ],
+      "numar_campuri": 11
+    },
+    "Model_email_APM_Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\01. Aviz APM - Iasi\\Model_email_APM_Iasi.docx",
+      "campuri_jinja": [
+        "adresa_lucrare_CU",
+        "data_cu",
+        "email_aviz",
+        "emitent_cu",
+        "nr_cu",
+        "nume_beneficiar",
+        "nume_lucrare_CU",
+        "persoana_contact",
+        "telefon_contact"
+      ],
+      "numar_campuri": 9
+    },
+    "Notificare_APM_Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\01. Aviz APM - Iasi\\Notificare_APM_Iasi.docx",
+      "campuri_jinja": [
+        "adresa_beneficiar",
+        "adresa_firma",
+        "adresa_lucrare_CU",
+        "descrierea_proiectului",
+        "email_firma",
+        "inginer_intocmit",
+        "inginer_verificat",
+        "judet_beneficiar",
+        "judet_firma",
+        "localitate_beneficiar",
+        "localitate_firma",
+        "nume_beneficiar",
+        "nume_firma",
+        "nume_lucrare_CU",
+        "reprezentant_firma",
+        "suprafata_mp",
+        "telefon_contact"
+      ],
+      "numar_campuri": 17
+    }
+  },
+  "campuri_unice_per_fisier": {
+    "Cerere_APM_Iasi.docx": [
+      "adresa_firma",
+      "adresa_lucrare_CU",
+      "data",
+      "email_firma",
+      "judet_firma",
+      "localitate_firma",
+      "nume_beneficiar",
+      "nume_firma",
+      "nume_lucrare_CU",
+      "persoana_contact",
+      "telefon_contact"
+    ],
+    "Model_email_APM_Iasi.docx": [
+      "adresa_lucrare_CU",
+      "data_cu",
+      "email_aviz",
+      "emitent_cu",
+      "nr_cu",
+      "nume_beneficiar",
+      "nume_lucrare_CU",
+      "persoana_contact",
+      "telefon_contact"
+    ],
+    "Notificare_APM_Iasi.docx": [
+      "adresa_beneficiar",
+      "adresa_firma",
+      "adresa_lucrare_CU",
+      "descrierea_proiectului",
+      "email_firma",
+      "inginer_intocmit",
+      "inginer_verificat",
+      "judet_beneficiar",
+      "judet_firma",
+      "localitate_beneficiar",
+      "localitate_firma",
+      "nume_beneficiar",
+      "nume_firma",
+      "nume_lucrare_CU",
+      "reprezentant_firma",
+      "suprafata_mp",
+      "telefon_contact"
+    ]
+  },
+  "toate_campurile_unice": [
+    "adresa_beneficiar",
+    "adresa_firma",
+    "adresa_lucrare_CU",
+    "data",
+    "data_cu",
+    "descrierea_proiectului",
+    "email_aviz",
+    "email_firma",
+    "emitent_cu",
+    "inginer_intocmit",
+    "inginer_verificat",
+    "judet_beneficiar",
+    "judet_firma",
+    "localitate_beneficiar",
+    "localitate_firma",
+    "nr_cu",
+    "nume_beneficiar",
+    "nume_firma",
+    "nume_lucrare_CU",
+    "persoana_contact",
+    "reprezentant_firma",
+    "suprafata_mp",
+    "telefon_contact"
+  ],
+  "numar_total_campuri_unice": 23
+}

@@ -1,0 +1,97 @@
+{
+  "director_analizat": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\02. Aviz EE Delgaz - Iasi",
+  "numar_fisiere": 2,
+  "fisiere_analizate": {
+    "Cerere EE Delgaz - Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\02. Aviz EE Delgaz - Iasi\\Cerere EE Delgaz - Iasi.docx",
+      "campuri_jinja": [
+        "adresa_firma",
+        "adresa_lucrare_CU",
+        "cui_firma",
+        "data",
+        "data_cu",
+        "email_firma",
+        "emitent_cu",
+        "judet_firma",
+        "localitate_firma",
+        "nr_cu",
+        "nr_reg_com",
+        "nume_beneficiar",
+        "nume_firma",
+        "nume_lucrare_CU",
+        "reprezentant_firma",
+        "telefon_contact"
+      ],
+      "numar_campuri": 16
+    },
+    "Model email - EE Delgaz - Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\02. Aviz EE Delgaz - Iasi\\Model email - EE Delgaz - Iasi.docx",
+      "campuri_jinja": [
+        "adresa_lucrare",
+        "data_cu",
+        "email_aviz",
+        "emitent_cu",
+        "nr_cu",
+        "nume_beneficiar",
+        "nume_lucrare",
+        "persoana_contact",
+        "telefon_contact"
+      ],
+      "numar_campuri": 9
+    }
+  },
+  "campuri_unice_per_fisier": {
+    "Cerere EE Delgaz - Iasi.docx": [
+      "adresa_firma",
+      "adresa_lucrare_CU",
+      "cui_firma",
+      "data",
+      "data_cu",
+      "email_firma",
+      "emitent_cu",
+      "judet_firma",
+      "localitate_firma",
+      "nr_cu",
+      "nr_reg_com",
+      "nume_beneficiar",
+      "nume_firma",
+      "nume_lucrare_CU",
+      "reprezentant_firma",
+      "telefon_contact"
+    ],
+    "Model email - EE Delgaz - Iasi.docx": [
+      "adresa_lucrare",
+      "data_cu",
+      "email_aviz",
+      "emitent_cu",
+      "nr_cu",
+      "nume_beneficiar",
+      "nume_lucrare",
+      "persoana_contact",
+      "telefon_contact"
+    ]
+  },
+  "toate_campurile_unice": [
+    "adresa_firma",
+    "adresa_lucrare",
+    "adresa_lucrare_CU",
+    "cui_firma",
+    "data",
+    "data_cu",
+    "email_aviz",
+    "email_firma",
+    "emitent_cu",
+    "judet_firma",
+    "localitate_firma",
+    "nr_cu",
+    "nr_reg_com",
+    "nume_beneficiar",
+    "nume_firma",
+    "nume_lucrare",
+    "nume_lucrare_CU",
+    "persoana_contact",
+    "reprezentant_firma",
+    "telefon_contact"
+  ],
+  "numar_total_campuri_unice": 20
+}

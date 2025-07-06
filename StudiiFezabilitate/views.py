@@ -389,7 +389,7 @@ def genereaza_aviz(request, lucrare_id, id_aviz):
             return HttpResponseRedirect(reverse('index_CU', args=[lucrare_id]))
 
         # Creăm un nume unic pentru arhiva ZIP
-        zip_filename = f"Documentatie_{avizCU.nume_aviz.nume}_{lucrare.beneficiar.nume}.zip"
+        zip_filename = f"Documentatie {avizCU.nume_aviz.nume} pentru {lucrare.beneficiar.nume}.zip"
         temp_dir = tempfile.gettempdir()
         zip_path = os.path.join(temp_dir, zip_filename)
 

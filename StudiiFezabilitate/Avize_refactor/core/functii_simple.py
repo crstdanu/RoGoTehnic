@@ -8,6 +8,9 @@ from datetime import datetime
 # ---------------------------------------    Functii de verificare
 
 def verifica_campuri_STANDARD(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact):
+    """
+    Acestea sunt campurile standard necesare pentru generarea documentației
+    """
     errors = baza.check_required_fields([
         (firma.nume, "Nu se poate genera avizul - lipsește numele firmei de proiectare"),
         (firma.adresa, "Nu se poate genera avizul - lipsește Adresa firmei de proiectare"),
@@ -51,6 +54,56 @@ def verifica_campuri_STANDARD(lucrare, avizCU, firma, reprezentant, cu, benefici
          "Nu se poate genera avizul - lipsește INGINERUL VERIFICATOR"),
         (avizCU.nume_aviz.email,
          "Nu se poate genera avizul - lipsește EMAIL-ul unde va fi trimisă documentația"),
+    ])
+    return errors
+
+
+def verifica_campuri_FARA_EMAIL(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact):
+    """
+    Acestea sunt campurile necesare pentru generarea documentației
+    LIPSESTE verificare pentru email intrucat unele avize nu necesita email
+    """
+    errors = baza.check_required_fields([
+        (firma.nume, "Nu se poate genera avizul - lipsește numele firmei de proiectare"),
+        (firma.adresa, "Nu se poate genera avizul - lipsește Adresa firmei de proiectare"),
+        (firma.localitate.nume,
+         "Nu se poate genera avizul - lipsește Localitatea firmei de proiectare"),
+        (firma.judet.nume, "Nu se poate genera avizul - lipsește Județul firmei de proiectare"),
+        (firma.email, "Nu se poate genera avizul - lipsește Email-ul firmei de proiectare"),
+        (firma.cui, "Nu se poate genera avizul - lipsește CUI-ul firmei de proiectare"),
+        (firma.nr_reg_com, "Nu se poate genera avizul - lipsește NR. REG. COM.-ul firmei de proiectare"),
+
+        (reprezentant.nume,
+         "Nu se poate genera avizul - lipsește Reprezentantul firmei de proiectare"),
+
+        (beneficiar.nume, "Nu se poate genera avizul - lipsește numele beneficiarului"),
+        (beneficiar.localitate.nume,
+         "Nu se poate genera avizul - lipsește Localitatea beneficiarului"),
+        (beneficiar.adresa, "Nu se poate genera avizul - lipsește Adresa beneficiarului"),
+        (beneficiar.judet.nume,
+         "Nu se poate genera avizul - lipsește Județul beneficiarului"),
+
+        (contact.nume, "Nu se poate genera avizul - lipsește Persoana de contact"),
+        (contact.telefon, "Nu se poate genera avizul - lipsește Telefonul persoanei de contact"),
+
+        (cu.nume, "Nu se poate genera avizul - lipsește Numele lucrarii din Certificatul de urbanism"),
+        (cu.adresa, "Nu se poate genera avizul - lipsește Adresa lucrarii din Certificatul de urbanism"),
+        (cu.descrierea_proiectului,
+         "Nu se poate genera avizul - lipsește DESCRIEREA PROIECTULUI"),
+        (cu.suprafata_ocupata,
+         "Nu se poate genera avizul - lipsește SUPRAFAȚA OCUPATA din Certificatul de urbanism"),
+        (cu.lungime_traseu,
+         "Nu se poate genera avizul - lipsește LUNGIMEA TRASEULUI din Certificatul de urbanism"),
+        (cu.numar,
+         "Nu se poate genera avizul - lipsește NUMARUL CERTIFICATULUI DE URBANISM"),
+        (cu.data,
+         "Nu se poate genera avizul - lipsește DATA CERTIFICATULUI DE URBANISM"),
+        (cu.emitent.nume,
+         "Nu se poate genera avizul - lipsește EMITENTUL CERTIFICATULUI DE URBANISM"),
+        (cu.inginer_intocmit.nume,
+         "Nu se poate genera avizul - lipsește INGINERUL INTOCMIT"),
+        (cu.inginer_verificat.nume,
+         "Nu se poate genera avizul - lipsește INGINERUL VERIFICATOR"),
     ])
     return errors
 
@@ -160,6 +213,48 @@ def genereaza_cerere_minimala(lucrare, firma, reprezentant, cu, beneficiar, cont
     return cerere_pdf_path
 
 
+def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
+    """
+    Generează cererea pentru Aviz folosind date minimale
+    și returnează calea către documentul generat.
+    """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
+
+    context_cerere = {
+        'nume_firma': firma.nume,
+        'localitate_firma': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma': firma.adresa,
+        'judet_firma': firma.judet.nume,
+        'email_firma': firma.email,
+        'cui_firma': firma.cui,
+        'nr_reg_com': firma.nr_reg_com,
+
+        'reprezentant_firma': reprezentant.nume,
+
+        'nume_beneficiar': beneficiar.nume,
+
+        'telefon_contact': contact.telefon,
+        'persoana_contact': contact.nume,
+
+        'nume_lucrare_CU': cu.nume,
+        'adresa_lucrare_CU': cu.adresa,
+        'nr_cu': cu.numar,
+        'data_cu': data_cu_formatata,
+        'emitent_cu': cu.emitent.nume,
+
+        'data': datetime.now().strftime("%d.%m.%Y"), }
+
+    # Generăm documentul și verificăm rezultatul
+    cerere_pdf_path = baza.create_document(
+        model_cerere,
+        context_cerere,
+        temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,)
+
+    return cerere_pdf_path
+
+
 def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, contact, model_notificare, temp_dir):
     """
     Generează notificarea pentru APM folosind datele furnizate
@@ -204,12 +299,12 @@ def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, conta
 
 # --------------------------------------      Aici se genereaza documentele finale
 
-def genereaza_document_final_APM(lucrare, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir, print=False):
+def genereaza_document_final_APM(lucrare, avizCU, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir, print=False):
     """
     Combină toate fișierele și pregătește documentul final pentru a fi livrat
     """
     path_document_final = os.path.join(
-        temp_dir, f"Documentatie Aviz APM {lucrare.judet.nume} - pentru {beneficiar.nume}.pdf"
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
     )
 
     pdf_list = [
@@ -230,18 +325,45 @@ def genereaza_document_final_APM(lucrare, cerere_pdf_path, notificare_pdf_path, 
     return path_document_final
 
 
+def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=False):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+    )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_memoriu_tehnic_CU.path,
+        cu.cale_acte_facturare.path,
+    ]
+
+    if print:
+        baza.merge_pdfs_print(pdf_list, path_document_final)
+    else:
+        baza.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+
 # --------------------------------------       Aici se genereaza email si readme
 
+# am observat ca modelele de email au aceleasi campuri, de pot pastra doar o singura functie aici
 def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir):
     """
-    Generează emailul pentru APM și îl pregătește pentru a fi livrat
+    Generează emailul și îl pregătește pentru a fi livrat
     """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
 
     context_email = {
         'email_aviz': avizCU.nume_aviz.email,
         'nume_beneficiar': beneficiar.nume,
         'nr_cu': cu.numar,
-        'data_cu': cu.data,
+        'data_cu': data_cu_formatata,
         'emitent_cu': cu.emitent,
         'nume_lucrare_CU': cu.nume,
         'adresa_lucrare_CU': cu.adresa,
