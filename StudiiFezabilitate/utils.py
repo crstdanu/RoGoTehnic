@@ -26,6 +26,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_Orange_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Iasi":
                 return iasi.aviz_Cultura_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Iasi":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Iași nu poate fi generată (...încă)")
@@ -40,6 +42,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_GN_Delgaz_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange Neamt":
                 return neamt.aviz_Orange_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Cultura - Neamt":
+                return neamt.aviz_Cultura_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Neamt":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Neamț nu poate fi generată (...încă)")
@@ -54,6 +60,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.aviz_GN_Delgaz_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange Bacau":
                 return bacau.aviz_Orange_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Bacau":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Bacău nu poate fi generată (...încă)")
@@ -68,6 +76,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_GN_Delgaz_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange Suceava":
                 return suceava.aviz_Orange_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Suceava":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Suceava nu poate fi generată (...încă)")
@@ -82,6 +92,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_GN_Delgaz_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange Botosani":
                 return botosani.aviz_Orange_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Cultura - Botosani":
+                return botosani.aviz_Cultura_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Botosani":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
@@ -96,6 +110,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return vaslui.aviz_GN_Delgaz_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange Vaslui":
                 return vaslui.aviz_Orange_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - Vaslui":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
             return DocumentGenerationResult.error_result(
                 "Aceasta documentație din Vaslui nu poate fi generată (...încă)")
         else:
