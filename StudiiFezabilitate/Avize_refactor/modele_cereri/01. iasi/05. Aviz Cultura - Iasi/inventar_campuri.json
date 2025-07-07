@@ -1,0 +1,97 @@
+{
+  "director_analizat": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\05. Aviz Cultura - Iasi",
+  "numar_fisiere": 2,
+  "fisiere_analizate": {
+    "Cerere Cultura - Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\05. Aviz Cultura - Iasi\\Cerere Cultura - Iasi.docx",
+      "campuri_jinja": [
+        "adresa_firma",
+        "adresa_lucrare_CU",
+        "data",
+        "data_cu",
+        "emitent_cu",
+        "judet_firma",
+        "localitate_firma",
+        "nr_cu",
+        "nume_beneficiar",
+        "nume_firma",
+        "nume_lucrare_CU",
+        "persoana_contact",
+        "suprafata_ocupata",
+        "telefon_contact",
+        "total_aviz"
+      ],
+      "numar_campuri": 15
+    },
+    "Model email - Iasi.docx": {
+      "path_complet": "E:\\NEW_python\\RGT\\StudiiFezabilitate\\Avize_refactor\\modele_cereri\\01. iasi\\05. Aviz Cultura - Iasi\\Model email - Iasi.docx",
+      "campuri_jinja": [
+        "adresa_lucrare_CU",
+        "cui_firma_facturare",
+        "data_cu",
+        "email_aviz",
+        "emitent_cu",
+        "firma_facturare",
+        "nr_cu",
+        "nume_beneficiar",
+        "nume_lucrare_CU",
+        "persoana_contact",
+        "telefon_contact"
+      ],
+      "numar_campuri": 11
+    }
+  },
+  "campuri_unice_per_fisier": {
+    "Cerere Cultura - Iasi.docx": [
+      "adresa_firma",
+      "adresa_lucrare_CU",
+      "data",
+      "data_cu",
+      "emitent_cu",
+      "judet_firma",
+      "localitate_firma",
+      "nr_cu",
+      "nume_beneficiar",
+      "nume_firma",
+      "nume_lucrare_CU",
+      "persoana_contact",
+      "suprafata_ocupata",
+      "telefon_contact",
+      "total_aviz"
+    ],
+    "Model email - Iasi.docx": [
+      "adresa_lucrare_CU",
+      "cui_firma_facturare",
+      "data_cu",
+      "email_aviz",
+      "emitent_cu",
+      "firma_facturare",
+      "nr_cu",
+      "nume_beneficiar",
+      "nume_lucrare_CU",
+      "persoana_contact",
+      "telefon_contact"
+    ]
+  },
+  "toate_campurile_unice": [
+    "adresa_firma",
+    "adresa_lucrare_CU",
+    "cui_firma_facturare",
+    "data",
+    "data_cu",
+    "email_aviz",
+    "emitent_cu",
+    "firma_facturare",
+    "judet_firma",
+    "localitate_firma",
+    "nr_cu",
+    "nume_beneficiar",
+    "nume_firma",
+    "nume_lucrare_CU",
+    "persoana_contact",
+    "suprafata_ocupata",
+    "telefon_contact",
+    "total_aviz"
+  ],
+  "numar_total_campuri_unice": 18
+}

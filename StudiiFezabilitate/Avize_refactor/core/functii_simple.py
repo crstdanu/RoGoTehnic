@@ -255,6 +255,52 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
     return cerere_pdf_path
 
 
+def genereaza_cerere_CULTURA(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
+    """
+    Generează cererea pentru Aviz folosind date minimale
+    și returnează calea către documentul generat.
+    """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
+
+    context_cerere = {
+        'nume_firma': firma.nume,
+        'localitate_firma': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma': firma.adresa,
+        'judet_firma': firma.judet.nume,
+        'email_firma': firma.email,
+        'cui_firma': firma.cui,
+        'nr_reg_com': firma.nr_reg_com,
+
+        'reprezentant_firma': reprezentant.nume,
+
+        'nume_beneficiar': beneficiar.nume,
+
+        'telefon_contact': contact.telefon,
+        'persoana_contact': contact.nume,
+
+        'nume_lucrare_CU': cu.nume,
+        'adresa_lucrare_CU': cu.adresa,
+        'nr_cu': cu.numar,
+        'data_cu': data_cu_formatata,
+        'emitent_cu': cu.emitent.nume,
+
+        'suprafata_mp': cu.suprafata_ocupata,  # asta e la Cultura
+        # asta e doar la CULTURA
+        'total_aviz': baza.multiply_by_3(cu.suprafata_ocupata),
+
+        'data': datetime.now().strftime("%d.%m.%Y"), }
+
+    # Generăm documentul și verificăm rezultatul
+    cerere_pdf_path = baza.create_document(
+        model_cerere,
+        context_cerere,
+        temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,)
+
+    return cerere_pdf_path
+
+
 def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, contact, model_notificare, temp_dir):
     """
     Generează notificarea pentru APM folosind datele furnizate
@@ -329,9 +375,14 @@ def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, bene
     """
     Combină toate fișierele și pregătește documentul final pentru a fi livrat
     """
-    path_document_final = os.path.join(
-        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
-    )
+    if print:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - DE PRINTAT.pdf"
+        )
+    else:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+        )
 
     pdf_list = [
         cerere_pdf_path,
@@ -369,6 +420,8 @@ def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contac
         'adresa_lucrare_CU': cu.adresa,
         'persoana_contact': contact.nume,
         'telefon_contact': contact.telefon,
+        'firma_facturare': firma.nume,
+        'cui_firma_facturare': firma.cui,
     }
 
     email_pdf_path = baza.create_document(

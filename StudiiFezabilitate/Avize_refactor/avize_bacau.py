@@ -351,3 +351,7 @@ def aviz_Orange_Bacau(lucrare_id: int, id_aviz: int):
         # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
         print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_Cultura_Bacau(lucrare_id: int, id_aviz: int):
+    pass
