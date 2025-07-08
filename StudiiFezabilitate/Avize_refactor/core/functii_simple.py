@@ -7,6 +7,7 @@ from datetime import datetime
 
 # ---------------------------------------    Functii de verificare
 
+# verifica CAMPURI
 def verifica_campuri_STANDARD(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact):
     """
     Acestea sunt campurile standard necesare pentru generarea documentației
@@ -108,6 +109,7 @@ def verifica_campuri_FARA_EMAIL(lucrare, avizCU, firma, reprezentant, cu, benefi
     return errors
 
 
+# verifica FISIERE
 def verifica_fisiere_incarcate_APM(cu, firma, reprezentant):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
@@ -160,6 +162,7 @@ def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant):
     return errors
 
 
+# verifica MODELE
 def verifica_existenta_modele(model_cerere, model_detalii, model_notificare=None):
     if not os.path.exists(model_cerere):
         return DocumentGenerationResult.error_result(
@@ -191,6 +194,7 @@ def genereaza_cerere_minimala(lucrare, firma, reprezentant, cu, beneficiar, cont
         'adresa_firma': firma.adresa,
         'judet_firma': firma.judet.nume,
         'email_firma': firma.email,
+        'cui_firma': firma.cui,
 
         'nume_beneficiar': beneficiar.nume,
 
@@ -241,6 +245,10 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
         'nr_cu': cu.numar,
         'data_cu': data_cu_formatata,
         'emitent_cu': cu.emitent.nume,
+        'lunigime_traseu': cu.lungime_traseu,  # folosit la HCL
+
+        'firma_facturare': firma.nume,
+        'cui_firma_facturare': firma.cui,
 
         'data': datetime.now().strftime("%d.%m.%Y"), }
 
@@ -403,7 +411,7 @@ def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, bene
 
 # --------------------------------------       Aici se genereaza email si readme
 
-# am observat ca modelele de email au aceleasi campuri, de pot pastra doar o singura functie aici
+# am observat ca modelele de email au aceleasi campuri, deci pot pastra doar o singura functie aici
 def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir):
     """
     Generează emailul și îl pregătește pentru a fi livrat
