@@ -321,6 +321,7 @@ def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, conta
         'adresa_firma': firma.adresa,
         'judet_firma': firma.judet.nume,
         'email_firma': firma.email,
+        'cui_firma': firma.cui,
 
         'reprezentant_firma': reprezentant.nume,
 
@@ -379,6 +380,28 @@ def genereaza_document_final_APM(lucrare, avizCU, cerere_pdf_path, notificare_pd
     return path_document_final
 
 
+def genereaza_document_final_PMI_MEDIU(lucrare, avizCU, cerere_pdf_path, notificare_pdf_path, cu, beneficiar, temp_dir, print=False):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+    )
+
+    pdf_list = [
+        cerere_pdf_path,
+        notificare_pdf_path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_acte_facturare.path,
+    ]
+
+    baza.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+
 def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=False):
     """
     Combină toate fișierele și pregătește documentul final pentru a fi livrat
@@ -405,6 +428,23 @@ def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, bene
         baza.merge_pdfs_print(pdf_list, path_document_final)
     else:
         baza.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+
+def genereaza_document_final_Salubris(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - DE PRINTAT.pdf"
+    )
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_CU.path,
+    ]
+    baza.merge_pdfs_print(pdf_list, path_document_final)
 
     return path_document_final
 
