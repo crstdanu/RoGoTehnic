@@ -32,6 +32,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_Apavital(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Gazmir":
                 return iasi.aviz_GN_Gazmir(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Termoficare":
+                return iasi.aviz_Termoficare(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz CTP":
+                return iasi.aviz_CTP(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Iași nu poate fi generată (...încă)")
