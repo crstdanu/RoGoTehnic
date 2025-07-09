@@ -195,6 +195,7 @@ def genereaza_cerere_minimala(lucrare, firma, reprezentant, cu, beneficiar, cont
         'judet_firma': firma.judet.nume,
         'email_firma': firma.email,
         'cui_firma': firma.cui,
+        'reprezentant_firma': reprezentant.nume,
 
         'nume_beneficiar': beneficiar.nume,
 
