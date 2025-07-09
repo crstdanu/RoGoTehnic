@@ -527,6 +527,10 @@ def aviz_principiu_Politia_Rutiera(lucrare_id, id_aviz):
     pass
 
 
+def studiu_Geotehnic_Polsa(lucrare_id, id_aviz):
+    pass
+
+
 def aviz_MAI(lucrare_id, id_aviz):
     pass
 
@@ -1374,6 +1378,252 @@ def aviz_PMI_Trafic_Urban(lucrare_id: int, id_aviz: int):
             # --- 5. Generare Email --- #
             email_pdf_path = simple.genereaza_email(
                 lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
+            fisiere_generate.append(email_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+        # -------------------------------------------- -------------------                    --- 3. Tratare erori --- #
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            baza.curata_fisierele_temporare(
+                temp_files, path_document_final, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
+        print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_PMI_GIS(lucrare_id: int, id_aviz: int):
+    """
+    Acest aviz se depune pe email astefel ca documentatia este in format pdf pentru a fi atasata emailului
+    Fisierul 'Model email' contine informatii cu privire la adresa de email și continutul mesajului din email
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/17. Aviz PMI - GiS Cadastru/Cerere Aviz GiS.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/17. Aviz PMI - GiS Cadastru/Model email.docx"
+
+        # -------------------------------                                     --- 1. Validări --- #
+        # 1.1 Verificare câmpuri necesare
+        result = simple.verifica_campuri_STANDARD(
+            lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.2 Verificare fișiere încărcate
+        result = simple.verifica_fisiere_incarcate_STANDARD(
+            cu, firma, reprezentant)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.3 Verificare existența modelelor
+        result = simple.verifica_existenta_modele(
+            model_cerere, model_detalii, model_notificare=None)
+        if result is not None and not result.is_success():
+            return result
+
+        temp_dir = tempfile.gettempdir()
+        # -------------------------------                                     --- 2. Generare Documente --- #
+        try:
+            # --- 2. Generare Cerere --- #
+            cerere_pdf_path = simple.genereaza_cerere_STANDARD(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # --- 4. Generare Document Final --- #
+            path_document_final = simple.genereaza_document_final_STANDARD(
+                lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            fisiere_generate.append(path_document_final)
+
+            # --- 5. Generare Email --- #
+            email_pdf_path = simple.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
+            fisiere_generate.append(email_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+        # -------------------------------------------- -------------------                    --- 3. Tratare erori --- #
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            baza.curata_fisierele_temporare(
+                temp_files, path_document_final, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
+        print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_PMI_Nomenclatura_urbana(lucrare_id: int, id_aviz: int):
+    """
+    Acest aviz se depune pe email astefel ca documentatia este in format pdf pentru a fi atasata emailului
+    Fisierul 'Model email' contine informatii cu privire la adresa de email și continutul mesajului din email
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/18. Aviz PMI - Nomenclatura urbana/Cerere PMI - Nomenclatura urbana.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/18. Aviz PMI - Nomenclatura urbana/Model email.docx"
+
+        # -------------------------------                                     --- 1. Validări --- #
+        # 1.1 Verificare câmpuri necesare
+        result = simple.verifica_campuri_STANDARD(
+            lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.2 Verificare fișiere încărcate
+        result = simple.verifica_fisiere_incarcate_STANDARD(
+            cu, firma, reprezentant)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.3 Verificare existența modelelor
+        result = simple.verifica_existenta_modele(
+            model_cerere, model_detalii, model_notificare=None)
+        if result is not None and not result.is_success():
+            return result
+
+        temp_dir = tempfile.gettempdir()
+        # -------------------------------                                     --- 2. Generare Documente --- #
+        try:
+            # --- 2. Generare Cerere --- #
+            cerere_pdf_path = simple.genereaza_cerere_STANDARD(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # --- 4. Generare Document Final --- #
+            path_document_final = simple.genereaza_document_final_STANDARD(
+                lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir)
+            fisiere_generate.append(path_document_final)
+
+            # --- 5. Generare Email --- #
+            email_pdf_path = simple.genereaza_email(
+                lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
+            fisiere_generate.append(email_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+        # -------------------------------------------- -------------------                    --- 3. Tratare erori --- #
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            baza.curata_fisierele_temporare(
+                temp_files, path_document_final, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
+        print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_PMI_Evidenta_Patrimoniiu(lucrare_id: int, id_aviz: int):
+    """
+    Avizul Evidență patrimoniu se depune fizic la adresa institutiei astfel ca documentatia va trebui printata. 
+    De aceea folosesc o functie care introduce pagini goale precum si documente in doua exemplare acolo unde e cazul.
+    Fisierul 'Citeste-ma' contine informatii cu privire la adresa de depunere a documentatiei si programul de lucru al institutiei.
+    Spre deosebire de celelelte functii de generare a documentatiei pentru avize, modelul de cerere pentru acest aviz difera in functie de firma de proiectare
+    """
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+        if firma.nume == "S.C. ROGOTEHNIC S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/19. Aviz Evidenta patrimoniu/Cerere Evidenta Patrimoniu - ROGOTEHNIC.docx"
+        elif firma.nume == "S.C. GENERAL TEHNIC S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/19. Aviz Evidenta patrimoniu/Cerere Evidenta Patrimoniu - GENERAL TEHNIC.docx"
+        elif firma.nume == "S.C. PROING SERV S.R.L.":
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/19. Aviz Evidenta patrimoniu/Cerere Evidenta Patrimoniu - PROING SERV.docx"
+        else:
+            return DocumentGenerationResult.error_result(
+                "Nu am gasit modelul de cerere pentru firma de proiectare selectata")
+
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/19. Aviz Evidenta patrimoniu/Citeste-ma.docx"
+
+        # -------------------------------                                     --- 1. Validări --- #
+        # 1.1 Verificare câmpuri necesare
+        result = simple.verifica_campuri_STANDARD(
+            lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.2 Verificare fișiere încărcate
+        result = simple.verifica_fisiere_incarcate_STANDARD(
+            cu, firma, reprezentant)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.3 Verificare existența modelelor
+        result = simple.verifica_existenta_modele(
+            model_cerere, model_detalii, model_notificare=None)
+        if result is not None and not result.is_success():
+            return result
+
+        temp_dir = tempfile.gettempdir()
+        # -------------------------------                                     --- 2. Generare Documente --- #
+        try:
+            # --- 2. Generare Cerere --- #
+            cerere_pdf_path = simple.genereaza_cerere_STANDARD(
+                lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir)
+            temp_files.append(cerere_pdf_path)
+
+            # --- 4. Generare Document Final --- #
+            path_document_final = simple.genereaza_document_final_STANDARD(
+                lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=True)
+            fisiere_generate.append(path_document_final)
+
+            # --- 5. Generare Email --- #
+            email_pdf_path = simple.genereaza_readme(model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
 
             # Toate documentele au fost generate cu succes

@@ -246,7 +246,9 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
         'nr_cu': cu.numar,
         'data_cu': data_cu_formatata,
         'emitent_cu': cu.emitent.nume,
-        'lunigime_traseu': cu.lungime_traseu,  # folosit la HCL
+
+        'suprafata_mp': cu.suprafata_ocupata,
+        'lungime_traseu': cu.lungime_traseu,  # folosit la HCL
 
         'firma_facturare': firma.nume,
         'cui_firma_facturare': firma.cui,

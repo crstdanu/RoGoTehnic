@@ -48,6 +48,12 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_PMI_Spatii_Verzi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz PMI - Trafic urban":
                 return iasi.aviz_PMI_Trafic_Urban(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMI - GIS Cadastru":
+                return iasi.aviz_PMI_GIS(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMI - Nomenclatura urbana":
+                return iasi.aviz_PMI_Nomenclatura_urbana(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Evidenta patrimoniu":
+                return iasi.aviz_PMI_Evidenta_Patrimoniiu(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Iași nu poate fi generată (...încă)")
