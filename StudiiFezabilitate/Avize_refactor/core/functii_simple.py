@@ -162,6 +162,33 @@ def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant):
     return errors
 
 
+# ------------------------------------------------------------    din cate stiu se foloseste OBLIGATORIU doar la avizul RAJA
+def verifica_fisiere_incarcate_CU_PLAN_SITUATIE_PDF(cu, firma, reprezentant):
+    errors = baza.check_required_fields([
+        # Fisiere necesare intocmire documentatie
+        (firma.cale_stampila,
+         "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona anexă CU"),
+        (cu.cale_plan_situatie_CU,
+            "Nu se poate genera avizul - lipsește Planul de situatie anexă CU"),
+        (cu.cale_memoriu_tehnic_CU,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic anexă CU"),
+        (cu.cale_acte_facturare,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+        # deocamdata folosesc asta doar la avizul RAJA
+        (cu.cale_plan_situatie_la_scara,
+            "Nu se poate genera avizul - lipsește Planul de situatie la scara (nu anexa CU ci cel original)"),
+    ])
+    return errors
+
+
 # verifica MODELE
 def verifica_existenta_modele(model_cerere, model_detalii, model_notificare=None):
     if not os.path.exists(model_cerere):
@@ -195,6 +222,7 @@ def genereaza_cerere_minimala(lucrare, firma, reprezentant, cu, beneficiar, cont
         'judet_firma': firma.judet.nume,
         'email_firma': firma.email,
         'cui_firma': firma.cui,
+        'nr_reg_com': firma.nr_reg_com,
         'reprezentant_firma': reprezentant.nume,
 
         'nume_beneficiar': beneficiar.nume,
