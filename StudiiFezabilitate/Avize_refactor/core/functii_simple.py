@@ -24,6 +24,18 @@ def verifica_campuri_STANDARD(lucrare, avizCU, firma, reprezentant, cu, benefici
 
         (reprezentant.nume,
          "Nu se poate genera avizul - lipsește Reprezentantul firmei de proiectare"),
+        (reprezentant.localitate.nume,
+         "Nu se poate genera avizul - lipsește Localitatea Reprezentantului firmei de proiectare"),
+        (reprezentant.adresa,
+         "Nu se poate genera avizul - lipsește Adresa Reprezentantului firmei de proiectare"),
+        (reprezentant.judet.nume,
+         "Nu se poate genera avizul - lipsește Județul Reprezentantului firmei de proiectare"),
+        (reprezentant.cnp,
+         "Nu se poate genera avizul - lipsește CNP-ul Reprezentantului firmei de proiectare"),
+        (reprezentant.serie_ci,
+         "Nu se poate genera avizul - lipsește SERIA CI-ului Reprezentantului firmei de proiectare"),
+        (reprezentant.numar_ci,
+         "Nu se poate genera avizul - lipsește NUMARUL CI-ului Reprezentantului firmei de proiectare"),
 
         (beneficiar.nume, "Nu se poate genera avizul - lipsește numele beneficiarului"),
         (beneficiar.localitate.nume,
@@ -162,6 +174,31 @@ def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant):
     return errors
 
 
+def verifica_fisiere_incarcate_cu_CI(cu, firma, reprezentant):
+    errors = baza.check_required_fields([
+        # Fisiere necesare intocmire documentatie
+        (firma.cale_stampila,
+         "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+        (reprezentant.cale_ci,
+            "Nu se poate genera avizul - lipsește CI-ul reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona anexă CU"),
+        (cu.cale_plan_situatie_CU,
+            "Nu se poate genera avizul - lipsește Planul de situatie anexă CU"),
+        (cu.cale_memoriu_tehnic_CU,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic anexă CU"),
+        (cu.cale_acte_facturare,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+    ])
+    return errors
+
+
 # ------------------------------------------------------------    din cate stiu se foloseste OBLIGATORIU doar la avizul RAJA
 def verifica_fisiere_incarcate_CU_PLAN_SITUATIE_PDF(cu, firma, reprezentant):
     errors = baza.check_required_fields([
@@ -232,6 +269,7 @@ def genereaza_cerere_minimala(lucrare, firma, reprezentant, cu, beneficiar, cont
 
         'nume_lucrare_CU': cu.nume,
         'adresa_lucrare_CU': cu.adresa,
+        'emitent_cu': cu.emitent.nume,
 
         'data': datetime.now().strftime("%d.%m.%Y"), }
 
@@ -263,6 +301,60 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
         'nr_reg_com': firma.nr_reg_com,
 
         'reprezentant_firma': reprezentant.nume,
+
+        'nume_beneficiar': beneficiar.nume,
+
+        'telefon_contact': contact.telefon,
+        'persoana_contact': contact.nume,
+
+        'nume_lucrare_CU': cu.nume,
+        'adresa_lucrare_CU': cu.adresa,
+        'nr_cu': cu.numar,
+        'data_cu': data_cu_formatata,
+        'emitent_cu': cu.emitent.nume,
+
+        'suprafata_mp': cu.suprafata_ocupata,
+        'lungime_traseu': cu.lungime_traseu,  # folosit la HCL
+
+        'firma_facturare': firma.nume,
+        'cui_firma_facturare': firma.cui,
+
+        'data': datetime.now().strftime("%d.%m.%Y"), }
+
+    # Generăm documentul și verificăm rezultatul
+    cerere_pdf_path = baza.create_document(
+        model_cerere,
+        context_cerere,
+        temp_dir,
+        firma.cale_stampila.path,
+        reprezentant.cale_semnatura.path,)
+
+    return cerere_pdf_path
+
+
+def genereaza_cerere_cu_CI(lucrare, firma, reprezentant, cu, beneficiar, contact, model_cerere, temp_dir):
+    """
+    Generează cererea pentru Aviz folosind date din CI ale reprezentantului firmei
+    și returnează calea către documentul generat.
+    """
+    data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
+
+    context_cerere = {
+        'nume_firma': firma.nume,
+        'localitate_firma': (firma.localitate.tip + ' ' + firma.localitate.nume).strip() if firma.localitate.tip else firma.localitate.nume,
+        'adresa_firma': firma.adresa,
+        'judet_firma': firma.judet.nume,
+        'email_firma': firma.email,
+        'cui_firma': firma.cui,
+        'nr_reg_com': firma.nr_reg_com,
+
+        'reprezentant_firma': reprezentant.nume,
+        'localitate_repr': reprezentant.localitate.nume,
+        'adresa_repr': reprezentant.adresa,
+        'judet_repr': reprezentant.judet.nume,
+        'cnp_repr': reprezentant.cnp,
+        'seria_CI': reprezentant.serie_ci,
+        'nr_CI': reprezentant.numar_ci,
 
         'nume_beneficiar': beneficiar.nume,
 
@@ -453,6 +545,37 @@ def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, bene
         cu.cale_plan_situatie_CU.path,
         cu.cale_memoriu_tehnic_CU.path,
         cu.cale_acte_facturare.path,
+    ]
+
+    if print:
+        baza.merge_pdfs_print(pdf_list, path_document_final)
+    else:
+        baza.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+
+def genereaza_document_final_cu_CI(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=False):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    if print:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - DE PRINTAT.pdf"
+        )
+    else:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+        )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_memoriu_tehnic_CU.path,
+        cu.cale_acte_facturare.path,
+        lucrare.firma_proiectare.reprezentant.cale_ci.path
     ]
 
     if print:
