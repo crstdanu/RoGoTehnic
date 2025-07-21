@@ -96,6 +96,12 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.acord_Birou_Tehnic_Onesti(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Acord Administrator Drum":
                 return bacau.Acord_Administrator_Drum(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Apa CRAB":
+                return bacau.aviz_Apa_CRAB(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz ChimComplex":
+                return bacau.aviz_ChimComplex(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Drumuri Judetene Bacau":
+                return bacau.aviz_Drumuri_Judetene_Bacau(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Bacău nu poate fi generată (...încă)")
