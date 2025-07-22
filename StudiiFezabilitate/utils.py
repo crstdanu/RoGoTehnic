@@ -132,6 +132,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_Orange_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Suceava":
                 return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz ACET":
+                return suceava.aviz_ACET(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz GN NeoGas":
+                return suceava.aviz_GN_NeoGas(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Suceava nu poate fi generată (...încă)")

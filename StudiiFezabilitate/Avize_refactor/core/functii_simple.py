@@ -627,6 +627,11 @@ def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contac
         'telefon_contact': contact.telefon,
         'firma_facturare': firma.nume,
         'cui_firma_facturare': firma.cui,
+        'reprezentant_firma': reprezentant.nume,
+        'email_firma': firma.email,
+        'localitate_firma': firma.localitate,
+        'adresa_firma': firma.adresa,
+        'judet_firma': firma.judet,
     }
 
     email_pdf_path = baza.create_document(
