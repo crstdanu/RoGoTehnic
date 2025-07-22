@@ -338,6 +338,8 @@ def genereaza_cerere_cu_CI(lucrare, firma, reprezentant, cu, beneficiar, contact
     și returnează calea către documentul generat.
     """
     data_cu_formatata = cu.data.strftime('%d.%m.%Y') if cu.data else ""
+    data_ci_formatata = reprezentant.data_ci.strftime(
+        '%d.%m.%Y') if reprezentant.data_ci else ""
 
     context_cerere = {
         'nume_firma': firma.nume,
@@ -355,6 +357,7 @@ def genereaza_cerere_cu_CI(lucrare, firma, reprezentant, cu, beneficiar, contact
         'cnp_repr': reprezentant.cnp,
         'seria_CI': reprezentant.serie_ci,
         'nr_CI': reprezentant.numar_ci,
+        'data_CI': data_ci_formatata,
 
         'nume_beneficiar': beneficiar.nume,
 

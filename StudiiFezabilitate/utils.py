@@ -72,6 +72,20 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_Cultura_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Neamt":
                 return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz ApaServ":
+                return neamt.aviz_ApaServ(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Luxten":
+                return neamt.aviz_Luxten(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMPN Trafic":
+                return neamt.aviz_PMPN_Trafic(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz PMPN Protocol HCL":
+                return neamt.aviz_PMPN_Protocol_HCL(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Publiserv":
+                return neamt.aviz_Publiserv(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz GN PrismaServ":
+                return neamt.aviz_GN_PrismaServ(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Salubritate - Edil Industry":
+                return neamt.aviz_Salubritate_Edil_Industry(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Neamț nu poate fi generată (...încă)")
@@ -136,6 +150,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_Cultura_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Botosani":
                 return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz ApaServ":
+                return botosani.aviz_ApaServ(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
