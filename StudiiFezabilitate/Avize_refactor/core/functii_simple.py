@@ -122,7 +122,7 @@ def verifica_campuri_FARA_EMAIL(lucrare, avizCU, firma, reprezentant, cu, benefi
 
 
 # verifica FISIERE
-def verifica_fisiere_incarcate_APM(cu, firma, reprezentant):
+def verifica_fisiere_incarcate_APM(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
         (firma.cale_stampila,
@@ -151,7 +151,7 @@ def verifica_fisiere_incarcate_APM(cu, firma, reprezentant):
     return errors
 
 
-def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant):
+def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
         (firma.cale_stampila,
@@ -173,8 +173,34 @@ def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant):
     ])
     return errors
 
+def verifica_fisiere_incarcate_ACTE_BENEFICIAR(cu, firma, reprezentant, beneficiar):
+    errors = baza.check_required_fields([
+        # Fisiere necesare intocmire documentatie
+        (firma.cale_stampila,
+         "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (firma.cale_certificat,
+         "Nu se poate genera avizul - lipsește Certificatul firmei de proiectare"),
+        (reprezentant.cale_semnatura,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
 
-def verifica_fisiere_incarcate_cu_CI(cu, firma, reprezentant):
+        # Fisiere necesare
+        (cu.cale_CU,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona anexă CU"),
+        (cu.cale_plan_situatie_CU,
+            "Nu se poate genera avizul - lipsește Planul de situatie anexă CU"),
+        (cu.cale_memoriu_tehnic_CU,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic anexă CU"),
+        (cu.cale_acte_facturare,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+        (cu.cale_acte_beneficiar,
+            "Nu se poate genera avizul - lipsesc Acte beneficiar"),
+    ])
+    return errors
+
+
+def verifica_fisiere_incarcate_cu_CI(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
         (firma.cale_stampila,
@@ -200,7 +226,7 @@ def verifica_fisiere_incarcate_cu_CI(cu, firma, reprezentant):
 
 
 # ------------------------------------------------------------    din cate stiu se foloseste OBLIGATORIU doar la avizul RAJA
-def verifica_fisiere_incarcate_CU_PLAN_SITUATIE_PDF(cu, firma, reprezentant):
+def verifica_fisiere_incarcate_CU_PLAN_SITUATIE_PDF(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
         (firma.cale_stampila,
@@ -303,6 +329,10 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
         'reprezentant_firma': reprezentant.nume,
 
         'nume_beneficiar': beneficiar.nume,
+        'cui_beneficiar': beneficiar.cui,
+        'judet_beneficiar': beneficiar.judet.nume,
+        'localitate_beneficiar': beneficiar.localitate.nume,
+        'adresa_beneficiar': beneficiar.adresa,
 
         'telefon_contact': contact.telefon,
         'persoana_contact': contact.nume,
@@ -472,8 +502,8 @@ def genereaza_notificare_APM(lucrare, firma, reprezentant, cu, beneficiar, conta
     notificare_pdf_path = baza.create_document(
         model_notificare, context_notificare, temp_dir,
         firma.cale_stampila.path,
-        cu.inginer_intocmit.cale_semnatura.path,
         cu.inginer_verificat.cale_semnatura.path,
+        cu.inginer_intocmit.cale_semnatura.path,
     )
     return notificare_pdf_path
 
@@ -648,5 +678,35 @@ def genereaza_email(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contac
 
 def genereaza_readme(model_readme, temp_dir):
     readme_pdf_path = baza.copy_doc_to_pdf(model_readme, temp_dir)
+
+    return readme_pdf_path
+
+def genereaza_readme_DIGI(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir):
+    """
+    Generează fisierul readme și îl pregătește pentru a fi livrat
+    """
+    context_readme = {
+        'nume_firma': firma.nume,
+        'email_firma': firma.email,
+
+        'telefon_contact': contact.telefon,
+        'nume_lucrare_CU': cu.nume,
+        'adresa_lucrare_CU': cu.adresa,
+
+        'nume_beneficiar': beneficiar.nume,
+        'cui_beneficiar': beneficiar.cui,
+        'judet_beneficiar': beneficiar.judet.nume,
+        'localitate_beneficiar': (beneficiar.localitate.tip + ' ' + beneficiar.localitate.nume).strip() if beneficiar.localitate.tip else beneficiar.localitate.nume,
+        'adresa_beneficiar': beneficiar.adresa,
+        }
+
+    readme_pdf_path = baza.create_document(
+        model_detalii, context_readme, temp_dir,
+    )
+
+    # Verifică dacă PDF-ul readme-ului există și are conținut
+    if not os.path.exists(readme_pdf_path) or os.path.getsize(readme_pdf_path) == 0:
+        raise Exception(
+            f"Readme-ul a fost generat, dar fișierul este gol: {readme_pdf_path}")
 
     return readme_pdf_path

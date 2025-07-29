@@ -37,7 +37,7 @@ def aviz_APM_Vaslui(lucrare_id: int, id_aviz: int):
             return result
 
         # 1.2 Verificare fișiere încărcate
-        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant)
+        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -120,7 +120,7 @@ def aviz_EE_Delgaz_Vaslui(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -198,7 +198,7 @@ def aviz_GN_Delgaz_Vaslui(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -279,7 +279,7 @@ def aviz_Orange_Vaslui(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -396,7 +396,7 @@ def aviz_HCL_Vaslui(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 

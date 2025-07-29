@@ -37,7 +37,7 @@ def aviz_APM_Neamt(lucrare_id: int, id_aviz: int):
             return result
 
         # 1.2 Verificare fișiere încărcate
-        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant)
+        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -120,7 +120,7 @@ def aviz_EE_Delgaz_Neamt(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -198,7 +198,7 @@ def aviz_GN_Delgaz_Neamt(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -279,7 +279,7 @@ def aviz_Orange_Neamt(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -383,7 +383,7 @@ def aviz_Cultura_Neamt(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -475,7 +475,7 @@ def aviz_HCL_Neamt(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -554,7 +554,7 @@ def aviz_ApaServ(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -633,7 +633,7 @@ def aviz_Luxten(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -721,7 +721,7 @@ def aviz_PMPN_Trafic(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -809,7 +809,7 @@ def aviz_PMPN_Protocol_HCL(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -896,7 +896,7 @@ def aviz_Publiserv(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -976,7 +976,7 @@ def aviz_GN_PrismaServ(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_cu_CI(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1064,7 +1064,7 @@ def aviz_Salubritate_Edil_Industry(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 

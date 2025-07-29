@@ -37,7 +37,7 @@ def aviz_APM_Iasi(lucrare_id: int, id_aviz: int):
             return result
 
         # 1.2 Verificare fișiere încărcate
-        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant)
+        result = simple.verifica_fisiere_incarcate_APM(cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -120,7 +120,7 @@ def aviz_EE_Delgaz_Iasi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -198,7 +198,7 @@ def aviz_GN_Delgaz_Iasi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -279,7 +279,7 @@ def aviz_Orange_Iasi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -383,7 +383,7 @@ def aviz_Cultura_Iasi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -475,7 +475,7 @@ def aviz_HCL_Iasi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -588,7 +588,7 @@ def aviz_Apavital(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -678,7 +678,7 @@ def aviz_GN_Gazmir(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -756,7 +756,7 @@ def aviz_Termoficare(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -833,7 +833,7 @@ def aviz_CTP(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -911,7 +911,7 @@ def aviz_Salubris(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -991,7 +991,7 @@ def aviz_PMI_Mediu(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1085,7 +1085,7 @@ def aviz_PMI_BSM(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1174,7 +1174,7 @@ def aviz_PMI_SUP(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1263,7 +1263,7 @@ def aviz_PMI_Spatii_Verzi(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1352,7 +1352,7 @@ def aviz_PMI_Trafic_Urban(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1431,7 +1431,7 @@ def aviz_PMI_GIS(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1510,7 +1510,7 @@ def aviz_PMI_Nomenclatura_urbana(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1599,7 +1599,7 @@ def aviz_PMI_Evidenta_Patrimoniiu(lucrare_id: int, id_aviz: int):
 
         # 1.2 Verificare fișiere încărcate
         result = simple.verifica_fisiere_incarcate_STANDARD(
-            cu, firma, reprezentant)
+            cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
 
@@ -1625,6 +1625,116 @@ def aviz_PMI_Evidenta_Patrimoniiu(lucrare_id: int, id_aviz: int):
             # --- 5. Generare Email --- #
             email_pdf_path = simple.genereaza_readme(model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
+
+            # Toate documentele au fost generate cu succes
+            return DocumentGenerationResult.success_result(fisiere_generate)
+        # -------------------------------------------- -------------------                    --- 3. Tratare erori --- #
+        except Exception as e:
+            # Dacă apare orice eroare, curățăm toate fișierele generate și returnăm eroarea
+            baza.curata_fisierele_temporare(
+                temp_files, path_document_final, fisiere_generate)
+            return DocumentGenerationResult.error_result(f"Eroare la generarea documentelor: {str(e)}")
+
+    except Lucrare.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Lucrare cu ID {lucrare_id} nu există")
+
+    except AvizeCU.DoesNotExist:
+        return DocumentGenerationResult.error_result(f"Aviz cu ID {id_aviz} nu există")
+
+    except Exception as e:
+        # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
+        print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
+        return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
+
+def aviz_DIGI_Iasi(lucrare_id: int, id_aviz: int):
+    """
+    Aceasta functie genereaza documentatia necesara pentru avizul Digi.
+    Documentația se depune pe portalul Digi.
+    Fisierele se depun separat, nu într-un singur fișier PDF. 
+    Se depune: Acte facturare, Acte beneficiar, Certificatul de urbanism, și Memoriul tehnic.
+    Fisierul README contine informatii cu privire la pasii de urmat pentru depunerea documentației pe portalul Digi."""
+    try:
+        lucrare = Lucrare.objects.get(pk=lucrare_id)
+        avizCU = AvizeCU.objects.get(pk=id_aviz)
+        cu = avizCU.certificat_urbanism
+        firma = lucrare.firma_proiectare
+        reprezentant = firma.reprezentant
+        beneficiar = lucrare.beneficiar
+        contact = lucrare.persoana_contact
+
+        temp_files = []
+        fisiere_generate = []
+        path_document_final = None
+
+        model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/20. Aviz DIGI - Iasi/Citeste-ma.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. iasi/20. Aviz DIGI - Iasi/Citeste-ma.docx"
+
+        # -------------------------------                                     --- 1. Validări --- #
+        # 1.1 Verificare câmpuri necesare
+        result = simple.verifica_campuri_FARA_EMAIL(
+            lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.2 Verificare fișiere încărcate
+        result = simple.verifica_fisiere_incarcate_ACTE_BENEFICIAR(
+            cu, firma, reprezentant, beneficiar)
+        if result is not None and not result.is_success():
+            return result
+
+        # 1.3 Verificare existența modelelor
+        result = simple.verifica_existenta_modele(
+            model_cerere, model_detalii, model_notificare=None)
+        if result is not None and not result.is_success():
+            return result
+
+        temp_dir = tempfile.gettempdir()
+        # -------------------------------                                     --- 2. Generare Documente --- #
+        try:
+
+            # 2.1 Copie Acte facturare
+            acte_facturare_path = baza.copy_file(
+                cu.cale_acte_facturare.path, temp_dir, "02. Acte facturare")
+            temp_files.append(acte_facturare_path)
+            fisiere_generate.append(acte_facturare_path)
+
+            # 2.2 Copie Acte beneficiar
+            acte_beneficiar_path = baza.copy_file(
+                cu.cale_acte_beneficiar.path, temp_dir, "03. Imputernicire")
+            temp_files.append(acte_beneficiar_path)
+            fisiere_generate.append(acte_beneficiar_path)
+
+            # 2.3 Copie Certificatul de urbanism
+            cu_path = baza.copy_file(
+                cu.cale_CU.path, temp_dir, "04. Certificat de urbanism")
+            temp_files.append(cu_path)
+            fisiere_generate.append(cu_path)
+        
+            # 2.4 Copie Memoriul tehnic
+            memoriu_tehnic_path = baza.copy_file(
+                cu.cale_memoriu_tehnic_CU.path, temp_dir, "05. Memoriu tehnic")
+            temp_files.append(memoriu_tehnic_path)
+            fisiere_generate.append(memoriu_tehnic_path)
+
+
+            # 2.5 Copie Plan de incadrare CU
+            plan_incadrare_path = baza.copy_file(
+                cu.cale_plan_incadrare_CU.path, temp_dir, "06. Plan de incadrare CU")
+            temp_files.append(plan_incadrare_path)
+            fisiere_generate.append(plan_incadrare_path)
+
+            # 2.6 Copie Plan de situație CU
+            plan_situatie_path = baza.copy_file(
+                cu.cale_plan_situatie_CU.path, temp_dir, "07. Plan de situație CU")
+            temp_files.append(plan_situatie_path)
+            fisiere_generate.append(plan_situatie_path)
+
+
+            # 2.7. Generare Readme
+            readme_pdf_path = simple.genereaza_readme_DIGI(lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
+            temp_files.append(readme_pdf_path)
+            fisiere_generate.append(readme_pdf_path)
 
             # Toate documentele au fost generate cu succes
             return DocumentGenerationResult.success_result(fisiere_generate)
