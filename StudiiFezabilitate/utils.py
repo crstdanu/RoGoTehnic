@@ -16,13 +16,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # IASI
         if lucrare.judet.nume == "Iași":
-            if avizCU.nume_aviz.nume == "Aviz APM Iasi":
+            if avizCU.nume_aviz.nume == "Aviz APM - Iasi":
                 return iasi.aviz_APM_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Iasi":
                 return iasi.aviz_EE_Delgaz_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Iasi":
                 return iasi.aviz_GN_Delgaz_Iasi(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Iasi":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Iasi":
                 return iasi.aviz_Orange_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Iasi":
                 return iasi.aviz_Cultura_Iasi(lucrare_id, id_aviz)
@@ -60,13 +60,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # NEAMȚ
         elif lucrare.judet.nume == "Neamț":
-            if avizCU.nume_aviz.nume == "Aviz APM Neamt":
+            if avizCU.nume_aviz.nume == "Aviz APM - Neamt":
                 return neamt.aviz_APM_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Neamt":
                 return neamt.aviz_EE_Delgaz_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Neamt":
                 return neamt.aviz_GN_Delgaz_Neamt(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Neamt":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Neamt":
                 return neamt.aviz_Orange_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Neamt":
                 return neamt.aviz_Cultura_Neamt(lucrare_id, id_aviz)
@@ -92,13 +92,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # BACĂU
         elif lucrare.judet.nume == "Bacău":
-            if avizCU.nume_aviz.nume == "Aviz APM Bacau":
+            if avizCU.nume_aviz.nume == "Aviz APM - Bacau":
                 return bacau.aviz_APM_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Bacau":
                 return bacau.aviz_EE_Delgaz_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Bacau":
                 return bacau.aviz_GN_Delgaz_Bacau(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Bacau":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Bacau":
                 return bacau.aviz_Orange_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Bacau":
                 return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
@@ -122,13 +122,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
             # SUCEAVA
         elif lucrare.judet.nume == "Suceava":
-            if avizCU.nume_aviz.nume == "Aviz APM Suceava":
+            if avizCU.nume_aviz.nume == "Aviz APM - Suceava":
                 return suceava.aviz_APM_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Suceava":
                 return suceava.aviz_EE_Delgaz_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Suceava":
                 return suceava.aviz_GN_Delgaz_Suceava(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Suceava":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Suceava":
                 return suceava.aviz_Orange_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Suceava":
                 return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
@@ -142,13 +142,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # BOTOȘANI
         elif lucrare.judet.nume == "Botoșani":
-            if avizCU.nume_aviz.nume == "Aviz APM Botosani":
+            if avizCU.nume_aviz.nume == "Aviz APM - Botosani":
                 return botosani.aviz_APM_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Botosani":
                 return botosani.aviz_EE_Delgaz_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Botosani":
                 return botosani.aviz_GN_Delgaz_Botosani(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Botosani":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Botosani":
                 return botosani.aviz_Orange_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Botosani":
                 return botosani.aviz_Cultura_Botosani(lucrare_id, id_aviz)
@@ -162,13 +162,13 @@ def creeaza_fisier(lucrare_id, id_aviz):
 
         # VASLUI
         elif lucrare.judet.nume == "Vaslui":
-            if avizCU.nume_aviz.nume == "Aviz APM Vaslui":
+            if avizCU.nume_aviz.nume == "Aviz APM - Vaslui":
                 return vaslui.aviz_APM_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz EE Delgaz - Vaslui":
                 return vaslui.aviz_EE_Delgaz_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN Delgaz - Vaslui":
                 return vaslui.aviz_GN_Delgaz_Vaslui(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz Orange Vaslui":
+            elif avizCU.nume_aviz.nume == "Aviz Orange - Vaslui":
                 return vaslui.aviz_Orange_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Vaslui":
                 return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
