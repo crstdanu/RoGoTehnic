@@ -88,6 +88,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_GN_PrismaServ(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Salubritate - Edil Industry":
                 return neamt.aviz_Salubritate_Edil_Industry(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz DIGI - Neamt":
+                return neamt.aviz_DIGI_Neamt(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Neamț nu poate fi generată (...încă)")
@@ -118,6 +120,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.aviz_ChimComplex(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Drumuri Judetene Bacau":
                 return bacau.aviz_Drumuri_Judetene_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz DIGI - Bacau":
+                return bacau.aviz_DIGI_Bacau(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Bacău nu poate fi generată (...încă)")
@@ -138,6 +142,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_ACET(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz GN NeoGas":
                 return suceava.aviz_GN_NeoGas(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz DIGI - Suceava":
+                return suceava.aviz_DIGI_Suceava(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Suceava nu poate fi generată (...încă)")
@@ -158,6 +164,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ApaServ":
                 return botosani.aviz_ApaServ(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz DIGI - Botosani":
+                return botosani.aviz_DIGI_Botosani(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
@@ -174,6 +182,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return vaslui.aviz_Orange_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz HCL - Vaslui":
                 return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz DIGI - Vaslui":
+                return vaslui.aviz_DIGI_Vaslui(lucrare_id, id_aviz)
             return DocumentGenerationResult.error_result(
                 "Aceasta documentație din Vaslui nu poate fi generată (...încă)")
         else:
