@@ -55,6 +55,7 @@
                                                     <th scope="col">Depus</th>
                                                     <th scope="col">Data depunerii</th>
                                                     <th scope="col">Primit</th>
+                                                    <th scope="col">Detalii</th>
                                                     <th scope="col">ACȚIUNI</th>
                                                 </tr>
                                             </thead>
@@ -68,9 +69,10 @@
                                                             Generează Aviz
                                                         </a>
                                                     </td>
-                                                    <td>{{aviz.depus}}</td>
+                                                    <td>{% if aviz.depus %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                                     <td>{{aviz.data_depunere}}</td>
-                                                    <td>{{aviz.primit}}</td>
+                                                    <td>{% if aviz.primit %}✅ Da{% else %}❌ Nu{% endif %}</td>
+                                                    <td>{{aviz.descriere_aviz}}</td>
                                                     <td>
                                                         <button type="button" class="btn btn-success me-1"
                                                             data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">

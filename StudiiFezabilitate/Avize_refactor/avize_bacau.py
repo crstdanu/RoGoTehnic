@@ -443,14 +443,6 @@ def aviz_HCL_Bacau(lucrare_id: int, id_aviz: int):
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
 
-def aviz_Chimcomplex(lucrare_id: int, id_aviz: int):
-    pass
-
-
-def aviz_Drumuri_Judetene_Bacau(lucrare_id: int, id_aviz: int):
-    pass
-
-
 def aviz_RAJA(lucrare_id: int, id_aviz: int):
     """
     Aceasta functie genereaza documentatia necesara pentru avizul RAJA.

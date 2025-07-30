@@ -3,8 +3,6 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 
-import urllib.parse
-
 import os
 import tempfile
 import zipfile
