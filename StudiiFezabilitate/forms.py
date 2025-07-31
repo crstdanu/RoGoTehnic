@@ -33,14 +33,6 @@ class LucrareForm(BaseForm):
             'persoana_contact': 'Persoană de contact',
             'finalizata': 'Finalizată',
         }
-        
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        instance = kwargs.get('instance')
-        
-        if instance and instance.judet:
-            # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
-            self.fields['localitate'].queryset = Localitate.objects.filter(judet=instance.judet)
         widgets = {
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele complet al lucrării'}),
             'nume_intern': forms.TextInput(attrs={'class': 'form-control'}),
@@ -53,6 +45,14 @@ class LucrareForm(BaseForm):
             'persoana_contact': forms.Select(attrs={'class': 'form-control'}),
             'finalizata': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        
+        if instance and instance.judet:
+            # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
+            self.fields['localitate'].queryset = Localitate.objects.filter(judet=instance.judet)
 
     def clean(self):
         cleaned_data = super().clean()
