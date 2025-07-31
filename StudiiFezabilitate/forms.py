@@ -1,5 +1,5 @@
 from django import forms
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate
 from django.core.exceptions import ValidationError
 
 
@@ -33,6 +33,14 @@ class LucrareForm(BaseForm):
             'persoana_contact': 'Persoană de contact',
             'finalizata': 'Finalizată',
         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        
+        if instance and instance.judet:
+            # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
+            self.fields['localitate'].queryset = Localitate.objects.filter(judet=instance.judet)
         widgets = {
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele complet al lucrării'}),
             'nume_intern': forms.TextInput(attrs={'class': 'form-control'}),
@@ -46,16 +54,16 @@ class LucrareForm(BaseForm):
             'finalizata': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
-        def clean(self):
-            cleaned_data = super().clean()
-            judet = cleaned_data.get("judet")
-            localitate = cleaned_data.get("localitate")
+    def clean(self):
+        cleaned_data = super().clean()
+        judet = cleaned_data.get("judet")
+        localitate = cleaned_data.get("localitate")
 
-            if localitate and judet and localitate.judet != judet:
-                self.add_error(
-                    'localitate', "Localitatea selectată nu aparține județului ales.")
+        if localitate and judet and localitate.judet != judet:
+            self.add_error(
+                'localitate', "Localitatea selectată nu aparține județului ales.")
 
-            return cleaned_data
+        return cleaned_data
 
 
 class CertificatUrbanismForm(BaseForm):
