@@ -18,7 +18,7 @@ import StudiiFezabilitate.utils as utils
 
 def index(request):
     context = {
-        'lucrari': Lucrare.objects.all(),
+        'lucrari': Lucrare.objects.filter(finalizata=False).order_by('-id'),
     }
     return render(request, 'StudiiFezabilitate/index.html', context)
 
