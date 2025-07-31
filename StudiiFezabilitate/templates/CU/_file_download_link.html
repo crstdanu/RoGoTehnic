@@ -1,0 +1,17 @@
+<div class="row mb-3">
+    <label class="col-sm-3 col-form-label">
+        {{ label }}
+    </label>
+    <div class="col-sm-9">
+        {% if file_field %}
+        <i class="far fa-file-pdf text-danger me-2"></i>
+        <a href="{% url 'download_file' 'certificaturbanism' field_name lucrare.id %}"
+            class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+            {{ file_field.name|cut:"media/" }}
+            <i class="fas fa-download ms-1 small"></i>
+        </a>
+        {% else %}
+        <span class="text-muted">Nu este fișier</span>
+        {% endif %}
+    </div>
+</div>

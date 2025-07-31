@@ -86,7 +86,7 @@
                                                             <div class="modal-dialog modal-lg" role="document">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <h5 class="modal-title">
+                                                                        <h5 class="modal-title" id="myModalLabel{{aviz.id}}">
                                                                             Aviz: {{aviz.nume_aviz}} pentru
                                                                             {{aviz.certificat_urbanism.lucrare.nume_intern}}
                                                                         </h5>
@@ -158,12 +158,12 @@
 
                                                         <!-- Modal - Delete Lucrare -->
                                                         <div class="modal" id="delete{{aviz.id}}" tabindex="-1"
-                                                            aria-labelledby="#myModalLabel1{{aviz.id}}"
+                                                            aria-labelledby="deleteModalLabel{{aviz.id}}"
                                                             aria-hidden="true">
                                                             <div class="modal-dialog" role="document">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <h5 class="modal-title">
+                                                                        <h5 class="modal-title" id="deleteModalLabel{{aviz.id}}">
                                                                             {{aviz.nume_aviz}} pentru
                                                                             {{aviz.certificat_urbanism.lucrare.nume_intern}}
                                                                         </h5>
@@ -199,7 +199,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    </p>
                                 </div>
                             </div>
                             {% else %}
@@ -298,232 +297,64 @@
                                 </div>
 
                                 <!-- Cale CU -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale CU
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_CU %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_CU' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_CU }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale CU" file_field=certificat_urbanism.cale_CU field_name="cale_CU" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Plan încadrare CU -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Plan încadrare CU
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_plan_incadrare_CU %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_plan_incadrare_CU' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_plan_incadrare_CU }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Plan încadrare CU" file_field=certificat_urbanism.cale_plan_incadrare_CU field_name="cale_plan_incadrare_CU" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Plan de situație CU -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Plan situație CU
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_plan_situatie_CU %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_plan_situatie_CU' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_plan_situatie_CU }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Plan situație CU" file_field=certificat_urbanism.cale_plan_situatie_CU field_name="cale_plan_situatie_CU" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Memoriu tehnic CU -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Memoriu tehnic CU
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_memoriu_tehnic_CU %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_memoriu_tehnic_CU' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_memoriu_tehnic_CU }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Memoriu tehnic CU" file_field=certificat_urbanism.cale_memoriu_tehnic_CU field_name="cale_memoriu_tehnic_CU" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Acte beneficiar -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Acte beneficiar
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_acte_beneficiar %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_acte_beneficiar' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_acte_beneficiar }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Acte beneficiar" file_field=certificat_urbanism.cale_acte_beneficiar field_name="cale_acte_beneficiar" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Acte facturare -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Acte facturare
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_acte_facturare %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_acte_facturare' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_acte_facturare }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Acte facturare" file_field=certificat_urbanism.cale_acte_facturare field_name="cale_acte_facturare" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Chitanta APM -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Chitanță APM
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_chitanta_APM %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_chitanta_APM' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_chitanta_APM }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Chitanță APM" file_field=certificat_urbanism.cale_chitanta_APM field_name="cale_chitanta_APM" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Plan situație la scară -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Plan situație la scară (opțional)
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_plan_situatie_la_scara %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_plan_situatie_la_scara' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_plan_situatie_la_scara }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Plan situație la scară (opțional)" file_field=certificat_urbanism.cale_plan_situatie_la_scara field_name="cale_plan_situatie_la_scara" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Plan situație în format DWG -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Plan situație în format DWG (opțional)
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_plan_situatie_DWG %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_plan_situatie_DWG' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_plan_situatie_DWG }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Plan situație în format DWG (opțional)" file_field=certificat_urbanism.cale_plan_situatie_DWG field_name="cale_plan_situatie_DWG" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Extrase CF -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Extrase CF
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_extrase_CF %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_extrase_CF' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_extrase_CF }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Extrase CF" file_field=certificat_urbanism.cale_extrase_CF field_name="cale_extrase_CF" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Aviz GiS -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Aviz GiS
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_aviz_GIS %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_aviz_GIS' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_aviz_GIS }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Aviz GiS" file_field=certificat_urbanism.cale_aviz_GIS field_name="cale_aviz_GIS" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
                                 <!-- Cale Chitanță DSP -->
-                                <div class="row mb-3">
-                                    <label for="staticCaleCU" class="col-sm-3 col-form-label">
-                                        Cale Chitanță DSP
-                                    </label>
-                                    <div class="col-sm-9">
-                                        {% if certificat_urbanism.cale_chitanta_DSP %}
-                                        <i class="far fa-file-pdf text-danger me-2"></i>
-                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_chitanta_DSP' lucrare.id %}"
-                                            class="text-decoration-none">
-                                            {{ certificat_urbanism.cale_chitanta_DSP }}
-                                            <i class="fas fa-download ms-1 small"></i>
-                                        </a>
-                                        {% else %}
-                                        <span class="text-muted">Nu este fișier</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                                {% with label="Cale Chitanță DSP" file_field=certificat_urbanism.cale_chitanta_DSP field_name="cale_chitanta_DSP" %}
+                                    {% include "CU/_file_download_link.html" %}
+                                {% endwith %}
 
 
 
