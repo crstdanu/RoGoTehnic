@@ -70,7 +70,7 @@
                                                         </a>
                                                     </td>
                                                     <td>{% if aviz.depus %}✅ Da{% else %}❌ Nu{% endif %}</td>
-                                                    <td>{{aviz.data_depunere}}</td>
+                                                    <td>{{aviz.data_depunere|date:"d.m.Y"}}</td>
                                                     <td>{% if aviz.primit %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                                     <td>{{aviz.descriere_aviz}}</td>
                                                     <td>
@@ -105,7 +105,7 @@
                                                                                 </strong>
                                                                             </li>
                                                                             <li> Data depunere:
-                                                                                <strong>{{aviz.data_depunere}}</strong>
+                                                                                <strong>{{aviz.data_depunere|date:"d.m.Y"}}</strong>
                                                                             </li>
                                                                             <li> Primit: <strong>
                                                                                     {% if aviz.primit == True %}✅
@@ -118,7 +118,7 @@
                                                                                 <strong>{{aviz.numar_aviz}}</strong>
                                                                             </li>
                                                                             <li> Data aviz:
-                                                                                <strong>{{aviz.data_aviz}}</strong>
+                                                                                <strong>{{aviz.data_aviz|date:"d.m.Y"}}</strong>
                                                                             </li>
                                                                             <li> Cost net:
                                                                                 <strong>{{ aviz.cost_net }}</strong>
@@ -226,7 +226,7 @@
                                             <label for="staticData" class="col-form-label me-2 mb-0"
                                                 style="white-space: nowrap;">Data CU</label>
                                             <input type="text" readonly class="form-control-plaintext" id="staticData"
-                                                value="{{certificat_urbanism.data}}">
+                                                value="{{certificat_urbanism.data|date:"d.m.Y"}}">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -243,7 +243,7 @@
                                         CU</label>
                                     <div class="col-sm-9">
                                         <input type="text" readonly class="form-control-plaintext"
-                                            id="staticValabilitate" value="{{certificat_urbanism.valabilitate}}">
+                                            id="staticValabilitate" value="{{certificat_urbanism.valabilitate|date:"d.m.Y"}}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
