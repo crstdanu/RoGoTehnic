@@ -210,9 +210,10 @@ class UAT(models.Model):
         Localitate, on_delete=models.PROTECT, blank=True, null=True, related_name='UAT')
     adresa = models.CharField(max_length=512, blank=True, null=True,)
     cod_postal = models.CharField(max_length=6, blank=True, null=True,)
-    telefon = models.CharField(max_length=20)
-    email = models.EmailField()
+    telefon = models.CharField(max_length=20, blank=True, null=True,)
+    email = models.EmailField(blank=True, null=True,)
     cont_trezorerie = models.CharField(max_length=30, blank=True, null=True,)
+    cif = models.CharField(max_length=30, blank=True, null=True,)
 
     class Meta:
         verbose_name = "Unitate administrativ teritorială"
