@@ -122,6 +122,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.aviz_Drumuri_Judetene_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz DIGI - Bacau":
                 return bacau.aviz_DIGI_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz Salubritate SOMA":
+                return bacau.aviz_Salubritate_SOMA(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Bacău nu poate fi generată (...încă)")
