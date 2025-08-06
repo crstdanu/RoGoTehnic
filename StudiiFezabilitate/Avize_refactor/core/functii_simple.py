@@ -349,7 +349,10 @@ def genereaza_cerere_STANDARD(lucrare, firma, reprezentant, cu, beneficiar, cont
         'firma_facturare': firma.nume,
         'cui_firma_facturare': firma.cui,
 
-        'data': datetime.now().strftime("%d.%m.%Y"), }
+        'data': datetime.now().strftime("%d.%m.%Y"),
+
+        'localitate_lucrare': lucrare.localitate.nume, # se foloseste DOAR la avizul MApN
+        }
 
     # Generăm documentul și verificăm rezultatul
     cerere_pdf_path = baza.create_document(

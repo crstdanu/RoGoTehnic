@@ -56,6 +56,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_PMI_Evidenta_Patrimoniiu(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz DIGI - Iasi":
                 return iasi.aviz_DIGI_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz MApN - Iasi":
+                return iasi.aviz_MApN_Iasi(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Iași nu poate fi generată (...încă)")
