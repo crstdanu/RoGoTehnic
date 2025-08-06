@@ -108,8 +108,8 @@ def aviz_EE_Delgaz_Botosani(lucrare_id: int, id_aviz: int):
         fisiere_generate = []
         path_document_final = None
 
-        model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/02. Aviz EE Delgaz - BotosaniCerere EE Delgaz - Botosani.docx"
-        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/02. Aviz EE Delgaz - BotosaniModel email - EE Delgaz - Botosani.docx"
+        model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/02. Aviz EE Delgaz - Botosani/Cerere EE Delgaz - Botosani.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/02. Aviz EE Delgaz - Botosani/Model email - EE Delgaz - Botosani.docx"
 
         # -------------------------------                                     --- 1. Validări --- #
         # 1.1 Verificare câmpuri necesare
@@ -450,16 +450,16 @@ def aviz_HCL_Botosani(lucrare_id: int, id_aviz: int):
         path_document_final = None
 
         if firma.nume == "S.C. ROGOTEHNIC S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. botosani/06. Aviz HCL - Botosani/Cerere HCL - ROGOTEHNIC.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/06. Aviz HCL - Botosani/Cerere HCL - ROGOTEHNIC.docx"
         elif firma.nume == "S.C. GENERAL TEHNIC S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. botosani/06. Aviz HCL - Botosani/Cerere HCL - GENERAL TEHNIC.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/06. Aviz HCL - Botosani/Cerere HCL - GENERAL TEHNIC.docx"
         elif firma.nume == "S.C. PROING SERV S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. botosani/06. Aviz HCL - Botosani/Cerere HCL - PROING SERV.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/06. Aviz HCL - Botosani/Cerere HCL - PROING SERV.docx"
         else:
             return DocumentGenerationResult.error_result(
                 "Nu am gasit modelul de cerere pentru firma de proiectare selectata")
 
-        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. botosani/06. Aviz HCL - Botosani/Citeste-ma.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/04. botosani/06. Aviz HCL - Botosani/Citeste-ma.docx"
 
         # -------------------------------                                     --- 1. Validări --- #
         # 1.1 Verificare câmpuri necesare
