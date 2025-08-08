@@ -591,6 +591,35 @@ def genereaza_document_final_STANDARD(lucrare, avizCU, cerere_pdf_path, cu, bene
     return path_document_final
 
 
+def genereaza_document_final_STANDARD_PRINT(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir,):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    if print:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - DE PRINTAT.pdf"
+        )
+    else:
+        path_document_final = os.path.join(
+            temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+        )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_memoriu_tehnic_CU.path,
+        cu.cale_acte_facturare.path,
+    ]
+    
+    baza.merge_pdfs_print(pdf_list, path_document_final)
+
+    return path_document_final
+
+
 def genereaza_document_final_cu_CI(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=False):
     """
     Combină toate fișierele și pregătește documentul final pentru a fi livrat
