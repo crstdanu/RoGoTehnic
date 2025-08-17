@@ -47,7 +47,7 @@
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
+                                        <table class="table table-hover table-sm">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Aviz</th>
@@ -64,7 +64,7 @@
                                                 <tr>
                                                     <td>{{aviz.nume_aviz}}</td>
                                                     <td>
-                                                        <a class="btn btn-primary me-1" href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
+                                                        <a class="btn btn-primary me-1 btn-sm" href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
                                                             Generează Aviz
                                                         </a>
                                                     </td>
@@ -73,7 +73,7 @@
                                                     <td>{% if aviz.primit %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                                     <td>{{aviz.descriere_aviz}}</td>
                                                     <td>
-                                                        <button type="button" class="btn btn-success me-1" data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
+                                                        <button type="button" class="btn btn-success me-1 btn-sm" data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
                                                             <i class="fa-solid fa-circle-info fa-lg"></i>
                                                         </button>
 
@@ -139,12 +139,12 @@
 
                                                         <!-- aici e butonul pentru a edita -->
 
-                                                        <a class="btn btn-warning me-1" href="{% url 'edit_aviz' lucrare.id aviz.id %}">Editează
+                                                        <a class="btn btn-warning me-1 btn-sm" href="{% url 'edit_aviz' lucrare.id aviz.id %}">Editează
                                                         </a>
 
                                                         <!-- aici e butonul pentru a sterge -->
 
-                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{aviz.id}}">
+                                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete{{aviz.id}}">
                                                             <i class="fa-solid fa-trash-can fa-lg"></i>
                                                         </button>
 
