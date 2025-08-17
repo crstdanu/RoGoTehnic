@@ -1,0 +1,89 @@
+{% extends "StudiiFezabilitate/base.html" %}
+
+{% block body %}
+
+<div class="container-fluid">
+    <h3 class="m-4">Lucrări — persoană de contact: {{ filtru_contact }}</h3>
+    <div class="row">
+        <div class="col-12">
+            {% if lucrari %}
+            <div class="card bg-light ms-4 me-4 mb-4">
+                <div class=" card-header">
+                    <i class="fa-solid fa-address-book fa-lg"></i> Lucrări filtrate
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nume intern</th>
+                                    <th scope="col">Lot</th>
+                                    <th scope="col">Certificat de urbanism</th>
+                                    <th scope="col">Persoană contact</th>
+                                    <th scope="col">Finalizată</th>
+                                    <th scope="col">ACȚIUNI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lucrare in lucrari %}
+                                <tr data-lucrare-id="{{ lucrare.id }}" style="cursor: pointer;">
+                                    <td>{{lucrare.nume_intern}}</td>
+                                    <td>{{lucrare.lot}}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{% url 'index_CU' lucrare.id %}" role="button">
+                                            Certificat de urbanism
+                                        </a>
+                                    </td>
+                                    <td>{{lucrare.persoana_contact}}</td>
+                                    <td>{% if lucrare.finalizata %}✅ Da{% else %}❌ Nu{% endif %}</td>
+                                    <td>
+                                        <a class="btn btn-warning me-1" href="{% url 'edit_lucrare' lucrare.id %}">
+                                            <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{lucrare.id}}">
+                                            <i class="fa-solid fa-trash-can fa-lg"></i>
+                                        </button>
+                                        <div class="modal" id="delete{{lucrare.id}}" tabindex="-1" aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Șterge lucrare</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Închide">
+                                                            <span aria-hidden="true"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Ești sigur că vrei să ștergi lucrarea {{lucrare.nume_intern}}?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form action="{% url 'delete_lucrare' lucrare.id %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Șterge</button>
+                                                        </form>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-primary ms-4 me-4 mb-4">Nu sunt lucrări pentru {{ filtru_contact }}</div>
+            {% endif %}
+
+            <div class="ms-4 me-4 mb-4">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Înapoi la toate lucrările
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

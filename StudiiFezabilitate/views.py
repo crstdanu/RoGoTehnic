@@ -23,6 +23,23 @@ def index(request):
     return render(request, 'StudiiFezabilitate/index.html', context)
 
 
+def lucrari_pe_contact(request, nume: str):
+    """
+    Afișează doar lucrările care au persoana de contact cu numele dat (case-insensitive).
+    Afișează un template dedicat pentru filtru după contact.
+    """
+    lucrari = Lucrare.objects.filter(
+        finalizata=False,
+        persoana_contact__nume__iexact=nume
+    ).order_by('-id')
+
+    context = {
+        'lucrari': lucrari,
+        'filtru_contact': nume,
+    }
+    return render(request, 'StudiiFezabilitate/lucrari_contact.html', context)
+
+
 def view_lucrare(request, id):
     lucrare = Lucrare.objects.get(pk=id)
     return HttpResponseRedirect(reverse('index'))
