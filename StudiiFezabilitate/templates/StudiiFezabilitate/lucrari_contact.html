@@ -15,7 +15,14 @@
                         <span>Avize pentru lucrarea:</span>
                     </div>
                     <div class="flex-grow-1 text-center">
-                        <span class="fw-bold fs-5">{{ lucrare.nume_intern }}</span>
+                        <div class="fw-bold fs-5">{{ lucrare.nume_intern }}</div>
+                        {% if lucrare.certificat_urbanism and not lucrare.finalizata %}
+                        <div class="mt-1">
+                            <span class="badge rounded-pill {{ lucrare.certificat_urbanism.expiry_badge_class }}">
+                                {{ lucrare.certificat_urbanism.expiry_badge_text }}
+                            </span>
+                        </div>
+                        {% endif %}
                     </div>
                     <div>
                         {% if lucrare.certificat_urbanism %}

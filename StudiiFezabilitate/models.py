@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator, MaxValueValidator, FileExtens
 import os
 import magic
 import datetime
+import calendar
 
 
 # Create your models here.
@@ -440,6 +441,15 @@ class Lucrare(models.Model):
     def __str__(self):
         return self.nume_intern
 
+    @property
+    def cu_button_class(self) -> str:
+        """Delegă către CertificatUrbanism.cu_button_class dacă există, altfel 'btn-primary'."""
+        try:
+            cu = self.certificat_urbanism
+            return cu.cu_button_class
+        except CertificatUrbanism.DoesNotExist:
+            return 'btn-primary'
+
 
 class CertificatUrbanism(models.Model):
     # date despre CU
@@ -542,6 +552,83 @@ class CertificatUrbanism(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def cu_button_class(self) -> str:
+        """Returnează 'btn-danger' dacă expiră în < 30 zile, 'btn-warning' dacă în < 90 zile, altfel 'btn-primary'."""
+        try:
+            # Dacă lucrarea e finalizată, nu evidențiem urgentarea
+            if getattr(self.lucrare, 'finalizata', False):
+                return 'btn-primary'
+            issue_date = self.data
+            months = self.valabilitate or 12
+            if not issue_date or not months:
+                return 'btn-primary'
+
+            # calculează data expirării adăugând luni la data emiterii
+            month_index = issue_date.month - 1 + months
+            year = issue_date.year + month_index // 12
+            month = month_index % 12 + 1
+            last_day = calendar.monthrange(year, month)[1]
+            day = min(issue_date.day, last_day)
+            expiry_date = datetime.date(year, month, day)
+
+            days_left = (expiry_date - datetime.date.today()).days
+            if days_left < 30:
+                return 'btn-danger'
+            if days_left < 90:
+                return 'btn-warning'
+            return 'btn-primary'
+        except Exception:
+            return 'btn-primary'
+
+    @property
+    def days_to_expiry(self):
+        """Numărul de zile până la expirarea CU; negativ dacă este deja expirat. None dacă lipsesc datele."""
+        # Pentru lucrări finalizate nu calculăm expirarea
+        if getattr(self.lucrare, 'finalizata', False):
+            return None
+        issue_date = self.data
+        months = self.valabilitate or 12
+        if not issue_date or not months:
+            return None
+        month_index = issue_date.month - 1 + months
+        year = issue_date.year + month_index // 12
+        month = month_index % 12 + 1
+        last_day = calendar.monthrange(year, month)[1]
+        day = min(issue_date.day, last_day)
+        expiry_date = datetime.date(year, month, day)
+        return (expiry_date - datetime.date.today()).days
+
+    @property
+    def expiry_badge_class(self) -> str:
+        """Clasa Bootstrap pentru badge în funcție de zilele rămase."""
+        if getattr(self.lucrare, 'finalizata', False):
+            return 'bg-secondary'
+        days = self.days_to_expiry
+        if days is None:
+            return 'bg-secondary'
+        if days < 30:
+            return 'bg-danger'
+        if days < 90:
+            return 'bg-warning'
+        return 'bg-secondary'
+
+    @property
+    def expiry_badge_text(self) -> str:
+        """Textul afișat pe badge-ul de expirare CU."""
+        if getattr(self.lucrare, 'finalizata', False):
+            return 'Lucrare finalizată'
+        days = self.days_to_expiry
+        if days is None:
+            return 'CU: necunoscut'
+        if days < 0:
+            return 'CU expirat'
+        if days == 0:
+            return 'CU expiră azi'
+        if days == 1:
+            return 'CU expiră mâine'
+        return f'CU expiră în {days} zile'
+
 
 class AvizeCU(models.Model):
     certificat_urbanism = models.ForeignKey(
@@ -602,3 +689,12 @@ class AvizeCU(models.Model):
         except Exception:
             return False
         return (today - self.data_depunere).days > 30
+
+    @property
+    def cu_button_class(self) -> str:
+        """Delegă către CertificatUrbanism.cu_button_class dacă există, altfel 'btn-primary'."""
+        try:
+            cu = self.certificat_urbanism
+            return cu.cu_button_class
+        except CertificatUrbanism.DoesNotExist:
+            return 'btn-primary'

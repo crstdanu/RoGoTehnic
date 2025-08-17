@@ -30,7 +30,7 @@
                                     <td>{{lucrare.nume_intern}}</td>
                                     <td>{{lucrare.lot}}</td>
                                     <td>
-                                        <a class="btn btn-primary" href="{% url 'index_CU' lucrare.id %}" role="button">
+                                        <a class="btn {{ lucrare.cu_button_class }}" href="{% url 'index_CU' lucrare.id %}" role="button">
                                             Certificat de urbanism
                                         </a>
                                     </td>
@@ -39,16 +39,14 @@
                                     <td>{% if lucrare.finalizata %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                     <td>
                                         <!-- Modal - View Lucrare -->
-                                        <div class="modal" id="myModal{{lucrare.id}}" tabindex="-1"
-                                            aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
+                                        <div class="modal" id="myModal{{lucrare.id}}" tabindex="-1" aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">
                                                             Lucrare: {{lucrare.nume_intern}}
                                                         </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true"></span>
                                                         </button>
                                                     </div>
@@ -71,8 +69,7 @@
                                                         </ul>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary"
-                                                            data-bs-dismiss="modal">Închide</button>
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Închide</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -82,22 +79,19 @@
                                             <i class="fa-solid fa-pen-to-square fa-lg"></i>
                                         </a>
 
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#delete{{lucrare.id}}">
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{lucrare.id}}">
                                             <i class="fa-solid fa-trash-can fa-lg"></i>
                                         </button>
 
                                         <!-- Modal - Delete Lucrare -->
-                                        <div class="modal" id="delete{{lucrare.id}}" tabindex="-1"
-                                            aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
+                                        <div class="modal" id="delete{{lucrare.id}}" tabindex="-1" aria-labelledby="myModalLabel{{lucrare.id}}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">
                                                             Lucrare: {{lucrare.nume_intern}}
                                                         </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Închide">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Închide">
                                                             <span aria-hidden="true"></span>
                                                         </button>
                                                     </div>
@@ -107,13 +101,11 @@
                                                         </p>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <form action="{% url 'delete_lucrare' lucrare.id %}"
-                                                            method="POST">
+                                                        <form action="{% url 'delete_lucrare' lucrare.id %}" method="POST">
                                                             {% csrf_token %}
                                                             <button type="submit" class="btn btn-danger">Șterge</button>
                                                         </form>
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Renunță</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
                                                     </div>
                                                 </div>
@@ -157,7 +149,7 @@
                 if (event.target.closest('a, button')) {
                     return;
                 }
-                
+
                 const lucrareId = this.dataset.lucrareId;
                 const modal = new bootstrap.Modal(document.getElementById('myModal' + lucrareId));
                 modal.show();
