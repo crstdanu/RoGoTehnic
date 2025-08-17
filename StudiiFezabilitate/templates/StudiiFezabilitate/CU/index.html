@@ -47,7 +47,16 @@
 
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-sm">
+                                        <table class="table table-hover table-sm table-avize" style="table-layout: fixed; width: 100%">
+                                            <colgroup>
+                                                <col style="width: 20%"><!-- Aviz -->
+                                                <col style="width: 12%"><!-- GENEREAZĂ -->
+                                                <col style="width: 8%"><!-- Depus -->
+                                                <col style="width: 12%"><!-- Data depunerii -->
+                                                <col style="width: 8%"><!-- Primit -->
+                                                <col style="width: 30%"><!-- Detalii -->
+                                                <col style="width: 10%"><!-- ACȚIUNI -->
+                                            </colgroup>
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Aviz</th>
@@ -56,7 +65,7 @@
                                                     <th scope="col">Data depunerii</th>
                                                     <th scope="col">Primit</th>
                                                     <th scope="col">Detalii</th>
-                                                    <th scope="col">ACȚIUNI</th>
+                                                    <th scope="col" class="text-center">ACȚIUNI</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -71,8 +80,8 @@
                                                     <td>{% if aviz.depus %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                                     <td>{{aviz.data_depunere|date:"d.m.Y"}}</td>
                                                     <td>{% if aviz.primit %}✅ Da{% else %}❌ Nu{% endif %}</td>
-                                                    <td>{{aviz.descriere_aviz}}</td>
-                                                    <td>
+                                                    <td>{{ aviz.descriere_aviz }}</td>
+                                                    <td class="text-end">
                                                         <button type="button" class="btn btn-success me-1 btn-sm" data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
                                                             <i class="fa-solid fa-circle-info fa-lg"></i>
                                                         </button>
