@@ -1,4 +1,4 @@
-{% extends "CU/base.html" %}
+{% extends "StudiiFezabilitate/CU/base.html" %}
 
 {% block body %}
 
@@ -64,8 +64,7 @@
                                                 <tr>
                                                     <td>{{aviz.nume_aviz}}</td>
                                                     <td>
-                                                        <a class="btn btn-primary me-1"
-                                                            href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
+                                                        <a class="btn btn-primary me-1" href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
                                                             Generează Aviz
                                                         </a>
                                                     </td>
@@ -74,15 +73,12 @@
                                                     <td>{% if aviz.primit %}✅ Da{% else %}❌ Nu{% endif %}</td>
                                                     <td>{{aviz.descriere_aviz}}</td>
                                                     <td>
-                                                        <button type="button" class="btn btn-success me-1"
-                                                            data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
+                                                        <button type="button" class="btn btn-success me-1" data-bs-toggle="modal" data-bs-target="#myModal{{aviz.id}}">
                                                             <i class="fa-solid fa-circle-info fa-lg"></i>
                                                         </button>
 
                                                         <!-- Modal - View Lucrare -->
-                                                        <div class="modal" id="myModal{{aviz.id}}" tabindex="-1"
-                                                            aria-labelledby="myModalLabel{{aviz.id}}"
-                                                            aria-hidden="true">
+                                                        <div class="modal" id="myModal{{aviz.id}}" tabindex="-1" aria-labelledby="myModalLabel{{aviz.id}}" aria-hidden="true">
                                                             <div class="modal-dialog modal-lg" role="document">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
@@ -90,8 +86,7 @@
                                                                             Aviz: {{aviz.nume_aviz}} pentru
                                                                             {{aviz.certificat_urbanism.lucrare.nume_intern}}
                                                                         </h5>
-                                                                        <button type="button" class="btn-close"
-                                                                            data-bs-dismiss="modal" aria-label="Close">
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                             <span aria-hidden="true"></span>
                                                                         </button>
                                                                     </div>
@@ -133,8 +128,7 @@
                                                                         </ul>
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-primary"
-                                                                            data-bs-dismiss="modal">Închide</button>
+                                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Închide</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -145,21 +139,17 @@
 
                                                         <!-- aici e butonul pentru a edita -->
 
-                                                        <a class="btn btn-warning me-1"
-                                                            href="{% url 'edit_aviz' lucrare.id aviz.id %}">Editează
+                                                        <a class="btn btn-warning me-1" href="{% url 'edit_aviz' lucrare.id aviz.id %}">Editează
                                                         </a>
 
                                                         <!-- aici e butonul pentru a sterge -->
 
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-bs-toggle="modal" data-bs-target="#delete{{aviz.id}}">
+                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{aviz.id}}">
                                                             <i class="fa-solid fa-trash-can fa-lg"></i>
                                                         </button>
 
                                                         <!-- Modal - Delete Lucrare -->
-                                                        <div class="modal" id="delete{{aviz.id}}" tabindex="-1"
-                                                            aria-labelledby="deleteModalLabel{{aviz.id}}"
-                                                            aria-hidden="true">
+                                                        <div class="modal" id="delete{{aviz.id}}" tabindex="-1" aria-labelledby="deleteModalLabel{{aviz.id}}" aria-hidden="true">
                                                             <div class="modal-dialog" role="document">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
@@ -167,9 +157,7 @@
                                                                             {{aviz.nume_aviz}} pentru
                                                                             {{aviz.certificat_urbanism.lucrare.nume_intern}}
                                                                         </h5>
-                                                                        <button type="button" class="btn-close"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Închide">
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Închide">
                                                                             <span aria-hidden="true"></span>
                                                                         </button>
                                                                     </div>
@@ -179,15 +167,11 @@
                                                                         </p>
                                                                     </div>
                                                                     <div class="modal-footer">
-                                                                        <form
-                                                                            action="{% url 'delete_aviz' lucrare.id aviz.id %}"
-                                                                            method="POST">
+                                                                        <form action="{% url 'delete_aviz' lucrare.id aviz.id %}" method="POST">
                                                                             {% csrf_token %}
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger">Șterge</button>
+                                                                            <button type="submit" class="btn btn-danger">Șterge</button>
                                                                         </form>
-                                                                        <button type="button" class="btn btn-secondary"
-                                                                            data-bs-dismiss="modal">Renunță</button>
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Renunță</button>
 
                                                                     </div>
                                                                 </div>
@@ -215,26 +199,20 @@
                                 <div class="row mb-3">
                                     <div class="col-sm-4">
                                         <div class="d-flex w-100">
-                                            <label for="staticNumar" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Număr CU</label>
-                                            <input type="text" readonly class="form-control-plaintext" id="staticNumar"
-                                                value="{{certificat_urbanism.numar}}">
+                                            <label for="staticNumar" class="col-form-label me-2 mb-0" style="white-space: nowrap;">Număr CU</label>
+                                            <input type="text" readonly class="form-control-plaintext" id="staticNumar" value="{{certificat_urbanism.numar}}">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="d-flex w-100">
-                                            <label for="staticData" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Data CU</label>
-                                            <input type="text" readonly class="form-control-plaintext" id="staticData"
-                                                value="{{certificat_urbanism.data|date:"d.m.Y"}}">
+                                            <label for="staticData" class="col-form-label me-2 mb-0" style="white-space: nowrap;">Data CU</label>
+                                            <input type="text" readonly class="form-control-plaintext" id="staticData" value="{{ certificat_urbanism.data|date:'d.m.Y' }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="d-flex w-100">
-                                            <label for="staticEmitent" class="col-form-label me-2 mb-0"
-                                                style="white-space: nowrap;">Emitent CU</label>
-                                            <input type="text" readonly class="form-control-plaintext"
-                                                id="staticEmitent" value="{{certificat_urbanism.emitent}}">
+                                            <label for="staticEmitent" class="col-form-label me-2 mb-0" style="white-space: nowrap;">Emitent CU</label>
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmitent" value="{{certificat_urbanism.emitent}}">
                                         </div>
                                     </div>
                                 </div>
@@ -242,39 +220,33 @@
                                     <label for="staticValabilitate" class="col-sm-3 col-form-label">Valabilitate
                                         CU</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticValabilitate" value="{{certificat_urbanism.valabilitate|date:"d.m.Y"}}">
+                                        <input type="text" readonly class="form-control-plaintext" id="staticValabilitate" value="{{ certificat_urbanism.valabilitate|date:'d.m.Y' }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="staticNume" class="col-sm-3 col-form-label">Nume lucrare</label>
                                     <div class="col-sm-9">
-                                        <textarea readonly class="form-control-plaintext" id="staticNume" rows="5"
-                                            style="resize: vertical;">{{certificat_urbanism.nume}}</textarea>
+                                        <textarea readonly class="form-control-plaintext" id="staticNume" rows="5" style="resize: vertical;">{{certificat_urbanism.nume}}</textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="staticNume" class="col-sm-3 col-form-label">Adresa lucrare</label>
                                     <div class="col-sm-9">
-                                        <textarea readonly class="form-control-plaintext" id="staticNume" rows="5"
-                                            style="resize: vertical;">{{certificat_urbanism.adresa}}</textarea>
+                                        <textarea readonly class="form-control-plaintext" id="staticNume" rows="5" style="resize: vertical;">{{certificat_urbanism.adresa}}</textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="staticInginerIntocmit" class="col-sm-3 col-form-label">Inginer
                                         întocmit</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticInginerIntocmit" value="{{certificat_urbanism.inginer_intocmit}}">
+                                        <input type="text" readonly class="form-control-plaintext" id="staticInginerIntocmit" value="{{certificat_urbanism.inginer_intocmit}}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="staticInginerVerificat" class="col-sm-3 col-form-label">Inginer
                                         verificat</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticInginerVerificat"
-                                            value="{{certificat_urbanism.inginer_verificat}}">
+                                        <input type="text" readonly class="form-control-plaintext" id="staticInginerVerificat" value="{{certificat_urbanism.inginer_verificat}}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -282,78 +254,75 @@
                                         ocupată
                                         (m2)</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticSuprafataOcupata"
-                                            value="{{certificat_urbanism.suprafata_ocupata}}">
+                                        <input type="text" readonly class="form-control-plaintext" id="staticSuprafataOcupata" value="{{certificat_urbanism.suprafata_ocupata}}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="staticLungimeTraseu" class="col-sm-3 col-form-label">Lungime traseu
                                         (m)</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext"
-                                            id="staticLungimeTraseu" value="{{certificat_urbanism.lungime_traseu}}">
+                                        <input type="text" readonly class="form-control-plaintext" id="staticLungimeTraseu" value="{{certificat_urbanism.lungime_traseu}}">
                                     </div>
                                 </div>
 
                                 <!-- Cale CU -->
                                 {% with label="Cale CU" file_field=certificat_urbanism.cale_CU field_name="cale_CU" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Plan încadrare CU -->
                                 {% with label="Cale Plan încadrare CU" file_field=certificat_urbanism.cale_plan_incadrare_CU field_name="cale_plan_incadrare_CU" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Plan de situație CU -->
                                 {% with label="Cale Plan situație CU" file_field=certificat_urbanism.cale_plan_situatie_CU field_name="cale_plan_situatie_CU" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Memoriu tehnic CU -->
                                 {% with label="Cale Memoriu tehnic CU" file_field=certificat_urbanism.cale_memoriu_tehnic_CU field_name="cale_memoriu_tehnic_CU" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Acte beneficiar -->
                                 {% with label="Cale Acte beneficiar" file_field=certificat_urbanism.cale_acte_beneficiar field_name="cale_acte_beneficiar" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Acte facturare -->
                                 {% with label="Cale Acte facturare" file_field=certificat_urbanism.cale_acte_facturare field_name="cale_acte_facturare" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Chitanta APM -->
                                 {% with label="Cale Chitanță APM" file_field=certificat_urbanism.cale_chitanta_APM field_name="cale_chitanta_APM" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Plan situație la scară -->
                                 {% with label="Cale Plan situație la scară (opțional)" file_field=certificat_urbanism.cale_plan_situatie_la_scara field_name="cale_plan_situatie_la_scara" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Plan situație în format DWG -->
                                 {% with label="Cale Plan situație în format DWG (opțional)" file_field=certificat_urbanism.cale_plan_situatie_DWG field_name="cale_plan_situatie_DWG" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Extrase CF -->
                                 {% with label="Cale Extrase CF" file_field=certificat_urbanism.cale_extrase_CF field_name="cale_extrase_CF" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Aviz GiS -->
                                 {% with label="Cale Aviz GiS" file_field=certificat_urbanism.cale_aviz_GIS field_name="cale_aviz_GIS" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
                                 <!-- Cale Chitanță DSP -->
                                 {% with label="Cale Chitanță DSP" file_field=certificat_urbanism.cale_chitanta_DSP field_name="cale_chitanta_DSP" %}
-                                    {% include "CU/_file_download_link.html" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
 
@@ -369,9 +338,7 @@
                                     <label for="staticDescriereaProiectului" class="col-form-label">Descrierea
                                         proiectului</label>
                                     <div>
-                                        <textarea readonly class="form-control-plaintext"
-                                            id="staticDescriereaProiectului" rows="30"
-                                            style="resize: vertical;">{{certificat_urbanism.descrierea_proiectului}}</textarea>
+                                        <textarea readonly class="form-control-plaintext" id="staticDescriereaProiectului" rows="30" style="resize: vertical;">{{certificat_urbanism.descrierea_proiectului}}</textarea>
                                     </div>
                                 </div>
                             </form>
@@ -386,8 +353,7 @@
             {% else %}
             <div class="alert alert-primary ms-4 me-4 mb-4 d-flex align-items-center justify-content-between">
                 <span>Nu avem Certificat de urbanism pentru aceasta lucrare</span>
-                <form action="{% url 'add_CU' lucrare.id %}" method="POST"
-                    class="flex-grow-1 d-flex justify-content-center">
+                <form action="{% url 'add_CU' lucrare.id %}" method="POST" class="flex-grow-1 d-flex justify-content-center">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Adaugă certificat de urbanism</button>
                 </form>

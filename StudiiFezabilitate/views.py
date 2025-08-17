@@ -104,7 +104,7 @@ def index_CU(request, id):
     except CertificatUrbanism.DoesNotExist:
         certificat_urbanism = None
         avize = []
-    return render(request, 'CU/index.html', {
+    return render(request, 'StudiiFezabilitate/CU/index.html', {
         'avize': avize,
         'certificat_urbanism': certificat_urbanism,
         'lucrare': Lucrare.objects.get(pk=id),
@@ -121,19 +121,19 @@ def add_CU(request, id):
             certificat_urbanism.lucrare = lucrare  # Asignează lucrarea existentă
             certificat_urbanism.save()  # Salvează în baza de date
 
-            return render(request, 'CU/add.html', {
+            return render(request, 'StudiiFezabilitate/CU/add.html', {
                 'form': CertificatUrbanismForm(),
                 'success': True,
                 'lucrare': lucrare
             })
         else:
-            return render(request, 'CU/add.html', {
+            return render(request, 'StudiiFezabilitate/CU/add.html', {
                 'form': form,
                 'lucrare': lucrare,
             })
     else:
         form = CertificatUrbanismForm()
-    return render(request, 'CU/add.html', {
+    return render(request, 'StudiiFezabilitate/CU/add.html', {
         'form': form,
         'lucrare': lucrare,
     })
@@ -150,14 +150,14 @@ def edit_CU(request, id):
             return redirect('index_CU', id=lucrare.id)
         else:
             print(form.errors)
-            return render(request, 'CU/edit.html', {
+            return render(request, 'StudiiFezabilitate/CU/edit.html', {
                 'form': form,
                 'lucrare': lucrare
             })
 
     else:
         form = CertificatUrbanismForm(instance=certificat_urbanism)
-    return render(request, 'CU/edit.html', {
+    return render(request, 'StudiiFezabilitate/CU/edit.html', {
         'form': form,
         'lucrare': lucrare
     })
@@ -172,20 +172,20 @@ def add_Avize(request, id):
             aviz = form.save(commit=False)
             aviz.certificat_urbanism = certificat_urbanism
             aviz.save()
-            return render(request, 'CU/add_avize.html', {
+            return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
                 'form': AvizeCUForm(),
                 'success': True,
                 'lucrare': lucrare
             })
         else:
-            return render(request, 'CU/add_avize.html', {
+            return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
                 'form': form,
                 'lucrare': lucrare
             })
     else:
         form = AvizeCUForm()
 
-    return render(request, 'CU/add_avize.html', {
+    return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
         'form': form,
         'lucrare': lucrare
     })
@@ -198,7 +198,7 @@ def edit_Aviz(request, lucrare_id, id):
         form = AvizeCUForm(request.POST, instance=aviz)
         if form.is_valid():
             form.save()
-            return render(request, 'CU/edit_avize.html', {
+            return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
                 'form': form,
                 'success': True,
                 'lucrare': lucrare,
@@ -206,7 +206,7 @@ def edit_Aviz(request, lucrare_id, id):
             })
     else:
         form = AvizeCUForm(instance=aviz)
-    return render(request, 'CU/edit_avize.html', {
+    return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
         'form': form,
         'lucrare': lucrare,
         'aviz': aviz,
