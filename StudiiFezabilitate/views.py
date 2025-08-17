@@ -17,8 +17,16 @@ import StudiiFezabilitate.utils as utils
 
 
 def index(request):
+    q = request.GET.get('q', '').strip()
+    lucrari_qs = Lucrare.objects.filter(finalizata=False)
+    if q:
+        from django.db.models import Q
+        lucrari_qs = lucrari_qs.filter(
+            Q(nume_intern__icontains=q) | Q(
+                persoana_contact__nume__icontains=q)
+        )
     context = {
-        'lucrari': Lucrare.objects.filter(finalizata=False).order_by('-id'),
+        'lucrari': lucrari_qs.order_by('-id'),
     }
     return render(request, 'StudiiFezabilitate/index.html', context)
 
