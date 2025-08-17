@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator, MaxValueValidator, FileExtens
 
 import os
 import magic
+import datetime
 
 
 # Create your models here.
@@ -588,3 +589,16 @@ class AvizeCU(models.Model):
 
     def __str__(self):
         return f"{self.nume_aviz.nume} pentru {self.certificat_urbanism.lucrare.nume_intern}"
+
+    @property
+    def is_overdue(self) -> bool:
+        """Returnează True dacă au trecut mai mult de 30 de zile de la data depunerii și avizul nu este primit."""
+        if self.primit:
+            return False
+        if not self.data_depunere:
+            return False
+        try:
+            today = datetime.date.today()
+        except Exception:
+            return False
+        return (today - self.data_depunere).days > 30

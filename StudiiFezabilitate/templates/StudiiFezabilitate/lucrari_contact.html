@@ -58,7 +58,13 @@
                             <tbody>
                                 {% for aviz in avize %}
                                 <tr>
-                                    <td>{{aviz.nume_aviz}}</td>
+                                    <td>
+                                        {% if aviz.is_overdue %}
+                                        <span class="text-danger">{{ aviz.nume_aviz }}</span>
+                                        {% else %}
+                                        {{ aviz.nume_aviz }}
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a class="btn btn-primary me-1 btn-sm" href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
                                             Generează Aviz
