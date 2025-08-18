@@ -26,7 +26,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_Orange_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Iasi":
                 return iasi.aviz_Cultura_Iasi(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Iasi":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return iasi.aviz_HCL_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Apavital":
                 return iasi.aviz_Apavital(lucrare_id, id_aviz)
@@ -74,7 +86,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_Orange_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Neamt":
                 return neamt.aviz_Cultura_Neamt(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Neamt":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return neamt.aviz_HCL_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ApaServ":
                 return neamt.aviz_ApaServ(lucrare_id, id_aviz)
@@ -108,7 +132,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.aviz_GN_Delgaz_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange - Bacau":
                 return bacau.aviz_Orange_Bacau(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Bacau":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return bacau.aviz_HCL_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz RAJA":
                 return bacau.aviz_RAJA(lucrare_id, id_aviz)
@@ -144,7 +180,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_GN_Delgaz_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange - Suceava":
                 return suceava.aviz_Orange_Suceava(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Suceava":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return suceava.aviz_HCL_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ACET":
                 return suceava.aviz_ACET(lucrare_id, id_aviz)
@@ -170,7 +218,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_Orange_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Cultura - Botosani":
                 return botosani.aviz_Cultura_Botosani(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Botosani":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return botosani.aviz_HCL_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz NOVA ApaServ":
                 return botosani.aviz_ApaServ(lucrare_id, id_aviz)
@@ -180,6 +240,10 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_MApN_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Modern Calor SA":
                 return botosani.aviz_Modern_Calor(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Acord CJ Botosani":
+                return botosani.acord_CJ_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Acord Club Sportiv Botosani":
+                return botosani.acord_Club_Sportiv_Botosani(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
@@ -194,7 +258,19 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return vaslui.aviz_GN_Delgaz_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz Orange - Vaslui":
                 return vaslui.aviz_Orange_Vaslui(lucrare_id, id_aviz)
-            elif avizCU.nume_aviz.nume == "Aviz HCL - Vaslui":
+            elif avizCU.nume_aviz.nume == "Aviz HCL":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 2":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 3":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 4":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 5":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 6":
+                return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz HCL - UAT 7":
                 return vaslui.aviz_HCL_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz DIGI - Vaslui":
                 return vaslui.aviz_DIGI_Vaslui(lucrare_id, id_aviz)
