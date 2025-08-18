@@ -50,12 +50,12 @@
                                         <table class="table table-hover table-sm table-avize" style="table-layout: fixed; width: 100%">
                                             <colgroup>
                                                 <col style="width: 20%"><!-- Aviz -->
-                                                <col style="width: 12%"><!-- GENEREAZĂ -->
+                                                <col style="width: 9%"><!-- GENEREAZĂ -->
                                                 <col style="width: 8%"><!-- Depus -->
                                                 <col style="width: 12%"><!-- Data depunerii -->
                                                 <col style="width: 8%"><!-- Primit -->
                                                 <col style="width: 30%"><!-- Detalii -->
-                                                <col style="width: 10%"><!-- ACȚIUNI -->
+                                                <col style="width: 13%"><!-- ACȚIUNI -->
                                             </colgroup>
                                             <thead>
                                                 <tr>
@@ -80,7 +80,7 @@
                                                     </td>
                                                     <td>
                                                         <a class="btn btn-primary me-1 btn-sm" href="{% url 'genereaza_aviz' lucrare.id aviz.id %}">
-                                                            Generează Aviz
+                                                            Generează
                                                         </a>
                                                     </td>
                                                     <td>{% if aviz.depus %}✅ Da{% else %}❌ Nu{% endif %}</td>
