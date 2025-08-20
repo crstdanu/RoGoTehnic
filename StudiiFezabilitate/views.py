@@ -194,14 +194,24 @@ def add_Avize(request, id):
     if request.method == 'POST':
         form = AvizeCUForm(request.POST)
         if form.is_valid():
-            aviz = form.save(commit=False)
-            aviz.certificat_urbanism = certificat_urbanism
-            aviz.save()
-            return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
-                'form': AvizeCUForm(),
-                'success': True,
-                'lucrare': lucrare
-            })
+            # Creează sau reutilizează înregistrarea existentă (evită duplicatele)
+            cleaned = form.cleaned_data
+            nume_aviz = cleaned.get('nume_aviz')
+            defaults = {k: v for k, v in cleaned.items() if k != 'nume_aviz'}
+
+            obj, created = AvizeCU.objects.get_or_create(
+                certificat_urbanism=certificat_urbanism,
+                nume_aviz=nume_aviz,
+                defaults=defaults,
+            )
+
+            if created:
+                messages.success(request, "Avizul a fost adăugat.")
+            else:
+                messages.info(request, "Avizul există deja pentru acest certificat.")
+
+            # PRG: redirecționează pentru a evita re-trimiterea formularului la refresh
+            return redirect('index_CU', id=lucrare.id)
         else:
             return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
                 'form': form,
