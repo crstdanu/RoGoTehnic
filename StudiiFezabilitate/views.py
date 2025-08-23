@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 import os
 import tempfile
@@ -26,8 +27,19 @@ def index_SF(request):
             Q(nume_intern__icontains=q) | Q(
                 persoana_contact__nume__icontains=q)
         )
+    lucrari_qs = lucrari_qs.order_by('-id')
+
+    # Paginare: 50 pe pagină
+    paginator = Paginator(lucrari_qs, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'lucrari': lucrari_qs.order_by('-id'),
+        'lucrari': page_obj.object_list,
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'is_paginated': page_obj.has_other_pages(),
+        'q': q,
     }
     return render(request, 'StudiiFezabilitate/index_lucrare_SF.html', context)
 

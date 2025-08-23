@@ -28,12 +28,6 @@
                             <i class="fa-solid fa-gauge-high fa-lg"></i> Dashboard
                         </a>
                     </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'index' %}">
-                            <i class="fa-solid fa-list fa-lg"></i> Toate lucrările
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'add_lucrare' %}">
                             <i class="fa-solid fa-plus fa-lg"></i> Adaugă lucrare
@@ -95,27 +89,48 @@
         document.addEventListener('DOMContentLoaded', function () {
             const judetSelect = document.getElementById('id_judet');
             const localitateSelect = document.getElementById('id_localitate');
+            const getLocalitatiUrl = "{% url 'get_localitati' %}";
 
             // Verifică dacă ambele elemente există
             if (judetSelect && localitateSelect) {
                 // Funcție pentru a actualiza opțiunile pentru localități
                 function updateLocalitati() {
                     const judetId = judetSelect.value;
+                    const desiredSelectedId = localitateSelect.dataset.selected || (window.selectedLocalitateId || '');
 
                     // Golește select-ul pentru localități
                     localitateSelect.innerHTML = '<option value="">---------</option>';
 
                     if (judetId) {
-                        // Fetch localitățile asociate județului
-                        fetch(`/ajax/get_localitati/?judet_id=${judetId}`)
-                            .then(response => response.json())
+                        // Fetch localitățile asociate județului (cu URL reversat și tratare erori)
+                        const url = `${getLocalitatiUrl}?judet_id=${encodeURIComponent(judetId)}`;
+                        fetch(url)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP ${response.status}`);
+                                }
+                                return response.json();
+                            })
                             .then(data => {
                                 data.forEach(item => {
                                     const option = document.createElement('option');
-                                    option.value = item.id;
+                                    option.value = String(item.id);
                                     option.textContent = item.text;
                                     localitateSelect.appendChild(option);
                                 });
+
+                                // Preselectează localitatea curentă (dacă e disponibilă)
+                                if (desiredSelectedId) {
+                                    const val = String(desiredSelectedId);
+                                    const hasOption = Array.from(localitateSelect.options).some(opt => opt.value === val);
+                                    if (hasOption) {
+                                        localitateSelect.value = val;
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Eroare la încărcarea localităților:', err);
+                                alert('Nu s-au putut încărca localitățile. Vă rugăm reîncercați.');
                             });
                     }
                 }

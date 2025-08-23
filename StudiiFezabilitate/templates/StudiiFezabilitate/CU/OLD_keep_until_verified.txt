@@ -1,1 +1,0 @@
-This folder contained legacy templates (base.html, index.html, add.html, edit.html) for CU. They have been replaced by base_CU_SF.html, index_CU_SF.html, add_CU_SF.html, and edit_CU_SF.html. If everything works fine, you can delete this note and remove the old files.
