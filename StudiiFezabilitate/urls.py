@@ -11,7 +11,7 @@ urlpatterns = [
          views.dd_avize_intarziate, name='dd_avize_intarziate'),
     path('dashboard/lucrari-finalizate/',
          views.dd_lucrari_finalizate, name='dd_lucrari_finalizate'),
-    path('', views.index, name='index'),
+    path('', views.index_SF, name='index'),
     path('contact/<str:nume>/', views.lucrari_pe_contact, name='lucrari_contact'),
     path('<int:id>', views.view_lucrare, name='view_lucrare'),
     path('add/', views.add, name='add_lucrare'),

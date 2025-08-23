@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
+from django.db.models import Q
 
 import os
 import tempfile
@@ -17,11 +18,10 @@ import datetime
 # Create your views here.
 
 
-def index(request):
+def index_SF(request):
     q = request.GET.get('q', '').strip()
     lucrari_qs = Lucrare.objects.filter(finalizata=False)
     if q:
-        from django.db.models import Q
         lucrari_qs = lucrari_qs.filter(
             Q(nume_intern__icontains=q) | Q(
                 persoana_contact__nume__icontains=q)
