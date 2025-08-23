@@ -130,44 +130,20 @@ def lucrari_pe_contact(request, nume: str):
     return render(request, 'StudiiFezabilitate/lucrari_contact.html', context)
 
 
-def view_lucrare(request, id):
-    lucrare = Lucrare.objects.get(pk=id)
-    return HttpResponseRedirect(reverse('index'))
+# def view_lucrare_SF(request, id):
+#     lucrare = Lucrare.objects.get(pk=id)
+#     return HttpResponseRedirect(reverse('index'))
 
 
-def add(request):
+def add_lucrare_SF(request) -> HttpResponse:
     if request.method == 'POST':
         form = LucrareForm(request.POST)
         if form.is_valid():
-            new_nume = form.cleaned_data['nume']
-            new_nume_intern = form.cleaned_data['nume_intern']
-            new_judet = form.cleaned_data['judet']
-            new_localitate = form.cleaned_data['localitate']
-            new_adresa = form.cleaned_data['adresa']
-            new_firma_proiectare = form.cleaned_data['firma_proiectare']
-            new_beneficiar = form.cleaned_data['beneficiar']
-            new_lot = form.cleaned_data['lot']
-            new_persoana_contact = form.cleaned_data['persoana_contact']
-            new_finalizata = form.cleaned_data['finalizata']
-
-            new_lucrare = Lucrare(
-                nume=new_nume,
-                nume_intern=new_nume_intern,
-                judet=new_judet,
-                localitate=new_localitate,
-                adresa=new_adresa,
-                firma_proiectare=new_firma_proiectare,
-                beneficiar=new_beneficiar,
-                lot=new_lot,
-                persoana_contact=new_persoana_contact,
-                finalizata=new_finalizata
-            )
-
-            new_lucrare.save()
-            return render(request, 'StudiiFezabilitate/add.html', {
-                'form': LucrareForm(),
-                'success': True
-            })
+            # Salvează direct obiectul folosind ModelForm (evită maparea manuală)
+            lucrare = form.save()
+            # PRG: Redirect după succes pentru a evita re-trimiterea formularului
+            messages.success(request, "Lucrarea a fost adăugată.")
+            return redirect('index')
         else:
             return render(request, 'StudiiFezabilitate/add.html', {
                 'form': form
@@ -175,7 +151,7 @@ def add(request):
     else:
         form = LucrareForm()
     return render(request, 'StudiiFezabilitate/add.html', {
-        'form': LucrareForm()
+        'form': form
     })
 
 

@@ -13,8 +13,8 @@ urlpatterns = [
          views.dd_lucrari_finalizate, name='dd_lucrari_finalizate'),
     path('', views.index_SF, name='index'),
     path('contact/<str:nume>/', views.lucrari_pe_contact, name='lucrari_contact'),
-    path('<int:id>', views.view_lucrare, name='view_lucrare'),
-    path('add/', views.add, name='add_lucrare'),
+    #     path('<int:id>', views.view_lucrare_SF, name='view_lucrare'),
+    path('add/', views.add_lucrare_SF, name='add_lucrare'),
     path('edit/<int:id>/', views.edit, name='edit_lucrare'),
     path('delete/<int:id>/', views.delete, name='delete_lucrare'),
     # CU
