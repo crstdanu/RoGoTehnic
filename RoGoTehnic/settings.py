@@ -104,10 +104,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ro'
 
 TIME_ZONE = 'UTC'
 
+# activează traducerile Django (mesaje built-in vor fi în română când disponibile)
 USE_I18N = True
 
 USE_TZ = True

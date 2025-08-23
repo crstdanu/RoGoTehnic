@@ -426,9 +426,19 @@ class Lucrare(models.Model):
         ordering = ['nume_intern']
 
     def clean(self):
-        if self.localitate and self.judet and self.localitate.judet != self.judet:
-            raise ValidationError(
-                {'localitate': "Localitatea selectata nu aparține județului ales."})
+        """Validează coerența județ/localitate fără a accesa relații ne-setate.
+
+        Folosește *_id pentru a evita RelatedObjectDoesNotExist pe formulare incomplete.
+        """
+        if self.localitate_id and self.judet_id:
+            try:
+                loc_judet_id = Localitate.objects.only(
+                    'judet_id').get(pk=self.localitate_id).judet_id
+            except Localitate.DoesNotExist:
+                loc_judet_id = None
+            if loc_judet_id is not None and loc_judet_id != self.judet_id:
+                raise ValidationError(
+                    {'localitate': "Localitatea selectată nu aparține județului ales."})
 
     def save(self, *args, **kwargs):
         if self.pk:  # Dacă lucrarea există deja în baza de date
