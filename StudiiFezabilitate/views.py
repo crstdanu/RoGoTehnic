@@ -29,7 +29,7 @@ def index_SF(request):
     context = {
         'lucrari': lucrari_qs.order_by('-id'),
     }
-    return render(request, 'StudiiFezabilitate/index.html', context)
+    return render(request, 'StudiiFezabilitate/index_lucrare_SF.html', context)
 
 
 def dashboard(request):
@@ -145,12 +145,12 @@ def add_lucrare_SF(request) -> HttpResponse:
             messages.success(request, "Lucrarea a fost adăugată.")
             return redirect('index')
         else:
-            return render(request, 'StudiiFezabilitate/add.html', {
+            return render(request, 'StudiiFezabilitate/add_lucrare_SF.html', {
                 'form': form
             })
     else:
         form = LucrareForm()
-    return render(request, 'StudiiFezabilitate/add.html', {
+    return render(request, 'StudiiFezabilitate/add_lucrare_SF.html', {
         'form': form
     })
 
@@ -161,14 +161,14 @@ def edit(request, id):
         form = LucrareForm(request.POST, instance=lucrare)
         if form.is_valid():
             form.save()
-            return render(request, 'StudiiFezabilitate/edit.html', {
+            return render(request, 'StudiiFezabilitate/edit_lucrare_SF.html', {
                 'form': form,  # LucrareForm(instance=lucrare)
                 'success': True
             })
     else:
         lucrare = Lucrare.objects.get(pk=id)
         form = LucrareForm(instance=lucrare)
-    return render(request, 'StudiiFezabilitate/edit.html', {
+    return render(request, 'StudiiFezabilitate/edit_lucrare_SF.html', {
         'form': form
     })
 
