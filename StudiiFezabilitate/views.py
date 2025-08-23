@@ -187,7 +187,7 @@ def index_CU(request, id):
     except CertificatUrbanism.DoesNotExist:
         certificat_urbanism = None
         avize = []
-    return render(request, 'StudiiFezabilitate/CU/index.html', {
+    return render(request, 'StudiiFezabilitate/CU/index_CU_SF.html', {
         'avize': avize,
         'certificat_urbanism': certificat_urbanism,
         'lucrare': Lucrare.objects.get(pk=id),
@@ -203,20 +203,19 @@ def add_CU(request, id):
             certificat_urbanism = form.save(commit=False)
             certificat_urbanism.lucrare = lucrare  # Asignează lucrarea existentă
             certificat_urbanism.save()  # Salvează în baza de date
-
-            return render(request, 'StudiiFezabilitate/CU/add.html', {
+            return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
                 'form': CertificatUrbanismForm(),
                 'success': True,
                 'lucrare': lucrare
             })
         else:
-            return render(request, 'StudiiFezabilitate/CU/add.html', {
+            return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
                 'form': form,
                 'lucrare': lucrare,
             })
     else:
         form = CertificatUrbanismForm()
-    return render(request, 'StudiiFezabilitate/CU/add.html', {
+    return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
         'form': form,
         'lucrare': lucrare,
     })
@@ -233,14 +232,14 @@ def edit_CU(request, id):
             return redirect('index_CU', id=lucrare.id)
         else:
             print(form.errors)
-            return render(request, 'StudiiFezabilitate/CU/edit.html', {
+            return render(request, 'StudiiFezabilitate/CU/edit_CU_SF.html', {
                 'form': form,
                 'lucrare': lucrare
             })
 
     else:
         form = CertificatUrbanismForm(instance=certificat_urbanism)
-    return render(request, 'StudiiFezabilitate/CU/edit.html', {
+    return render(request, 'StudiiFezabilitate/CU/edit_CU_SF.html', {
         'form': form,
         'lucrare': lucrare
     })

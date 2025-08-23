@@ -1,0 +1,607 @@
+{% extends "StudiiFezabilitate/CU/base_CU_SF.html" %}
+
+
+{% block body %}
+<h3 class="text-center m-4">Editează Certificatul de urbanism</h3>
+{% if success %}
+<div class="alert alert-success" role="alert">
+    Certificatul de urbanism a fost editat cu succes!
+    <a href="{% url 'index_CU' lucrare.id %}" class="alert-link">Mergi la pagina principală.</a>
+</div>
+{% else %}
+<div class="row justify-content-center">
+    <div class="col-10">
+        <div class="card bg-light mb-3">
+            <div class="card-header">
+                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează Certificatul de urbanism
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" class="p-4 border rounded shadow bg-light" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 p-3">
+                            <!-- Numar -->
+                            <div class="form-group">
+                                <label for="{{ form.numar.id_for_label }}">{{ form.numar.label }}</label>
+                                {{ form.numar }}
+                                {% if form.numar.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.numar.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Data -->
+                            <div class="form-group">
+                                <label for="{{ form.data.id_for_label }}">{{ form.data.label }}</label>
+                                {{ form.data }}
+                                {% if form.data.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.data.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Emitent -->
+                            <div class="form-group">
+                                <label for="{{ form.emitent.id_for_label }}">{{ form.emitent.label }}</label>
+                                {{ form.emitent }}
+                                {% if form.emitent.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.emitent.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Nume lucrare -->
+                            <div class="form-group">
+                                <label for="{{ form.nume.id_for_label }}">{{ form.nume.label }}</label>
+                                {{ form.nume }}
+                                {% if form.nume.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.nume.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Adresa lucrare -->
+                            <div class="form-group">
+                                <label for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}</label>
+                                {{ form.adresa }}
+                                {% if form.adresa.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.adresa.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Valabilitate -->
+                            <div class="form-group">
+                                <label for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}</label>
+                                {{ form.valabilitate }}
+                                {% if form.valabilitate.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.valabilitate.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Descrierea proiectului -->
+                            <div class="form-group">
+                                <label for="{{ form.descrierea_proiectului.id_for_label }}">
+                                    {{ form.descrierea_proiectului.label }}
+                                </label>
+                                {{ form.descrierea_proiectului }}
+                                {% if form.descrierea_proiectului.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.descrierea_proiectului.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Inginer intocmit -->
+                            <div class="form-group">
+                                <label for="{{ form.inginer_intocmit.id_for_label }}">
+                                    {{ form.inginer_intocmit.label}}
+                                </label>
+                                {{ form.inginer_intocmit }}
+                                {% if form.inginer_intocmit.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.inginer_intocmit.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Inginer verificat -->
+                            <div class="form-group">
+                                <label for="{{ form.inginer_verificat.id_for_label }}">
+                                    {{ form.inginer_verificat.label}}
+                                </label>
+                                {{ form.inginer_verificat }}
+                                {% if form.inginer_verificat.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.inginer_verificat.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Suprafata ocupata -->
+                            <div class="form-group">
+                                <label for="{{ form.suprafata_ocupata.id_for_label }}">
+                                    {{ form.suprafata_ocupata.label }}
+                                </label>
+                                {{ form.suprafata_ocupata }}
+                                {% if form.suprafata_ocupata.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.suprafata_ocupata.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <!-- Lungime traseu -->
+                            <div class="form-group">
+                                <label for="{{ form.lungime_traseu.id_for_label }}">
+                                    {{ form.lungime_traseu.label}}
+                                </label>
+                                {{ form.lungime_traseu }}
+                                {% if form.lungime_traseu.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.lungime_traseu.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6 p-3">
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Certificat de urbanism -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_CU.id_for_label }}" class="form-label">
+                                    {{ form.cale_CU.label }}
+                                </label>
+
+                                {% if form.instance.cale_CU %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_CU' lucrare.id %}"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_CU.name }}
+                                            <i class="fas fa-download ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel
+                                        existent.</small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_CU }}
+                                    {% if form.cale_CU.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_CU.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Plan de incadrare CU -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_plan_incadrare_CU.id_for_label }}" class="form-label">
+                                    {{ form.cale_plan_incadrare_CU.label }}
+                                </label>
+
+                                {% if form.instance.cale_plan_incadrare_CU %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_plan_incadrare_CU.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_plan_incadrare_CU.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel
+                                        existent.</small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_plan_incadrare_CU }}
+                                    {% if form.cale_plan_incadrare_CU.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_plan_incadrare_CU.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Plan de situatie CU -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_plan_situatie_CU.id_for_label }}" class="form-label">
+                                    {{ form.cale_plan_situatie_CU.label }}
+                                </label>
+
+                                {% if form.instance.cale_plan_situatie_CU %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_plan_situatie_CU.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_plan_situatie_CU.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel
+                                        existent.</small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_plan_situatie_CU }}
+                                    {% if form.cale_plan_situatie_CU.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_plan_situatie_CU.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Memoriu tehnic CU -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_memoriu_tehnic_CU.id_for_label }}" class="form-label">
+                                    {{ form.cale_memoriu_tehnic_CU.label }}
+                                </label>
+
+                                {% if form.instance.cale_memoriu_tehnic_CU %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_memoriu_tehnic_CU.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_memoriu_tehnic_CU.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_memoriu_tehnic_CU }}
+                                    {% if form.cale_memoriu_tehnic_CU.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_memoriu_tehnic_CU.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Acte beneficiar -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_acte_beneficiar.id_for_label }}" class="form-label">
+                                    {{ form.cale_acte_beneficiar.label }}
+                                </label>
+
+                                {% if form.instance.cale_acte_beneficiar %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_acte_beneficiar.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_acte_beneficiar.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel
+                                        existent.</small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_acte_beneficiar }}
+                                    {% if form.cale_acte_beneficiar.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_acte_beneficiar.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Acte facturare -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_acte_facturare.id_for_label }}" class="form-label">
+                                    {{ form.cale_acte_facturare.label }}
+                                </label>
+
+                                {% if form.instance.cale_acte_facturare %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_acte_facturare.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_acte_facturare.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">Încărcați un nou fișier doar dacă doriți să-l
+                                        înlocuiți pe
+                                        cel
+                                        existent.</small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_acte_facturare }}
+                                    {% if form.cale_acte_facturare.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_acte_facturare.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Chitanță APM -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_chitanta_APM.id_for_label }}" class="form-label">
+                                    {{ form.cale_chitanta_APM.label }}
+                                </label>
+
+                                {% if form.instance.cale_chitanta_APM %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_chitanta_APM.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_chitanta_APM.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l
+                                        înlocuiți pe cel existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_chitanta_APM }}
+                                    {% if form.cale_chitanta_APM.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_chitanta_APM.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Plan de situație - LA SCARA -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_plan_situatie_la_scara.id_for_label }}" class="form-label">
+                                    {{ form.cale_plan_situatie_la_scara.label }}
+                                </label>
+
+                                {% if form.instance.cale_plan_situatie_la_scara %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_plan_situatie_la_scara.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_plan_situatie_la_scara.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l
+                                        înlocuiți pe cel existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_plan_situatie_la_scara }}
+                                    {% if form.cale_plan_situatie_la_scara.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_plan_situatie_la_scara.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Plan de situație - DWG -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_plan_situatie_DWG.id_for_label }}" class="form-label">
+                                    {{ form.cale_plan_situatie_DWG.label }}
+                                </label>
+
+                                {% if form.instance.cale_plan_situatie_DWG %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_plan_situatie_DWG.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_plan_situatie_DWG.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe cel
+                                        existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_plan_situatie_DWG }}
+                                    {% if form.cale_plan_situatie_DWG.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_plan_situatie_DWG.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Extrase CF -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_extrase_CF.id_for_label }}" class="form-label">
+                                    {{ form.cale_extrase_CF.label }}
+                                </label>
+
+                                {% if form.instance.cale_extrase_CF %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_extrase_CF.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_extrase_CF.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l înlocuiți pe
+                                        cel
+                                        existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_extrase_CF }}
+                                    {% if form.cale_extrase_CF.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_extrase_CF.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Aviz GIS -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_aviz_GIS.id_for_label }}" class="form-label">
+                                    {{ form.cale_aviz_GIS.label }}
+                                </label>
+
+                                {% if form.instance.cale_aviz_GIS %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_aviz_GIS.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_aviz_GIS.name }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l înlocuiți
+                                        pe
+                                        cel
+                                        existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_aviz_GIS }}
+                                    {% if form.cale_aviz_GIS.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_aviz_GIS.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Separator -->
+                            <hr class="my-4">
+
+                            <!-- Cale Chitanță DSP -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_chitanta_DSP.id_for_label }}" class="form-label">
+                                    {{ form.cale_chitanta_DSP.label }}
+                                </label>
+
+                                {% if form.instance.cale_chitanta_DSP %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{{ form.instance.cale_chitanta_DSP.url }}" target="_blank"
+                                            class="text-decoration-none">
+                                            {{ form.instance.cale_chitanta_DSP.name
+                                            }}
+                                            <i class="fas fa-external-link-alt ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți
+                                        să-l
+                                        înlocuiți
+                                        pe
+                                        cel
+                                        existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div class="custom-file">
+                                    {{ form.cale_chitanta_DSP }}
+                                    {% if form.cale_chitanta_DSP.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_chitanta_DSP.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Butoanele de jos -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Editează</button>
+                        <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary">Anulează</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endif %}
+{% endblock %}
