@@ -11,6 +11,7 @@ from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Loca
 from StudiiFezabilitate.forms import LucrareForm, CertificatUrbanismForm, AvizeCUForm
 
 import StudiiFezabilitate.utils as utils
+import datetime
 
 
 # Create your views here.
@@ -29,6 +30,87 @@ def index(request):
         'lucrari': lucrari_qs.order_by('-id'),
     }
     return render(request, 'StudiiFezabilitate/index.html', context)
+
+
+def dashboard(request):
+    """Afișează un mic dashboard cu 3 carduri: CU care expiră <30 zile, Avize întârziate, Lucrări finalizate."""
+    today = datetime.date.today()
+
+    # Lucrări finalizate
+    finalizate_count = Lucrare.objects.filter(finalizata=True).count()
+
+    # Avize întârziate (>30 zile de la depunere, neprimit), doar pentru lucrări active
+    from django.db.models import Q
+    avize_intarziate_count = AvizeCU.objects.filter(
+        primit=False,
+        data_depunere__lt=today - datetime.timedelta(days=30),
+        certificat_urbanism__lucrare__finalizata=False,
+    ).select_related('certificat_urbanism', 'certificat_urbanism__lucrare').count()
+
+    # CU care expiră în <30 zile, doar pentru lucrări active
+    cu_qs = CertificatUrbanism.objects.select_related('lucrare').filter(
+        lucrare__finalizata=False
+    )
+    cu_expira_30_count = 0
+    for cu in cu_qs:
+        days = getattr(cu, 'days_to_expiry', None)
+        if days is None:
+            continue
+        if 0 <= days < 30:
+            cu_expira_30_count += 1
+
+    context = {
+        'cu_expira_30_count': cu_expira_30_count,
+        'avize_intarziate_count': avize_intarziate_count,
+        'finalizate_count': finalizate_count,
+    }
+    return render(request, 'StudiiFezabilitate/Dashboard/dashboard.html', context)
+
+
+def dd_cu_expira(request):
+    """Listă cu lucrările active ale căror CU expiră în următoarele 30 de zile."""
+    today = datetime.date.today()
+    cu_qs = CertificatUrbanism.objects.select_related('lucrare', 'emitent').filter(
+        lucrare__finalizata=False
+    )
+    rows = []
+    for cu in cu_qs:
+        days = getattr(cu, 'days_to_expiry', None)
+        if days is None:
+            continue
+        if 0 <= days < 30:
+            rows.append((cu, days))
+    # sort by days ascending (soonest first)
+    rows.sort(key=lambda t: t[1])
+    context = {'rows': rows}
+    return render(request, 'StudiiFezabilitate/Dashboard/dashboard_cu_expira.html', context)
+
+
+def dd_avize_intarziate(request):
+    """Listă de avize întârziate, grupate pe lucrare (doar lucrări active)."""
+    today = datetime.date.today()
+    qs = AvizeCU.objects.select_related('certificat_urbanism', 'certificat_urbanism__lucrare', 'nume_aviz').filter(
+        primit=False,
+        data_depunere__lt=today - datetime.timedelta(days=30),
+        certificat_urbanism__lucrare__finalizata=False,
+    )
+    # group by lucrare
+    grouped = {}
+    for a in qs:
+        l = a.certificat_urbanism.lucrare
+        grouped.setdefault(l, []).append(a)
+    # sort lucrare by number of delayed avize desc
+    items = sorted(grouped.items(), key=lambda kv: len(kv[1]), reverse=True)
+    context = {'items': items}
+    return render(request, 'StudiiFezabilitate/Dashboard/dashboard_avize_intarziate.html', context)
+
+
+def dd_lucrari_finalizate(request):
+    """Listă cu lucrările finalizate, ordonate cu ultima finalizată prima, afișează data_finalizare."""
+    lucrari = Lucrare.objects.filter(
+        finalizata=True).order_by('-data_finalizare', '-id')
+    context = {'lucrari': lucrari}
+    return render(request, 'StudiiFezabilitate/Dashboard/dashboard_lucrari_finalizate.html', context)
 
 
 def lucrari_pe_contact(request, nume: str):
@@ -208,7 +290,8 @@ def add_Avize(request, id):
             if created:
                 messages.success(request, "Avizul a fost adăugat.")
             else:
-                messages.info(request, "Avizul există deja pentru acest certificat.")
+                messages.info(
+                    request, "Avizul există deja pentru acest certificat.")
 
             # PRG: redirecționează pentru a evita re-trimiterea formularului la refresh
             return redirect('index_CU', id=lucrare.id)

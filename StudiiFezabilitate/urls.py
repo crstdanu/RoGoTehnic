@@ -5,6 +5,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('dashboard/cu-expira/', views.dd_cu_expira, name='dd_cu_expira'),
+    path('dashboard/avize-intarziate/',
+         views.dd_avize_intarziate, name='dd_avize_intarziate'),
+    path('dashboard/lucrari-finalizate/',
+         views.dd_lucrari_finalizate, name='dd_lucrari_finalizate'),
     path('', views.index, name='index'),
     path('contact/<str:nume>/', views.lucrari_pe_contact, name='lucrari_contact'),
     path('<int:id>', views.view_lucrare, name='view_lucrare'),

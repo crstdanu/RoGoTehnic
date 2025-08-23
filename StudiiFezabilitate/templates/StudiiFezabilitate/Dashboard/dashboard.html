@@ -1,0 +1,56 @@
+{% extends "StudiiFezabilitate/base.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <h3 class="m-4">Panou de control</h3>
+    <div class="row ms-4 me-4">
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'dd_cu_expira' %}" class="text-decoration-none">
+                <div class="card border-warning h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-1"><i class="fa-solid fa-calendar-exclamation me-2"></i> CU expiră &lt; 30 zile</h5>
+                                <small class="text-muted">doar lucrări active</small>
+                            </div>
+                            <span class="badge bg-warning text-dark fs-5">{{ cu_expira_30_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'dd_avize_intarziate' %}" class="text-decoration-none">
+                <div class="card border-danger h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-1"><i class="fa-solid fa-triangle-exclamation me-2"></i> Avize întârziate</h5>
+                                <small class="text-muted">depușe &gt;30 zile, neprimit</small>
+                            </div>
+                            <span class="badge bg-danger fs-5">{{ avize_intarziate_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'dd_lucrari_finalizate' %}" class="text-decoration-none">
+                <div class="card border-secondary h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-1"><i class="fa-solid fa-circle-check me-2"></i> Lucrări finalizate</h5>
+                                <small class="text-muted">toate</small>
+                            </div>
+                            <span class="badge bg-secondary fs-5">{{ finalizate_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

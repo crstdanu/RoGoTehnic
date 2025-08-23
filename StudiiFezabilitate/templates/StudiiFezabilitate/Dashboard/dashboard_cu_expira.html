@@ -1,0 +1,43 @@
+{% extends "StudiiFezabilitate/base.html" %}
+{% block body %}
+<div class="container-fluid">
+    <h3 class="m-4">CU care expiră în &lt; 30 zile</h3>
+    <div class="card ms-4 me-4 mb-4">
+        <div class="card-body">
+            {% if rows %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Lucrare</th>
+                            <th>Emitent</th>
+                            <th>Data CU</th>
+                            <th>Zile rămase</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cu, days in rows %}
+                        <tr>
+                            <td>{{ cu.lucrare.nume_intern }}</td>
+                            <td>{{ cu.emitent.nume }}</td>
+                            <td>{{ cu.data|date:"d.m.Y" }}</td>
+                            <td>
+                                <span class="badge rounded-pill {{ cu.expiry_badge_class }}">{{ cu.expiry_badge_text }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-primary btn-sm" href="{% url 'index_CU' cu.lucrare.id %}">Deschide</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-secondary">Nu există CUrente care expiră în următoarele 30 de zile.</div>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Înapoi</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

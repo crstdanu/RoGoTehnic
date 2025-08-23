@@ -1,0 +1,48 @@
+{% extends "StudiiFezabilitate/base.html" %}
+{% block body %}
+<div class="container-fluid">
+    <h3 class="m-4">Avize întârziate (grupate pe lucrare)</h3>
+    <div class="card ms-4 me-4 mb-4">
+        <div class="card-body">
+            {% if items %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Lucrare</th>
+                            <th>Nr. avize întârziate</th>
+                            <th>Detalii</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lucrare, avize in items %}
+                        <tr>
+                            <td class="fw-bold">{{ lucrare.nume_intern }}</td>
+                            <td>{{ avize|length }}</td>
+                            <td>
+                                <ul class="mb-0">
+                                    {% for a in avize %}
+                                    <li>
+                                        {{ a.nume_aviz.nume }} — depus {{ a.data_depunere|date:"d.m.Y" }}
+                                        {% if a.is_overdue %}<span class="text-danger">(întârziat)</span>{% endif %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-primary btn-sm" href="{% url 'index_CU' lucrare.id %}">Deschide</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-secondary">Nu există avize întârziate.</div>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Înapoi</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

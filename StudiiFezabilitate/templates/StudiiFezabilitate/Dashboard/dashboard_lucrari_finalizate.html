@@ -1,0 +1,41 @@
+{% extends "StudiiFezabilitate/base.html" %}
+{% block body %}
+<div class="container-fluid">
+    <h3 class="m-4">Lucrări finalizate</h3>
+    <div class="card ms-4 me-4 mb-4">
+        <div class="card-body">
+            {% if lucrari %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nume intern</th>
+                            <th>Lot</th>
+                            <th>Persoană contact</th>
+                            <th>Data finalizare</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lucrare in lucrari %}
+                        <tr>
+                            <td class="fw-bold">{{ lucrare.nume_intern }}</td>
+                            <td>{{ lucrare.lot }}</td>
+                            <td>{{ lucrare.persoana_contact }}</td>
+                            <td>{{ lucrare.data_finalizare|date:"d.m.Y" }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-primary btn-sm" href="{% url 'index_CU' lucrare.id %}">Deschide</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-secondary">Nu există lucrări finalizate.</div>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Înapoi</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

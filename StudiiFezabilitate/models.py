@@ -418,6 +418,7 @@ class Lucrare(models.Model):
     persoana_contact = models.ForeignKey(
         PersoanaContact, on_delete=models.PROTECT)
     finalizata = models.BooleanField(default=False)
+    data_finalizare = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Lucrare"
