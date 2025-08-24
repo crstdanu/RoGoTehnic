@@ -34,7 +34,7 @@
 
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label" for="{{ form.nume.id_for_label }}">{{ form.nume.label }}</label>
+                            <label class="form-label" for="{{ form.nume.id_for_label }}">{{ form.nume.label }}{% if form.nume.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.nume }}
                             {% if form.nume.errors %}
                             <div class="invalid-feedback">{{ form.nume.errors|striptags }}</div>
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="{{ form.nume_intern.id_for_label }}">{{ form.nume_intern.label }}</label>
+                            <label class="form-label" for="{{ form.nume_intern.id_for_label }}">{{ form.nume_intern.label }}{% if form.nume_intern.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.nume_intern }}
                             {% if form.nume_intern.errors %}
                             <div class="invalid-feedback">{{ form.nume_intern.errors|striptags }}</div>
@@ -56,14 +56,14 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.judet.id_for_label }}">{{ form.judet.label }}</label>
+                            <label class="form-label" for="{{ form.judet.id_for_label }}">{{ form.judet.label }}{% if form.judet.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.judet }}
                             {% if form.judet.errors %}
                             <div class="invalid-feedback">{{ form.judet.errors|striptags }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.localitate.id_for_label }}">{{ form.localitate.label }}</label>
+                            <label class="form-label" for="{{ form.localitate.id_for_label }}">{{ form.localitate.label }}{% if form.localitate.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.localitate }}
                             {% if form.localitate.errors %}
                             <div class="invalid-feedback">{{ form.localitate.errors|striptags }}</div>
@@ -71,7 +71,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}</label>
+                            <label class="form-label" for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}{% if form.adresa.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.adresa }}
                             {% if form.adresa.errors %}
                             <div class="invalid-feedback">{{ form.adresa.errors|striptags }}</div>
@@ -79,14 +79,14 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.firma_proiectare.id_for_label }}">{{ form.firma_proiectare.label }}</label>
+                            <label class="form-label" for="{{ form.firma_proiectare.id_for_label }}">{{ form.firma_proiectare.label }}{% if form.firma_proiectare.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.firma_proiectare }}
                             {% if form.firma_proiectare.errors %}
                             <div class="invalid-feedback">{{ form.firma_proiectare.errors|striptags }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.beneficiar.id_for_label }}">{{ form.beneficiar.label }}</label>
+                            <label class="form-label" for="{{ form.beneficiar.id_for_label }}">{{ form.beneficiar.label }}{% if form.beneficiar.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.beneficiar }}
                             {% if form.beneficiar.errors %}
                             <div class="invalid-feedback">{{ form.beneficiar.errors|striptags }}</div>
@@ -94,14 +94,14 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.lot.id_for_label }}">{{ form.lot.label }}</label>
+                            <label class="form-label" for="{{ form.lot.id_for_label }}">{{ form.lot.label }}{% if form.lot.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.lot }}
                             {% if form.lot.errors %}
                             <div class="invalid-feedback">{{ form.lot.errors|striptags }}</div>
                             {% endif %}
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.persoana_contact.id_for_label }}">{{ form.persoana_contact.label }}</label>
+                            <label class="form-label" for="{{ form.persoana_contact.id_for_label }}">{{ form.persoana_contact.label }}{% if form.persoana_contact.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.persoana_contact }}
                             {% if form.persoana_contact.errors %}
                             <div class="invalid-feedback">{{ form.persoana_contact.errors|striptags }}</div>

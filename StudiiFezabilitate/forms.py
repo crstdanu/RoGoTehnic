@@ -8,12 +8,34 @@ class BaseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             widget = field.widget
-            if 'class' not in widget.attrs:
-                widget.attrs['class'] = ''
-            widget.attrs['class'] += ' form-control'
-            # Adaugă is-invalid dacă există erori
-            if field_name in self.errors:
-                widget.attrs['class'] += ' is-invalid'
+            # Bootstrap 5: select -> form-select, checkbox -> form-check-input, rest -> form-control
+            existing_classes = widget.attrs.get('class', '').split()
+
+            # Decide baza în funcție de tipul widgetului
+            if isinstance(widget, (forms.Select, forms.SelectMultiple)):
+                base_class = 'form-select'
+                # elimină form-control dacă e setat din greșeală
+                existing_classes = [
+                    c for c in existing_classes if c != 'form-control']
+            elif isinstance(widget, forms.CheckboxInput):
+                base_class = 'form-check-input'
+                # elimină form-control/select eronate
+                existing_classes = [c for c in existing_classes if c not in (
+                    'form-control', 'form-select')]
+            else:
+                base_class = 'form-control'
+                # elimină form-select dacă a fost adăugat anterior
+                existing_classes = [
+                    c for c in existing_classes if c != 'form-select']
+
+            if base_class not in existing_classes:
+                existing_classes.append(base_class)
+
+            # Adaugă is-invalid dacă există erori pe câmp
+            if field_name in self.errors and 'is-invalid' not in existing_classes:
+                existing_classes.append('is-invalid')
+
+            widget.attrs['class'] = ' '.join(existing_classes).strip()
 
 
 class LucrareForm(BaseForm):
@@ -36,13 +58,13 @@ class LucrareForm(BaseForm):
         widgets = {
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele complet al lucrării'}),
             'nume_intern': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Introduceți numele scurt al lucrării'}),
-            'judet': forms.Select(attrs={'class': 'form-control'}),
-            'localitate': forms.Select(attrs={'class': 'form-control'}),
+            'judet': forms.Select(attrs={'class': 'form-select'}),
+            'localitate': forms.Select(attrs={'class': 'form-select'}),
             'adresa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Introduceți adresa (fără județ sau localitate)'}),
-            'firma_proiectare': forms.Select(attrs={'class': 'form-control'}),
-            'beneficiar': forms.Select(attrs={'class': 'form-control'}),
-            'lot': forms.Select(attrs={'class': 'form-control'}),
-            'persoana_contact': forms.Select(attrs={'class': 'form-control'}),
+            'firma_proiectare': forms.Select(attrs={'class': 'form-select'}),
+            'beneficiar': forms.Select(attrs={'class': 'form-select'}),
+            'lot': forms.Select(attrs={'class': 'form-select'}),
+            'persoana_contact': forms.Select(attrs={'class': 'form-select'}),
             'finalizata': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
@@ -105,13 +127,13 @@ class CertificatUrbanismForm(BaseForm):
         widgets = {
             'numar': forms.TextInput(attrs={'class': 'form-control'}),
             'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'emitent': forms.Select(attrs={'class': 'form-control'}),
+            'emitent': forms.Select(attrs={'class': 'form-select'}),
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele lucrării din Certificatul de Urbanism'}),
             'adresa': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți adresa lucrării din Certificatul de Urbanism'}),
             'valabilitate': forms.DateInput(attrs={'class': 'form-control'}),
             'descrierea_proiectului': forms.Textarea(attrs={'class': 'form-control', 'rows': 20, 'placeholder': 'Introduceți descrierea proiectului din Memoriul tehnic'}),
-            'inginer_intocmit': forms.Select(attrs={'class': 'form-control'}),
-            'inginer_verificat': forms.Select(attrs={'class': 'form-control'}),
+            'inginer_intocmit': forms.Select(attrs={'class': 'form-select'}),
+            'inginer_verificat': forms.Select(attrs={'class': 'form-select'}),
             'suprafata_ocupata': forms.NumberInput(attrs={'class': 'form-control'}),
             'lungime_traseu': forms.NumberInput(attrs={'class': 'form-control'}),
             'cale_CU': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
@@ -150,7 +172,7 @@ class AvizeCUForm(BaseForm):
         }
 
         widgets = {
-            'nume_aviz': forms.Select(attrs={'class': 'form-control'}),
+            'nume_aviz': forms.Select(attrs={'class': 'form-select'}),
             'depus': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'data_depunere': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'primit': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

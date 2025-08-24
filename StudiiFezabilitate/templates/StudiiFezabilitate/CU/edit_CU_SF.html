@@ -34,7 +34,7 @@
                         <div class="col-md-6 p-3">
                             <!-- Numar -->
                             <div class="form-group">
-                                <label for="{{ form.numar.id_for_label }}">{{ form.numar.label }}</label>
+                                <label for="{{ form.numar.id_for_label }}">{{ form.numar.label }}{% if form.numar.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.numar }}
                                 {% if form.numar.errors %}
                                 <div class="invalid-feedback d-block">
@@ -44,7 +44,7 @@
                             </div>
                             <!-- Data -->
                             <div class="form-group">
-                                <label for="{{ form.data.id_for_label }}">{{ form.data.label }}</label>
+                                <label for="{{ form.data.id_for_label }}">{{ form.data.label }}{% if form.data.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.data }}
                                 {% if form.data.errors %}
                                 <div class="invalid-feedback d-block">
@@ -54,7 +54,7 @@
                             </div>
                             <!-- Emitent -->
                             <div class="form-group">
-                                <label for="{{ form.emitent.id_for_label }}">{{ form.emitent.label }}</label>
+                                <label for="{{ form.emitent.id_for_label }}">{{ form.emitent.label }}{% if form.emitent.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.emitent }}
                                 {% if form.emitent.errors %}
                                 <div class="invalid-feedback d-block">
@@ -64,7 +64,7 @@
                             </div>
                             <!-- Nume lucrare -->
                             <div class="form-group">
-                                <label for="{{ form.nume.id_for_label }}">{{ form.nume.label }}</label>
+                                <label for="{{ form.nume.id_for_label }}">{{ form.nume.label }}{% if form.nume.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.nume }}
                                 {% if form.nume.errors %}
                                 <div class="invalid-feedback d-block">
@@ -74,7 +74,7 @@
                             </div>
                             <!-- Adresa lucrare -->
                             <div class="form-group">
-                                <label for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}</label>
+                                <label for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}{% if form.adresa.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.adresa }}
                                 {% if form.adresa.errors %}
                                 <div class="invalid-feedback d-block">
@@ -84,7 +84,7 @@
                             </div>
                             <!-- Valabilitate -->
                             <div class="form-group">
-                                <label for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}</label>
+                                <label for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}{% if form.valabilitate.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                                 {{ form.valabilitate }}
                                 {% if form.valabilitate.errors %}
                                 <div class="invalid-feedback d-block">
@@ -95,7 +95,7 @@
                             <!-- Descrierea proiectului -->
                             <div class="form-group">
                                 <label for="{{ form.descrierea_proiectului.id_for_label }}">
-                                    {{ form.descrierea_proiectului.label }}
+                                    {{ form.descrierea_proiectului.label }}{% if form.descrierea_proiectului.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}
                                 </label>
                                 {{ form.descrierea_proiectului }}
                                 {% if form.descrierea_proiectului.errors %}
@@ -107,7 +107,7 @@
                             <!-- Inginer intocmit -->
                             <div class="form-group">
                                 <label for="{{ form.inginer_intocmit.id_for_label }}">
-                                    {{ form.inginer_intocmit.label}}
+                                    {{ form.inginer_intocmit.label}}{% if form.inginer_intocmit.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}
                                 </label>
                                 {{ form.inginer_intocmit }}
                                 {% if form.inginer_intocmit.errors %}
@@ -119,7 +119,7 @@
                             <!-- Inginer verificat -->
                             <div class="form-group">
                                 <label for="{{ form.inginer_verificat.id_for_label }}">
-                                    {{ form.inginer_verificat.label}}
+                                    {{ form.inginer_verificat.label}}{% if form.inginer_verificat.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}
                                 </label>
                                 {{ form.inginer_verificat }}
                                 {% if form.inginer_verificat.errors %}
@@ -131,7 +131,7 @@
                             <!-- Suprafata ocupata -->
                             <div class="form-group">
                                 <label for="{{ form.suprafata_ocupata.id_for_label }}">
-                                    {{ form.suprafata_ocupata.label }}
+                                    {{ form.suprafata_ocupata.label }}{% if form.suprafata_ocupata.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}
                                 </label>
                                 {{ form.suprafata_ocupata }}
                                 {% if form.suprafata_ocupata.errors %}
@@ -143,7 +143,7 @@
                             <!-- Lungime traseu -->
                             <div class="form-group">
                                 <label for="{{ form.lungime_traseu.id_for_label }}">
-                                    {{ form.lungime_traseu.label}}
+                                    {{ form.lungime_traseu.label}}{% if form.lungime_traseu.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}
                                 </label>
                                 {{ form.lungime_traseu }}
                                 {% if form.lungime_traseu.errors %}
