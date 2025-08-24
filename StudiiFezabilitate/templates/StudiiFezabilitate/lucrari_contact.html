@@ -1,5 +1,16 @@
 {% extends "StudiiFezabilitate/base_lucrare_SF.html" %}
 
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb" class="bg-light py-2">
+    <div class="container">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Lucrări</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Persoană de contact: {{ filtru_contact }}</li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
 {% block body %}
 
 <div class="container-fluid">
