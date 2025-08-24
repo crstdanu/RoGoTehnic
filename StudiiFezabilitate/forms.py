@@ -70,12 +70,18 @@ class LucrareForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        instance = kwargs.get('instance')
+        # Folosește self.instance (setată de ModelForm) după super().__init__
+        instance = getattr(self, 'instance', None)
 
-        if instance and instance.judet:
-            # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
-            self.fields['localitate'].queryset = Localitate.objects.filter(
-                judet=instance.judet)
+        if instance and getattr(instance, 'pk', None):
+            if instance.judet_id:
+                # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
+                self.fields['localitate'].queryset = Localitate.objects.filter(
+                    judet=instance.judet)
+            if getattr(instance, 'localitate_id', None):
+                # Ajută JS-ul dependent să preselecteze valoarea existentă
+                self.fields['localitate'].widget.attrs['data-selected'] = str(
+                    instance.localitate_id)
 
     def clean(self):
         cleaned_data = super().clean()

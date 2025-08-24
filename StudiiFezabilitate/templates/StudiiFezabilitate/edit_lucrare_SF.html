@@ -1,5 +1,7 @@
 {% extends "StudiiFezabilitate/base_lucrare_SF.html" %}
 
+{% block title %}Editează lucrarea{% endblock %}
+
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb" class="bg-light py-2">
     <div class="container">
@@ -21,17 +23,113 @@
 </div>
 {% else %}
 <div class="row justify-content-center">
-    <div class="col-6">
+    <div class="col-12 col-md-8 col-lg-6">
         <div class="card bg-light mb-3">
             <div class="card-header">
                 <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează lucrarea
             </div>
             <div class="card-body">
-                <form action="" method="POST">
+                {# Erori non-câmp #}
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <form action="" method="POST" novalidate>
                     {% csrf_token %}
-                    {{form.as_p}}
-                    <button type="submit" class="btn btn-primary">Editează</button>
-                    <a href="{% url 'index' %}" class="btn btn-secondary">Anulează</a>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.nume.id_for_label }}">{{ form.nume.label }}{% if form.nume.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.nume }}
+                            {% if form.nume.errors %}
+                            <div class="invalid-feedback">{{ form.nume.errors|striptags }}</div>
+                            {% endif %}
+                            {% if form.nume.help_text %}
+                            <div class="form-text">{{ form.nume.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.nume_intern.id_for_label }}">{{ form.nume_intern.label }}{% if form.nume_intern.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.nume_intern }}
+                            {% if form.nume_intern.errors %}
+                            <div class="invalid-feedback">{{ form.nume_intern.errors|striptags }}</div>
+                            {% endif %}
+                            {% if form.nume_intern.help_text %}
+                            <div class="form-text">{{ form.nume_intern.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.judet.id_for_label }}">{{ form.judet.label }}{% if form.judet.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.judet }}
+                            {% if form.judet.errors %}
+                            <div class="invalid-feedback">{{ form.judet.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.localitate.id_for_label }}">{{ form.localitate.label }}{% if form.localitate.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.localitate }}
+                            {% if form.localitate.errors %}
+                            <div class="invalid-feedback">{{ form.localitate.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.adresa.id_for_label }}">{{ form.adresa.label }}{% if form.adresa.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.adresa }}
+                            {% if form.adresa.errors %}
+                            <div class="invalid-feedback">{{ form.adresa.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.firma_proiectare.id_for_label }}">{{ form.firma_proiectare.label }}{% if form.firma_proiectare.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.firma_proiectare }}
+                            {% if form.firma_proiectare.errors %}
+                            <div class="invalid-feedback">{{ form.firma_proiectare.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.beneficiar.id_for_label }}">{{ form.beneficiar.label }}{% if form.beneficiar.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.beneficiar }}
+                            {% if form.beneficiar.errors %}
+                            <div class="invalid-feedback">{{ form.beneficiar.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.lot.id_for_label }}">{{ form.lot.label }}{% if form.lot.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.lot }}
+                            {% if form.lot.errors %}
+                            <div class="invalid-feedback">{{ form.lot.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="{{ form.persoana_contact.id_for_label }}">{{ form.persoana_contact.label }}{% if form.persoana_contact.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.persoana_contact }}
+                            {% if form.persoana_contact.errors %}
+                            <div class="invalid-feedback">{{ form.persoana_contact.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch mt-2">
+                                {{ form.finalizata }}
+                                <label class="form-check-label fw-semibold" for="{{ form.finalizata.id_for_label }}">{{ form.finalizata.label }}</label>
+                                {% if form.finalizata.errors %}
+                                <div class="invalid-feedback d-block">{{ form.finalizata.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% if request.GET.next %}{{ request.GET.next }}{% elif request.GET.q %}{% url 'index' %}?q={{ request.GET.q|urlencode }}{% else %}{% url 'index' %}{% endif %}" class="btn btn-secondary">Anulează</a>
+                        <button type="submit" class="btn btn-primary">Editează</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -39,8 +137,16 @@
 </div>
 
 {% endif %}
-{% block scripts %}
-{% load static %}
-<script src="{% static 'js/localitati.js' %}"></script>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    // Setează focus pe primul câmp invalid, dacă există
+    document.addEventListener('DOMContentLoaded', function () {
+        const firstInvalid = document.querySelector('.is-invalid');
+        if (firstInvalid && typeof firstInvalid.focus === 'function') {
+            firstInvalid.focus();
+        }
+    });
+</script>
 {% endblock %}
