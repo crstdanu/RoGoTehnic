@@ -35,24 +35,25 @@ class LucrareForm(BaseForm):
         }
         widgets = {
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele complet al lucrării'}),
-            'nume_intern': forms.TextInput(attrs={'class': 'form-control'}),
+            'nume_intern': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Introduceți numele scurt al lucrării'}),
             'judet': forms.Select(attrs={'class': 'form-control'}),
             'localitate': forms.Select(attrs={'class': 'form-control'}),
-            'adresa': forms.TextInput(attrs={'class': 'form-control'}),
+            'adresa': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Introduceți adresa (fără județ sau localitate)'}),
             'firma_proiectare': forms.Select(attrs={'class': 'form-control'}),
             'beneficiar': forms.Select(attrs={'class': 'form-control'}),
             'lot': forms.Select(attrs={'class': 'form-control'}),
             'persoana_contact': forms.Select(attrs={'class': 'form-control'}),
             'finalizata': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-        
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         instance = kwargs.get('instance')
-        
+
         if instance and instance.judet:
             # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
-            self.fields['localitate'].queryset = Localitate.objects.filter(judet=instance.judet)
+            self.fields['localitate'].queryset = Localitate.objects.filter(
+                judet=instance.judet)
 
     def clean(self):
         cleaned_data = super().clean()
