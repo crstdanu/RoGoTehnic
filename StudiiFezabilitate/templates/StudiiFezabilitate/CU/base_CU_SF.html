@@ -32,10 +32,7 @@
                         </a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-sm-2" type="search" placeholder="Caută" aria-label="Caută lucrări">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Caută</button>
-                </form>
+
             </div>
         </div>
     </nav>
@@ -76,6 +73,8 @@
             window.lucrareJudetId = "{{ lucrare.judet.id }}";
         </script>
         {% endif %}
+
+        {% block scripts %}{% endblock %}
 </body>
 
 </html>
