@@ -484,9 +484,9 @@ class CertificatUrbanism(models.Model):
     # Date obligatorii
     descrierea_proiectului = models.TextField()
     inginer_intocmit = models.ForeignKey(
-        Inginer, on_delete=models.SET_NULL, default=2, null=True, related_name='certificat_urbanism_intocmit')
+        Inginer, on_delete=models.SET_NULL, null=True, related_name='certificat_urbanism_intocmit')
     inginer_verificat = models.ForeignKey(
-        Inginer, on_delete=models.SET_NULL, default=1, null=True, related_name='certificat_urbanism_verificat')
+        Inginer, on_delete=models.SET_NULL, null=True, related_name='certificat_urbanism_verificat')
     # Date optionale
     suprafata_ocupata = models.IntegerField(
         blank=True, null=True, validators=[MinValueValidator(0)])

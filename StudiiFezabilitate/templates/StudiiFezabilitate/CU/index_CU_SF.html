@@ -203,8 +203,9 @@
                                 </div>
                             </div>
                             {% else %}
-                            <div class="alert alert-primary ms-4 me-4 mb-4"> Nu sunt avize asociate acestei lucrări
-                                <form action="{% url 'add_Avize' lucrare.id %}" method="POST">
+                            <div class="alert alert-primary ms-4 me-4 mb-4 d-flex align-items-center">
+                                <span class="mb-0">Nu sunt avize asociate acestei lucrări</span>
+                                <form action="{% url 'add_Avize' lucrare.id %}" method="POST" class="ms-auto mb-0">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary">Adaugă aviz</button>
                                 </form>
@@ -239,12 +240,6 @@
                                     <div class="col-sm-9">
                                         <div class="form-control-plaintext" id="staticValabilitate">
                                             {{ certificat_urbanism.valabilitate }} luni
-                                            {% if certificat_urbanism.expiry_date %}
-                                            <span class="badge {{ certificat_urbanism.expiry_badge_class }} ms-2">
-                                                {{ certificat_urbanism.expiry_badge_text }}
-                                            </span>
-                                            <span class="text-muted ms-2">(expiră la {{ certificat_urbanism.expiry_date|date:'d.m.Y' }})</span>
-                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

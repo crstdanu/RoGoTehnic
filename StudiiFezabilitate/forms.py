@@ -104,31 +104,31 @@ class CertificatUrbanismForm(BaseForm):
                   'cale_acte_facturare', 'cale_chitanta_APM', 'cale_plan_situatie_la_scara',
                   'cale_plan_situatie_DWG', 'cale_extrase_CF', 'cale_aviz_GIS', 'cale_chitanta_DSP',
                   ]
-
-        labels = {'numar': 'Număr',
-                  'data': 'Data',
-                  'emitent': 'Emitent CU',
-                  'nume': 'Denumire lucrare',
-                  'adresa': 'Adresa lucrare',
-                  'valabilitate': 'Valabilitate',
-                  'descrierea_proiectului': 'Descrierea proiectului',
-                  'inginer_intocmit': 'Inginer Întocmit',
-                  'inginer_verificat': 'Inginer Verificat',
-                  'suprafata_ocupata': 'Suprafața ocupată (m2)',
-                  'lungime_traseu': 'Lungime traseu (m)',
-                  'cale_CU': 'Cale Certificat de urbanism',
-                  'cale_plan_incadrare_CU': 'Cale Plan de încadrare',
-                  'cale_plan_situatie_CU': 'Cale Plan de situație',
-                  'cale_memoriu_tehnic_CU': 'Cale Memoriu tehnic',
-                  'cale_acte_beneficiar': 'Cale acte beneficiar',
-                  'cale_acte_facturare': 'Cale acte facturare',
-                  'cale_chitanta_APM': 'Cale chitanță APM',
-                  'cale_plan_situatie_la_scara': 'Cale plan situație la scară',
-                  'cale_plan_situatie_DWG': 'Cale plan situație DWG',
-                  'cale_extrase_CF': 'Cale extrase CF',
-                  'cale_aviz_GIS': 'Cale aviz GIS',
-                  'cale_chitanta_DSP': 'Cale chitanță DSP',
-                  }
+        labels = {
+            'numar': 'Număr',
+            'data': 'Data',
+            'emitent': 'Emitent CU',
+            'nume': 'Denumire lucrare',
+            'adresa': 'Adresa lucrare',
+            'valabilitate': 'Valabilitate (luni 1-60)',
+            'descrierea_proiectului': 'Descrierea proiectului',
+            'inginer_intocmit': 'Inginer Întocmit',
+            'inginer_verificat': 'Inginer Verificat',
+            'suprafata_ocupata': 'Suprafața ocupată (m2)',
+            'lungime_traseu': 'Lungime traseu (m)',
+            'cale_CU': 'Cale Certificat de urbanism',
+            'cale_plan_incadrare_CU': 'Cale Plan de încadrare',
+            'cale_plan_situatie_CU': 'Cale Plan de situație',
+            'cale_memoriu_tehnic_CU': 'Cale Memoriu tehnic',
+            'cale_acte_beneficiar': 'Cale acte beneficiar',
+            'cale_acte_facturare': 'Cale acte facturare',
+            'cale_chitanta_APM': 'Cale chitanță APM',
+            'cale_plan_situatie_la_scara': 'Cale plan situație la scară',
+            'cale_plan_situatie_DWG': 'Cale plan situație DWG',
+            'cale_extrase_CF': 'Cale extrase CF',
+            'cale_aviz_GIS': 'Cale aviz GIS',
+            'cale_chitanta_DSP': 'Cale chitanță DSP',
+        }
 
         widgets = {
             'numar': forms.TextInput(attrs={'class': 'form-control'}),
@@ -136,7 +136,7 @@ class CertificatUrbanismForm(BaseForm):
             'emitent': forms.Select(attrs={'class': 'form-select'}),
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele lucrării din Certificatul de Urbanism'}),
             'adresa': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți adresa lucrării din Certificatul de Urbanism'}),
-            'valabilitate': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 60, 'placeholder': 'luni (1-60)'}),
+            'valabilitate': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 60}),
             'descrierea_proiectului': forms.Textarea(attrs={'class': 'form-control', 'rows': 20, 'placeholder': 'Introduceți descrierea proiectului din Memoriul tehnic'}),
             'inginer_intocmit': forms.Select(attrs={'class': 'form-select'}),
             'inginer_verificat': forms.Select(attrs={'class': 'form-select'}),
@@ -173,6 +173,9 @@ class CertificatUrbanismForm(BaseForm):
         # Acceptă dd.mm.yyyy la input și (opțional) ISO ca fallback
         if 'data' in self.fields:
             self.fields['data'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
+        # Setează 12 ca valoare implicită pentru formulare noi
+        if 'valabilitate' in self.fields and not getattr(self.instance, 'pk', None):
+            self.fields['valabilitate'].initial = 12
 
     def clean(self):
         cleaned = super().clean()
