@@ -132,11 +132,11 @@ class CertificatUrbanismForm(BaseForm):
 
         widgets = {
             'numar': forms.TextInput(attrs={'class': 'form-control'}),
-            'data': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'data': forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control', 'placeholder': 'zz.ll.aaaa', 'data-role': 'datepicker'}),
             'emitent': forms.Select(attrs={'class': 'form-select'}),
             'nume': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți numele lucrării din Certificatul de Urbanism'}),
             'adresa': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți adresa lucrării din Certificatul de Urbanism'}),
-            'valabilitate': forms.DateInput(attrs={'class': 'form-control'}),
+            'valabilitate': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 60, 'placeholder': 'luni (1-60)'}),
             'descrierea_proiectului': forms.Textarea(attrs={'class': 'form-control', 'rows': 20, 'placeholder': 'Introduceți descrierea proiectului din Memoriul tehnic'}),
             'inginer_intocmit': forms.Select(attrs={'class': 'form-select'}),
             'inginer_verificat': forms.Select(attrs={'class': 'form-select'}),
@@ -156,6 +156,12 @@ class CertificatUrbanismForm(BaseForm):
             'cale_chitanta_DSP': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
 
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Acceptă dd.mm.yyyy la input și (opțional) ISO ca fallback
+        if 'data' in self.fields:
+            self.fields['data'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
 
 
 class AvizeCUForm(BaseForm):
@@ -180,10 +186,10 @@ class AvizeCUForm(BaseForm):
         widgets = {
             'nume_aviz': forms.Select(attrs={'class': 'form-select'}),
             'depus': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'data_depunere': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'data_depunere': forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control', 'placeholder': 'zz.ll.aaaa', 'data-role': 'datepicker'}),
             'primit': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'numar_aviz': forms.TextInput(attrs={'class': 'form-control'}),
-            'data_aviz': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'data_aviz': forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control', 'placeholder': 'zz.ll.aaaa', 'data-role': 'datepicker'}),
             'cale_aviz_eliberat': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea avizului'}),
             'descriere_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți descrierea avizului'}),
             'cost_net': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -196,3 +202,9 @@ class AvizeCUForm(BaseForm):
         self.fields['cost_net'].required = False
         self.fields['cost_tva'].required = False
         self.fields['cost_total'].required = False
+        # Acceptă dd.mm.yyyy și (opțional) ISO
+        if 'data_depunere' in self.fields:
+            self.fields['data_depunere'].input_formats = [
+                '%d.%m.%Y', '%Y-%m-%d']
+        if 'data_aviz' in self.fields:
+            self.fields['data_aviz'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
