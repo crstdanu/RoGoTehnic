@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 from django.db.models import Q
+from django.db import IntegrityError
 from django.core.paginator import Paginator
 
 import os
@@ -208,18 +209,31 @@ def index_CU(request, id):
 
 def add_CU(request, id):
     lucrare = get_object_or_404(Lucrare, pk=id)
+    # Dacă există deja un CU pentru această lucrare, mergem direct la editare
+    if CertificatUrbanism.objects.filter(lucrare=lucrare).exists():
+        messages.info(
+            request, "Există deja un Certificat de Urbanism pentru această lucrare. L-am deschis pentru editare.")
+        return redirect('edit_CU', id=lucrare.id)
     if request.method == 'POST':
         form = CertificatUrbanismForm(request.POST, request.FILES)
         if form.is_valid():
-            # Crează obiectul dar nu îl salvează încă
-            certificat_urbanism = form.save(commit=False)
-            certificat_urbanism.lucrare = lucrare  # Asignează lucrarea existentă
-            certificat_urbanism.save()  # Salvează în baza de date
-            return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
-                'form': CertificatUrbanismForm(),
-                'success': True,
-                'lucrare': lucrare
-            })
+            # Creează obiectul, setează lucrarea și salvează
+            try:
+                certificat_urbanism = form.save(commit=False)
+                certificat_urbanism.lucrare = lucrare
+                certificat_urbanism.save()
+                # Salvează relațiile M2M dacă există în formular
+                if hasattr(form, 'save_m2m'):
+                    form.save_m2m()
+            except IntegrityError:
+                messages.error(
+                    request, "Există deja un Certificat de Urbanism pentru această lucrare.")
+                return redirect('edit_CU', id=lucrare.id)
+
+            messages.success(
+                request, "Certificatul de Urbanism a fost adăugat.")
+            # PRG: redirecționează pentru a evita re-trimiterea formularului
+            return redirect('index_CU', id=lucrare.id)
         else:
             return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
                 'form': form,
