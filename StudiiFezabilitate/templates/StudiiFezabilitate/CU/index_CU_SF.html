@@ -237,7 +237,15 @@
                                     <label for="staticValabilitate" class="col-sm-3 col-form-label">Valabilitate
                                         CU</label>
                                     <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="staticValabilitate" value="{{ certificat_urbanism.valabilitate|date:'d.m.Y' }}">
+                                        <div class="form-control-plaintext" id="staticValabilitate">
+                                            {{ certificat_urbanism.valabilitate }} luni
+                                            {% if certificat_urbanism.expiry_date %}
+                                            <span class="badge {{ certificat_urbanism.expiry_badge_class }} ms-2">
+                                                {{ certificat_urbanism.expiry_badge_text }}
+                                            </span>
+                                            <span class="text-muted ms-2">(expiră la {{ certificat_urbanism.expiry_date|date:'d.m.Y' }})</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">

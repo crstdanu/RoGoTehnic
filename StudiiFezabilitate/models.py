@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MaxValueValidator, FileExtensionValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator, FileExtensionValidator
 
 import os
 import magic
@@ -472,9 +472,13 @@ class CertificatUrbanism(models.Model):
     lucrare = models.OneToOneField(
         Lucrare, on_delete=models.CASCADE, related_name='certificat_urbanism')
     valabilitate = models.PositiveIntegerField(
-        validators=[MaxValueValidator(
-            limit_value=60,
-            message="Valoarea trebuie să fie mai mică sau egală cu 60.")],
+        validators=[
+            MinValueValidator(
+                1, message="Valoarea trebuie să fie cel puțin 1."),
+            MaxValueValidator(
+                limit_value=60,
+                message="Valoarea trebuie să fie mai mică sau egală cu 60.")
+        ],
         default=12,
         blank=True, null=True,)
     # Date obligatorii
@@ -484,8 +488,10 @@ class CertificatUrbanism(models.Model):
     inginer_verificat = models.ForeignKey(
         Inginer, on_delete=models.SET_NULL, default=1, null=True, related_name='certificat_urbanism_verificat')
     # Date optionale
-    suprafata_ocupata = models.IntegerField(blank=True, null=True,)
-    lungime_traseu = models.IntegerField(blank=True, null=True,)
+    suprafata_ocupata = models.IntegerField(
+        blank=True, null=True, validators=[MinValueValidator(0)])
+    lungime_traseu = models.IntegerField(
+        blank=True, null=True, validators=[MinValueValidator(0)])
     # ATASAMENTE
     cale_CU = models.FileField(
         upload_to=cale_upload_CU, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True)
@@ -514,32 +520,84 @@ class CertificatUrbanism(models.Model):
 
     @property
     def data_formatata(self):
-        """Returnează data în format românesc: ZZ-LL-AAAA"""
+        """Returnează data în format românesc: ZZ.LL.AAAA"""
         if self.data:
-            return self.data.strftime('%d-%m-%Y')
+            return self.data.strftime('%d.%m.%Y')
         return ""
+
+    @property
+    def expiry_date(self):
+        """Data expirării CU, calculată ca data + valabilitate (luni). Returnează None dacă nu se poate calcula."""
+        # Nu calculăm pentru lucrări finalizate
+        if getattr(self.lucrare, 'finalizata', False):
+            return None
+        issue_date = self.data
+        months = self.valabilitate or 12
+        if not issue_date or not months:
+            return None
+        month_index = issue_date.month - 1 + months
+        year = issue_date.year + month_index // 12
+        month = month_index % 12 + 1
+        last_day = calendar.monthrange(year, month)[1]
+        day = min(issue_date.day, last_day)
+        try:
+            return datetime.date(year, month, day)
+        except Exception:
+            return None
+
+    @property
+    def is_expired(self) -> bool:
+        d = self.expiry_date
+        return bool(d and d < datetime.date.today())
+
+    @property
+    def expiry_days_left(self):
+        d = self.expiry_date
+        return None if not d else (d - datetime.date.today()).days
 
     class Meta:
         verbose_name = "Certificat de urbanism"
         verbose_name_plural = "Certificate de urbanism"
 
     def clean(self):
-        # Validează că UAT-ul (emitent) aparține aceluiași județ ca lucrarea
-        # Verificăm mai întâi dacă avem emitent_id pentru a evita eroarea RelatedObjectDoesNotExist
-        if hasattr(self, 'emitent_id') and self.emitent_id and self.lucrare_id:
-            # Încărcăm explicit obiectele pentru a asigura că există
-            try:
-                emitent = UAT.objects.get(pk=self.emitent_id)
-                lucrare = Lucrare.objects.get(pk=self.lucrare_id)
+        # Validează că UAT-ul (emitent) aparține aceluiași județ ca lucrarea, cu minim de interogări.
+        if getattr(self, 'emitent_id', None) and getattr(self, 'lucrare_id', None):
+            # Încearcă să folosești judet_id fără a încărca complet obiectele
+            lucrare_judet_id = None
+            emitent_judet_id = None
 
-                # Verificăm județele
-                if emitent.judet and lucrare.judet and emitent.judet != lucrare.judet:
-                    raise ValidationError({
-                        'emitent': "UAT-ul emitent trebuie să aparțină aceluiași județ ca lucrarea."
-                    })
-            except (UAT.DoesNotExist, Lucrare.DoesNotExist):
-                # Dacă unul dintre obiecte nu există, nu validăm această regulă
-                pass
+            # Dacă instanța lucrare este atașată și are judet_id, folosește-o
+            try:
+                if hasattr(self, 'lucrare') and getattr(self.lucrare, 'judet_id', None) is not None:
+                    lucrare_judet_id = self.lucrare.judet_id
+            except Exception:
+                lucrare_judet_id = None
+
+            # Dacă instanța emitent este atașată și are judet_id, folosește-o
+            try:
+                if hasattr(self, 'emitent') and getattr(self.emitent, 'judet_id', None) is not None:
+                    emitent_judet_id = self.emitent.judet_id
+            except Exception:
+                emitent_judet_id = None
+
+            # Dacă lipsesc, adu doar câmpurile necesare
+            if lucrare_judet_id is None:
+                try:
+                    lucrare_judet_id = Lucrare.objects.only(
+                        'judet_id').get(pk=self.lucrare_id).judet_id
+                except Lucrare.DoesNotExist:
+                    lucrare_judet_id = None
+            if emitent_judet_id is None:
+                try:
+                    emitent_judet_id = UAT.objects.only(
+                        'judet_id').get(pk=self.emitent_id).judet_id
+                except UAT.DoesNotExist:
+                    emitent_judet_id = None
+
+            if lucrare_judet_id and emitent_judet_id and emitent_judet_id != lucrare_judet_id:
+                raise ValidationError({
+                    'emitent': "UAT-ul emitent trebuie să aparțină aceluiași județ ca lucrarea."
+                })
 
         super().clean()
 
@@ -570,20 +628,10 @@ class CertificatUrbanism(models.Model):
             # Dacă lucrarea e finalizată, nu evidențiem urgentarea
             if getattr(self.lucrare, 'finalizata', False):
                 return 'btn-primary'
-            issue_date = self.data
-            months = self.valabilitate or 12
-            if not issue_date or not months:
+            d = self.expiry_date
+            if not d:
                 return 'btn-primary'
-
-            # calculează data expirării adăugând luni la data emiterii
-            month_index = issue_date.month - 1 + months
-            year = issue_date.year + month_index // 12
-            month = month_index % 12 + 1
-            last_day = calendar.monthrange(year, month)[1]
-            day = min(issue_date.day, last_day)
-            expiry_date = datetime.date(year, month, day)
-
-            days_left = (expiry_date - datetime.date.today()).days
+            days_left = (d - datetime.date.today()).days
             if days_left < 30:
                 return 'btn-danger'
             if days_left < 90:
@@ -595,20 +643,8 @@ class CertificatUrbanism(models.Model):
     @property
     def days_to_expiry(self):
         """Numărul de zile până la expirarea CU; negativ dacă este deja expirat. None dacă lipsesc datele."""
-        # Pentru lucrări finalizate nu calculăm expirarea
-        if getattr(self.lucrare, 'finalizata', False):
-            return None
-        issue_date = self.data
-        months = self.valabilitate or 12
-        if not issue_date or not months:
-            return None
-        month_index = issue_date.month - 1 + months
-        year = issue_date.year + month_index // 12
-        month = month_index % 12 + 1
-        last_day = calendar.monthrange(year, month)[1]
-        day = min(issue_date.day, last_day)
-        expiry_date = datetime.date(year, month, day)
-        return (expiry_date - datetime.date.today()).days
+        d = self.expiry_date
+        return None if not d else (d - datetime.date.today()).days
 
     @property
     def expiry_badge_class(self) -> str:
