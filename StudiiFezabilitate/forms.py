@@ -1,5 +1,5 @@
 from django import forms
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate
+from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate, UAT
 from django.core.exceptions import ValidationError
 
 
@@ -158,10 +158,32 @@ class CertificatUrbanismForm(BaseForm):
         }
 
     def __init__(self, *args, **kwargs):
+        # Permite trecerea explicită a lucrării pentru filtrare emitent
+        lucrare = kwargs.pop('lucrare', None)
         super().__init__(*args, **kwargs)
+        # Derivă lucrarea din instanță dacă nu a fost furnizată separat
+        if lucrare is None and getattr(self.instance, 'lucrare_id', None):
+            lucrare = self.instance.lucrare
+        # Stochează pentru validare ulterioară
+        self._lucrare = lucrare
+        # Filtrează emitent la UAT din același județ cu lucrarea
+        if lucrare and getattr(lucrare, 'judet_id', None):
+            self.fields['emitent'].queryset = UAT.objects.filter(
+                judet=lucrare.judet).order_by('nume')
         # Acceptă dd.mm.yyyy la input și (opțional) ISO ca fallback
         if 'data' in self.fields:
             self.fields['data'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
+
+    def clean(self):
+        cleaned = super().clean()
+        emitent = cleaned.get('emitent')
+        lucrare = self._lucrare if hasattr(self, '_lucrare') else None
+        if not lucrare and getattr(self.instance, 'lucrare_id', None):
+            lucrare = self.instance.lucrare
+        if lucrare and emitent and getattr(emitent, 'judet_id', None) != getattr(lucrare, 'judet_id', None):
+            self.add_error(
+                'emitent', 'Emitentul trebuie să fie din același județ cu lucrarea.')
+        return cleaned
 
 
 class AvizeCUForm(BaseForm):

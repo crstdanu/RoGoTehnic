@@ -215,7 +215,8 @@ def add_CU(request, id):
             request, "Există deja un Certificat de Urbanism pentru această lucrare. L-am deschis pentru editare.")
         return redirect('edit_CU', id=lucrare.id)
     if request.method == 'POST':
-        form = CertificatUrbanismForm(request.POST, request.FILES)
+        form = CertificatUrbanismForm(
+            request.POST, request.FILES, lucrare=lucrare)
         if form.is_valid():
             # Creează obiectul, setează lucrarea și salvează
             try:
@@ -240,7 +241,7 @@ def add_CU(request, id):
                 'lucrare': lucrare,
             })
     else:
-        form = CertificatUrbanismForm()
+        form = CertificatUrbanismForm(lucrare=lucrare)
     return render(request, 'StudiiFezabilitate/CU/add_CU_SF.html', {
         'form': form,
         'lucrare': lucrare,
@@ -252,7 +253,7 @@ def edit_CU(request, id):
     certificat_urbanism = CertificatUrbanism.objects.get(lucrare=lucrare)
     if request.method == 'POST':
         form = CertificatUrbanismForm(
-            request.POST, request.FILES, instance=certificat_urbanism)
+            request.POST, request.FILES, instance=certificat_urbanism, lucrare=lucrare)
         if form.is_valid():
             form.save()
             return redirect('index_CU', id=lucrare.id)
@@ -264,7 +265,8 @@ def edit_CU(request, id):
             })
 
     else:
-        form = CertificatUrbanismForm(instance=certificat_urbanism)
+        form = CertificatUrbanismForm(
+            instance=certificat_urbanism, lucrare=lucrare)
     return render(request, 'StudiiFezabilitate/CU/edit_CU_SF.html', {
         'form': form,
         'lucrare': lucrare
