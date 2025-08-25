@@ -608,17 +608,6 @@ class CertificatUrbanism(models.Model):
         # Apelăm metoda clean() pentru a asigura validarea înainte de salvare
         self.full_clean()
 
-        if self.pk:  # Dacă obiectul există deja în DB
-            try:
-                old_instance = CertificatUrbanism.objects.get(pk=self.pk)
-                if old_instance.cale_CU and self.cale_CU and self.cale_CU != old_instance.cale_CU:
-                    old_file_path = old_instance.cale_CU.path
-                    if os.path.isfile(old_file_path):
-                        # Ștergem fișierul vechi înainte de a salva noul fișier
-                        os.remove(old_file_path)
-            except CertificatUrbanism.DoesNotExist:
-                pass
-
         super().save(*args, **kwargs)
 
     @property

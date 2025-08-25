@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'StudiiFezabilitate',
+    # Keep django-cleanup after your apps so it can hook file fields correctly
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
