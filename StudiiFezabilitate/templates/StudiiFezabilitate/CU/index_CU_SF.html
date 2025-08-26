@@ -40,10 +40,7 @@
                                         <i class="fa-solid fa-list fa-lg me-2"></i>
                                         <span>Avize</span>
                                     </div>
-                                    <form action="{% url 'add_Avize' lucrare.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary">Adaugă aviz</button>
-                                    </form>
+                                    <a href="{% url 'add_Avize' lucrare.id %}" class="btn btn-primary">Adaugă aviz</a>
                                 </div>
 
 
@@ -205,10 +202,7 @@
                             {% else %}
                             <div class="alert alert-primary ms-4 me-4 mb-4 d-flex align-items-center">
                                 <span class="mb-0">Nu sunt avize asociate acestei lucrări</span>
-                                <form action="{% url 'add_Avize' lucrare.id %}" method="POST" class="ms-auto mb-0">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary">Adaugă aviz</button>
-                                </form>
+                                <a href="{% url 'add_Avize' lucrare.id %}" class="btn btn-primary ms-auto">Adaugă aviz</a>
                             </div>
                             {% endif %}
                         </div>

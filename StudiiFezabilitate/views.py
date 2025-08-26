@@ -278,6 +278,17 @@ def add_Avize(request, id):
     certificat_urbanism = CertificatUrbanism.objects.get(lucrare=lucrare)
     if request.method == 'POST':
         form = AvizeCUForm(request.POST)
+        # Filtrăm opțiunile doar la avizele din județul lucrării și validăm alegerea
+        try:
+            # Excludem avizele deja adăugate pentru acest CU
+            used_ids = AvizeCU.objects.filter(
+                certificat_urbanism=certificat_urbanism
+            ).values_list('nume_aviz_id', flat=True)
+            form.fields['nume_aviz'].queryset = Aviz.objects.filter(
+                judet=lucrare.judet
+            ).exclude(id__in=used_ids).order_by('nume')
+        except Exception:
+            pass
         if form.is_valid():
             # Creează sau reutilizează înregistrarea existentă (evită duplicatele)
             cleaned = form.cleaned_data
@@ -305,6 +316,18 @@ def add_Avize(request, id):
             })
     else:
         form = AvizeCUForm()
+        # Filtrăm opțiunile doar la avizele din județul lucrării
+        try:
+            from StudiiFezabilitate.models import Aviz
+            # Excludem avizele deja adăugate pentru acest CU
+            used_ids = AvizeCU.objects.filter(
+                certificat_urbanism=certificat_urbanism
+            ).values_list('nume_aviz_id', flat=True)
+            form.fields['nume_aviz'].queryset = Aviz.objects.filter(
+                judet=lucrare.judet
+            ).exclude(id__in=used_ids).order_by('nume')
+        except Exception:
+            pass
 
     return render(request, 'StudiiFezabilitate/CU/Avize/add_avize.html', {
         'form': form,
@@ -317,6 +340,18 @@ def edit_Aviz(request, lucrare_id, id):
     aviz = AvizeCU.objects.get(pk=id)
     if request.method == 'POST':
         form = AvizeCUForm(request.POST, instance=aviz)
+        # Filtrăm opțiunile doar la avizele din județul lucrării și validăm alegerea
+        try:
+            from StudiiFezabilitate.models import Aviz
+            # Excludem avizele deja adăugate pentru acest CU, dar păstrăm opțiunea curentă
+            used_ids = AvizeCU.objects.filter(
+                certificat_urbanism=aviz.certificat_urbanism
+            ).exclude(pk=aviz.pk).values_list('nume_aviz_id', flat=True)
+            form.fields['nume_aviz'].queryset = Aviz.objects.filter(
+                judet=lucrare.judet
+            ).exclude(id__in=used_ids).order_by('nume')
+        except Exception:
+            pass
         if form.is_valid():
             form.save()
             return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
@@ -327,6 +362,18 @@ def edit_Aviz(request, lucrare_id, id):
             })
     else:
         form = AvizeCUForm(instance=aviz)
+        # Filtrăm opțiunile doar la avizele din județul lucrării
+        try:
+            from StudiiFezabilitate.models import Aviz
+            # Excludem avizele deja adăugate pentru acest CU, dar păstrăm opțiunea curentă
+            used_ids = AvizeCU.objects.filter(
+                certificat_urbanism=aviz.certificat_urbanism
+            ).exclude(pk=aviz.pk).values_list('nume_aviz_id', flat=True)
+            form.fields['nume_aviz'].queryset = Aviz.objects.filter(
+                judet=lucrare.judet
+            ).exclude(id__in=used_ids).order_by('nume')
+        except Exception:
+            pass
     return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
         'form': form,
         'lucrare': lucrare,

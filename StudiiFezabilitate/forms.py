@@ -233,3 +233,38 @@ class AvizeCUForm(BaseForm):
                 '%d.%m.%Y', '%Y-%m-%d']
         if 'data_aviz' in self.fields:
             self.fields['data_aviz'].input_formats = ['%d.%m.%Y', '%Y-%m-%d']
+        # Dacă edităm o instanță existentă, filtrează nume_aviz la județul lucrării pentru UX
+        try:
+            instance = getattr(self, 'instance', None)
+            if instance and getattr(instance, 'pk', None):
+                cu = getattr(instance, 'certificat_urbanism', None)
+                lucrare = getattr(cu, 'lucrare', None)
+                judet = getattr(lucrare, 'judet', None)
+                if judet is not None and 'nume_aviz' in self.fields:
+                    from StudiiFezabilitate.models import Aviz
+                    self.fields['nume_aviz'].queryset = Aviz.objects.filter(
+                        judet=judet).order_by('nume')
+        except Exception:
+            pass
+
+    def clean(self):
+        cleaned = super().clean()
+        # Previne duplicatele la editare: același (certificat_urbanism, nume_aviz)
+        try:
+            instance = getattr(self, 'instance', None)
+            if instance and getattr(instance, 'pk', None):
+                cu = getattr(instance, 'certificat_urbanism', None)
+                nume_aviz = cleaned.get('nume_aviz')
+                if cu and nume_aviz:
+                    from StudiiFezabilitate.models import AvizeCU
+                    exists = AvizeCU.objects.filter(
+                        certificat_urbanism=cu,
+                        nume_aviz=nume_aviz
+                    ).exclude(pk=instance.pk).exists()
+                    if exists:
+                        self.add_error(
+                            'nume_aviz', 'Acest aviz este deja adăugat pentru certificatul curent.')
+        except Exception:
+            # Fără blocaj dacă există probleme de context; validarea modelului/DB va prinde oricum
+            pass
+        return cleaned
