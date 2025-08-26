@@ -8,8 +8,15 @@
 <div class="row justify-content-center">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card bg-light mb-3">
-            <div class="card-header">
-                <i class="fa-solid fa-address-card fa-lg"></i> Adaugă Certificat de urbanism
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-address-card fa-lg"></i>
+                    <span class="ms-2">Adaugă Certificat de urbanism</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary btn-sm">Anulează</a>
+                    <button type="submit" form="add-cu-form" class="btn btn-primary btn-sm">Adaugă datele</button>
+                </div>
             </div>
             <div class="card-body">
                 {# Erori non-câmp #}
@@ -19,32 +26,56 @@
                 </div>
                 {% endif %}
 
-                <form action="{% url 'add_CU' lucrare.id %}" method="POST" enctype="multipart/form-data" novalidate>
+                <form id="add-cu-form" action="{% url 'add_CU' lucrare.id %}" method="POST" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
 
                     <div class="row g-3">
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div class="w-100" style="max-width: 600px;">
+                                <label class="form-label text-center w-100" for="{{ form.emitent.id_for_label }}">{{ form.emitent.label }}{% if form.emitent.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                                {{ form.emitent }}
+                                {% if form.emitent.errors %}
+                                <div class="invalid-feedback">{{ form.emitent.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-1">
                             <label class="form-label" for="{{ form.numar.id_for_label }}">{{ form.numar.label }}{% if form.numar.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.numar }}
                             {% if form.numar.errors %}
                             <div class="invalid-feedback">{{ form.numar.errors|striptags }}</div>
                             {% endif %}
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-2">
                             <label class="form-label" for="{{ form.data.id_for_label }}">{{ form.data.label }}{% if form.data.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.data }}
                             {% if form.data.errors %}
                             <div class="invalid-feedback">{{ form.data.errors|striptags }}</div>
                             {% endif %}
                         </div>
-
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.emitent.id_for_label }}">{{ form.emitent.label }}{% if form.emitent.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.emitent }}
-                            {% if form.emitent.errors %}
-                            <div class="invalid-feedback">{{ form.emitent.errors|striptags }}</div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label" for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}{% if form.valabilitate.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.valabilitate }}
+                            {% if form.valabilitate.errors %}
+                            <div class="invalid-feedback">{{ form.valabilitate.errors|striptags }}</div>
                             {% endif %}
                         </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label" for="{{ form.suprafata_ocupata.id_for_label }}">{{ form.suprafata_ocupata.label }}{% if form.suprafata_ocupata.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.suprafata_ocupata }}
+                            {% if form.suprafata_ocupata.errors %}
+                            <div class="invalid-feedback">{{ form.suprafata_ocupata.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label" for="{{ form.lungime_traseu.id_for_label }}">{{ form.lungime_traseu.label }}{% if form.lungime_traseu.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.lungime_traseu }}
+                            {% if form.lungime_traseu.errors %}
+                            <div class="invalid-feedback">{{ form.lungime_traseu.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+
 
                         <div class="col-12">
                             <label class="form-label" for="{{ form.nume.id_for_label }}">{{ form.nume.label }}{% if form.nume.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
@@ -66,22 +97,6 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.valabilitate.id_for_label }}">{{ form.valabilitate.label }}{% if form.valabilitate.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.valabilitate }}
-                            {% if form.valabilitate.errors %}
-                            <div class="invalid-feedback">{{ form.valabilitate.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label" for="{{ form.descrierea_proiectului.id_for_label }}">{{ form.descrierea_proiectului.label }}{% if form.descrierea_proiectului.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.descrierea_proiectului }}
-                            {% if form.descrierea_proiectului.errors %}
-                            <div class="invalid-feedback">{{ form.descrierea_proiectului.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="col-12 col-md-6">
                             <label class="form-label" for="{{ form.inginer_intocmit.id_for_label }}">{{ form.inginer_intocmit.label }}{% if form.inginer_intocmit.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
                             {{ form.inginer_intocmit }}
                             {% if form.inginer_intocmit.errors %}
@@ -96,20 +111,15 @@
                             {% endif %}
                         </div>
 
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.suprafata_ocupata.id_for_label }}">{{ form.suprafata_ocupata.label }}{% if form.suprafata_ocupata.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.suprafata_ocupata }}
-                            {% if form.suprafata_ocupata.errors %}
-                            <div class="invalid-feedback">{{ form.suprafata_ocupata.errors|striptags }}</div>
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.descrierea_proiectului.id_for_label }}">{{ form.descrierea_proiectului.label }}{% if form.descrierea_proiectului.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                            {{ form.descrierea_proiectului }}
+                            {% if form.descrierea_proiectului.errors %}
+                            <div class="invalid-feedback">{{ form.descrierea_proiectului.errors|striptags }}</div>
                             {% endif %}
                         </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.lungime_traseu.id_for_label }}">{{ form.lungime_traseu.label }}{% if form.lungime_traseu.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.lungime_traseu }}
-                            {% if form.lungime_traseu.errors %}
-                            <div class="invalid-feedback">{{ form.lungime_traseu.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
+
+
 
                         <div class="col-12">
                             <hr>
@@ -117,88 +127,98 @@
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="{{ form.cale_CU.id_for_label }}">{{ form.cale_CU.label }}{% if form.cale_CU.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
-                            {{ form.cale_CU }}
-                            {% if form.cale_CU.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_CU.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_plan_incadrare_CU.id_for_label }}">{{ form.cale_plan_incadrare_CU.label }}</label>
-                            {{ form.cale_plan_incadrare_CU }}
-                            {% if form.cale_plan_incadrare_CU.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_plan_incadrare_CU.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_plan_situatie_CU.id_for_label }}">{{ form.cale_plan_situatie_CU.label }}</label>
-                            {{ form.cale_plan_situatie_CU }}
-                            {% if form.cale_plan_situatie_CU.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_CU.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label" for="{{ form.cale_memoriu_tehnic_CU.id_for_label }}">{{ form.cale_memoriu_tehnic_CU.label }}</label>
-                            {{ form.cale_memoriu_tehnic_CU }}
-                            {% if form.cale_memoriu_tehnic_CU.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_memoriu_tehnic_CU.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_acte_beneficiar.id_for_label }}">{{ form.cale_acte_beneficiar.label }}</label>
-                            {{ form.cale_acte_beneficiar }}
-                            {% if form.cale_acte_beneficiar.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_acte_beneficiar.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_acte_facturare.id_for_label }}">{{ form.cale_acte_facturare.label }}</label>
-                            {{ form.cale_acte_facturare }}
-                            {% if form.cale_acte_facturare.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_acte_facturare.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_chitanta_APM.id_for_label }}">{{ form.cale_chitanta_APM.label }}</label>
-                            {{ form.cale_chitanta_APM }}
-                            {% if form.cale_chitanta_APM.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_chitanta_APM.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_plan_situatie_la_scara.id_for_label }}">{{ form.cale_plan_situatie_la_scara.label }}</label>
-                            {{ form.cale_plan_situatie_la_scara }}
-                            {% if form.cale_plan_situatie_la_scara.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_la_scara.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_plan_situatie_DWG.id_for_label }}">{{ form.cale_plan_situatie_DWG.label }}</label>
-                            {{ form.cale_plan_situatie_DWG }}
-                            {% if form.cale_plan_situatie_DWG.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_DWG.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_extrase_CF.id_for_label }}">{{ form.cale_extrase_CF.label }}</label>
-                            {{ form.cale_extrase_CF }}
-                            {% if form.cale_extrase_CF.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_extrase_CF.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_aviz_GIS.id_for_label }}">{{ form.cale_aviz_GIS.label }}</label>
-                            {{ form.cale_aviz_GIS }}
-                            {% if form.cale_aviz_GIS.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_aviz_GIS.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="{{ form.cale_chitanta_DSP.id_for_label }}">{{ form.cale_chitanta_DSP.label }}</label>
-                            {{ form.cale_chitanta_DSP }}
-                            {% if form.cale_chitanta_DSP.errors %}
-                            <div class="invalid-feedback d-block">{{ form.cale_chitanta_DSP.errors|striptags }}</div>
-                            {% endif %}
+                            <div class="row g-3">
+                                <!-- LEFT COLUMN -->
+                                <div class="col-12 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_CU.id_for_label }}">{{ form.cale_CU.label }}{% if form.cale_CU.field.required %} <span class="text-danger" title="Obligatoriu">*</span>{% endif %}</label>
+                                        {{ form.cale_CU }}
+                                        {% if form.cale_CU.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_CU.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_plan_incadrare_CU.id_for_label }}">{{ form.cale_plan_incadrare_CU.label }}</label>
+                                        {{ form.cale_plan_incadrare_CU }}
+                                        {% if form.cale_plan_incadrare_CU.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_plan_incadrare_CU.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_plan_situatie_CU.id_for_label }}">{{ form.cale_plan_situatie_CU.label }}</label>
+                                        {{ form.cale_plan_situatie_CU }}
+                                        {% if form.cale_plan_situatie_CU.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_CU.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_memoriu_tehnic_CU.id_for_label }}">{{ form.cale_memoriu_tehnic_CU.label }}</label>
+                                        {{ form.cale_memoriu_tehnic_CU }}
+                                        {% if form.cale_memoriu_tehnic_CU.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_memoriu_tehnic_CU.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_acte_beneficiar.id_for_label }}">{{ form.cale_acte_beneficiar.label }}</label>
+                                        {{ form.cale_acte_beneficiar }}
+                                        {% if form.cale_acte_beneficiar.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_acte_beneficiar.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_acte_facturare.id_for_label }}">{{ form.cale_acte_facturare.label }}</label>
+                                        {{ form.cale_acte_facturare }}
+                                        {% if form.cale_acte_facturare.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_acte_facturare.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_chitanta_APM.id_for_label }}">{{ form.cale_chitanta_APM.label }}</label>
+                                        {{ form.cale_chitanta_APM }}
+                                        {% if form.cale_chitanta_APM.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_chitanta_APM.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <!-- RIGHT COLUMN -->
+                                <div class="col-12 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_plan_situatie_la_scara.id_for_label }}">{{ form.cale_plan_situatie_la_scara.label }}</label>
+                                        {{ form.cale_plan_situatie_la_scara }}
+                                        {% if form.cale_plan_situatie_la_scara.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_la_scara.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_plan_situatie_DWG.id_for_label }}">{{ form.cale_plan_situatie_DWG.label }}</label>
+                                        {{ form.cale_plan_situatie_DWG }}
+                                        {% if form.cale_plan_situatie_DWG.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_plan_situatie_DWG.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_extrase_CF.id_for_label }}">{{ form.cale_extrase_CF.label }}</label>
+                                        {{ form.cale_extrase_CF }}
+                                        {% if form.cale_extrase_CF.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_extrase_CF.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_aviz_GIS.id_for_label }}">{{ form.cale_aviz_GIS.label }}</label>
+                                        {{ form.cale_aviz_GIS }}
+                                        {% if form.cale_aviz_GIS.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_aviz_GIS.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_chitanta_DSP.id_for_label }}">{{ form.cale_chitanta_DSP.label }}</label>
+                                        {{ form.cale_chitanta_DSP }}
+                                        {% if form.cale_chitanta_DSP.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_chitanta_DSP.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
