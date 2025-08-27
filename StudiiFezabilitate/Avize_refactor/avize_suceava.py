@@ -230,7 +230,7 @@ def aviz_GN_Delgaz_Suceava(lucrare_id: int, id_aviz: int):
             plan_situatie_DWG_path = simple.genereaza_plan_situatie_DWG(
                 lucrare, avizCU, cu, temp_dir)
             fisiere_generate.append(plan_situatie_DWG_path)
-            
+
             # Toate documentele au fost generate cu succes
             return DocumentGenerationResult.success_result(fisiere_generate)
         # -------------------------------------------- -------------------                    --- 3. Tratare erori --- #
@@ -365,7 +365,7 @@ def aviz_Cultura_Suceava(lucrare_id: int, id_aviz: int):
 
 def aviz_HCL_Suceava(lucrare_id: int, id_aviz: int):
     """
-    Aceasta functie genereaza documentatia necesara pentru avizul EE DELGAZ.
+    Aceasta functie genereaza documentatia necesara pentru avizul HCL Suceava.
     Documentatia se depune pe email in format PDF, un singur fișier."""
     try:
         lucrare = Lucrare.objects.get(pk=lucrare_id)
@@ -381,16 +381,16 @@ def aviz_HCL_Suceava(lucrare_id: int, id_aviz: int):
         path_document_final = None
 
         if firma.nume == "S.C. ROGOTEHNIC S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. suceava/06. Aviz HCL - Suceava/Cerere HCL - ROGOTEHNIC.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/05. suceava/06. Aviz HCL - Suceava/Cerere HCL - ROGOTEHNIC.docx"
         elif firma.nume == "S.C. GENERAL TEHNIC S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. suceava/06. Aviz HCL - Suceava/Cerere HCL - GENERAL TEHNIC.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/05. suceava/06. Aviz HCL - Suceava/Cerere HCL - GENERAL TEHNIC.docx"
         elif firma.nume == "S.C. PROING SERV S.R.L.":
-            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. suceava/06. Aviz HCL - Suceava/Cerere HCL - PROING SERV.docx"
+            model_cerere = "StudiiFezabilitate/Avize_refactor/modele_cereri/05. suceava/06. Aviz HCL - Suceava/Cerere HCL - PROING SERV.docx"
         else:
             return DocumentGenerationResult.error_result(
                 "Nu am gasit modelul de cerere pentru firma de proiectare selectata")
 
-        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/01. suceava/06. Aviz HCL - Suceava/Citeste-ma.docx"
+        model_detalii = "StudiiFezabilitate/Avize_refactor/modele_cereri/05. suceava/06. Aviz HCL - Suceava/Citeste-ma.docx"
 
         # -------------------------------                                     --- 1. Validări --- #
         # 1.1 Verificare câmpuri necesare
