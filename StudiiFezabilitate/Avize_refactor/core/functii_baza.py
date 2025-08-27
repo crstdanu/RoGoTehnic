@@ -410,7 +410,7 @@ def merge_pdfs(pdf_list, output_path):
         merger = PdfMerger()
         for pdf in pdf_list:
             try:
-                merger.append(pdf)
+                merger.append(pdf, import_outline=False)
             except Exception as e:
                 raise Exception(
                     f"Eroare la adăugarea PDF-ului '{pdf}': {str(e)}")
@@ -485,7 +485,7 @@ def merge_pdfs_print(pdf_list, output_path):
         merger = PdfMerger()
         for pdf in pdf_list:
             try:
-                merger.append(pdf)
+                merger.append(pdf, import_outline=False)
                 x = count_pages(pdf)
                 if x % 2 == 1:
                     merger.append(pagina_goala)

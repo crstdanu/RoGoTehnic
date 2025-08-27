@@ -118,6 +118,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_DIGI_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz MApN - Neamt":
                 return neamt.aviz_MApN_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz GN - Mihoc Oil SRL":
+                return neamt.aviz_GN_Mihoc_Oil(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Neamț nu poate fi generată (...încă)")
