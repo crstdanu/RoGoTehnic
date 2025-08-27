@@ -8,7 +8,8 @@ import PyPDF2
 from PyPDF2 import PdfMerger
 from django.db.models.fields.files import FieldFile
 
-pagina_goala = r"StudiiFezabilitate\Avize\modele_cereri\pagina_goala.pdf"
+pagina_goala = r"StudiiFezabilitate\Avize_refactor\pagina_goala.pdf"
+
 
 
 def check_required_fields(fields):
@@ -626,3 +627,4 @@ def valideaza_existenta_modele(lista_cai):
     if erori:
         return DocumentGenerationResult.error_result("\n".join(erori))
     return None
+
