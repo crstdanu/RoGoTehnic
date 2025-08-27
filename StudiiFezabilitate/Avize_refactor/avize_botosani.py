@@ -197,7 +197,7 @@ def aviz_GN_Delgaz_Botosani(lucrare_id: int, id_aviz: int):
             return result
 
         # 1.2 Verificare fișiere încărcate
-        result = simple.verifica_fisiere_incarcate_STANDARD(
+        result = simple.verifica_fisiere_incarcate_STANDARD_cu_DWG(
             cu, firma, reprezentant, beneficiar)
         if result is not None and not result.is_success():
             return result
@@ -225,6 +225,11 @@ def aviz_GN_Delgaz_Botosani(lucrare_id: int, id_aviz: int):
             email_pdf_path = simple.genereaza_email(
                 lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
+
+            # --- 5. Generare DWG-ul --- #
+            plan_situatie_DWG_path = simple.genereaza_plan_situatie_DWG(
+                lucrare, avizCU, cu, temp_dir)
+            fisiere_generate.append(plan_situatie_DWG_path)
 
             # Toate documentele au fost generate cu succes
             return DocumentGenerationResult.success_result(fisiere_generate)

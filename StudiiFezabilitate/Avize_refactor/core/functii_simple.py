@@ -197,6 +197,30 @@ def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant, beneficiar):
     ])
     return errors
 
+def verifica_fisiere_incarcate_STANDARD_cu_DWG(cu, firma, reprezentant, beneficiar):
+    errors = baza.check_required_fields([
+        # Fisiere necesare intocmire documentatie
+        (firma.cale_stampila,
+         "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona anexă CU"),
+        (cu.cale_plan_situatie_CU,
+            "Nu se poate genera avizul - lipsește Planul de situatie anexă CU"),
+        (cu.cale_memoriu_tehnic_CU,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic anexă CU"),
+        (cu.cale_acte_facturare,
+            "Nu se poate genera avizul - lipsesc Acte facturare"),
+        (cu.cale_plan_situatie_DWG,
+            "Nu se poate genera avizul - lipsește Planul de situație în format DWG"),
+    ])
+    return errors
+
 def verifica_fisiere_incarcate_ACTE_BENEFICIAR(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
         # Fisiere necesare intocmire documentatie
@@ -222,7 +246,6 @@ def verifica_fisiere_incarcate_ACTE_BENEFICIAR(cu, firma, reprezentant, benefici
             "Nu se poate genera avizul - lipsesc Acte beneficiar"),
     ])
     return errors
-
 
 def verifica_fisiere_incarcate_cu_CI(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
@@ -791,3 +814,38 @@ def genereaza_readme_DIGI(lucrare, avizCU, firma, reprezentant, cu, beneficiar, 
             f"Readme-ul a fost generat, dar fișierul este gol: {readme_pdf_path}")
 
     return readme_pdf_path
+
+def genereaza_plan_situatie_DWG(lucrare, avizCU, cu, temp_dir):
+    """
+    Copiază planul de situație în format DWG încărcat pe Certificatul de Urbanism
+    într-un director temporar și returnează calea fișierului copiat.
+
+    Args:
+        lucrare: obiectul Lucrare (nefolosit direct, păstrat pentru semnătură unitară)
+        avizCU: obiectul AvizeCU (nefolosit direct, păstrat pentru semnătură unitară)
+        cu: obiectul CertificatUrbanism care conține câmpul FileField `cale_plan_situatie_DWG`
+        temp_dir: directorul temporar unde copiem fișierul
+
+    Returns:
+        str: calea completă către fișierul DWG copiat în temp_dir
+    """
+    # Validăm existența câmpului și a fișierului sursă
+    if not getattr(cu, 'cale_plan_situatie_DWG', None):
+        raise Exception("Nu se poate genera documentația: Planul de situație în format DWG nu este încărcat în CU.")
+
+    source_field = cu.cale_plan_situatie_DWG
+    try:
+        source_path = source_field.path
+    except Exception:
+        # Fallback dacă path nu este disponibil
+        source_path = str(source_field)
+
+    # Copiem fișierul în temp_dir, păstrând extensia și dând un nume prietenos
+    dest_path = baza.copy_file(source_path, temp_dir, new_filename="Plan situatie DWG")
+
+    # Verificăm că fișierul rezultat există și are conținut
+    if not os.path.exists(dest_path) or os.path.getsize(dest_path) == 0:
+        raise Exception(
+            f"Planul de situație DWG a fost copiat, dar fișierul este gol sau inexistent: {dest_path}")
+
+    return dest_path
