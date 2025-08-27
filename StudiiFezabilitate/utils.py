@@ -244,6 +244,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.acord_CJ_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Acord Club Sportiv Botosani":
                 return botosani.acord_Club_Sportiv_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz principiu - Biroul Rutier - Botosani":
+                return botosani.aviz_principiu_Biroul_Rutier_Botosani(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")

@@ -150,6 +150,30 @@ def verifica_fisiere_incarcate_APM(cu, firma, reprezentant, beneficiar):
     ])
     return errors
 
+def verifica_fisiere_incarcate_Biroul_Rutier_Botosani(cu, firma, reprezentant, beneficiar):
+    errors = baza.check_required_fields([
+        # Fisiere necesare intocmire documentatie
+        (firma.cale_stampila,
+         "Nu se poate genera avizul - lipsește ștampila firmei de proiectare"),
+        (reprezentant.cale_semnatura,
+            "Nu se poate genera avizul - lipsește Semnatura reprezentantului firmei de proiectare"),
+
+        # Fisiere necesare
+        (cu.cale_CU,
+         "Nu se poate genera avizul - lipsește Certificatul de Urbanism"),
+        (cu.cale_plan_incadrare_CU,
+            "Nu se poate genera avizul - lipsește Planul de incadrare in zona anexă CU"),
+        (cu.cale_plan_situatie_CU,
+            "Nu se poate genera avizul - lipsește Planul de situatie anexă CU"),
+        (cu.cale_memoriu_tehnic_CU,
+            "Nu se poate genera avizul - lipsește Memoriul tehnic anexă CU"),
+        (cu.cale_acte_beneficiar,
+            "Nu se poate genera avizul - lipsesc Acte beneficiar"),
+        (cu.cale_chitanta_IPJ_Botosani,
+            "Nu se poate genera avizul - lipseste CHITANTA IPJ Botosani"),
+    ])
+    return errors
+
 
 def verifica_fisiere_incarcate_STANDARD(cu, firma, reprezentant, beneficiar):
     errors = baza.check_required_fields([
@@ -529,6 +553,31 @@ def genereaza_document_final_APM(lucrare, avizCU, cerere_pdf_path, notificare_pd
         cu.cale_plan_situatie_CU.path,
         notificare_pdf_path,
         cu.cale_acte_facturare.path,
+    ]
+
+    if print:
+        baza.merge_pdfs_print(pdf_list, path_document_final)
+    else:
+        baza.merge_pdfs(pdf_list, path_document_final)
+
+    return path_document_final
+
+def genereaza_document_final_aviz_principiu_Biroul_Rutier_Botosani(lucrare, avizCU, cerere_pdf_path, cu, beneficiar, temp_dir, print=False):
+    """
+    Combină toate fișierele și pregătește documentul final pentru a fi livrat
+    """
+    path_document_final = os.path.join(
+        temp_dir, f"Documentatie {avizCU.nume_aviz.nume} - pentru {beneficiar.nume}.pdf"
+    )
+
+    pdf_list = [
+        cerere_pdf_path,
+        cu.cale_chitanta_IPJ_Botosani.path,
+        cu.cale_CU.path,
+        cu.cale_plan_incadrare_CU.path,
+        cu.cale_plan_situatie_CU.path,
+        cu.cale_memoriu_tehnic_CU.path,
+        cu.cale_acte_beneficiar.path,
     ]
 
     if print:

@@ -217,6 +217,18 @@
                                         <div class="invalid-feedback d-block">{{ form.cale_chitanta_DSP.errors|striptags }}</div>
                                         {% endif %}
                                     </div>
+
+                                    {% if lucrare and lucrare.judet and lucrare.judet.nume %}
+                                    {% if lucrare.judet.nume == 'Botoșani' %}
+                                    <div class="mb-3">
+                                        <label class="form-label" for="{{ form.cale_chitanta_IPJ_Botosani.id_for_label }}">{{ form.cale_chitanta_IPJ_Botosani.label }}</label>
+                                        {{ form.cale_chitanta_IPJ_Botosani }}
+                                        {% if form.cale_chitanta_IPJ_Botosani.errors %}
+                                        <div class="invalid-feedback d-block">{{ form.cale_chitanta_IPJ_Botosani.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

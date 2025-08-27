@@ -479,6 +479,42 @@
                                     {% endif %}
                                 </div>
                             </div>
+
+                            {% if lucrare and lucrare.judet and lucrare.judet.nume %}
+                            {% if lucrare.judet.nume == 'Botoșani' %}
+                            <!-- Cale Chitanță IPJ Botoșani -->
+                            <div class="form-group mb-4">
+                                <label for="{{ form.cale_chitanta_IPJ_Botosani.id_for_label }}" class="form-label">
+                                    {{ form.cale_chitanta_IPJ_Botosani.label }}
+                                </label>
+
+                                {% if form.instance.cale_chitanta_IPJ_Botosani %}
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="far fa-file-pdf text-danger me-2"></i>
+                                        <a href="{% url 'download_file' 'certificaturbanism' 'cale_chitanta_IPJ_Botosani' lucrare.id %}" class="text-decoration-none">
+                                            {{ form.instance.cale_chitanta_IPJ_Botosani.name }}
+                                            <i class="fas fa-download ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">
+                                        Încărcați un nou fișier doar dacă doriți să-l
+                                        înlocuiți pe cel existent.
+                                    </small>
+                                </div>
+                                {% endif %}
+
+                                <div>
+                                    {{ form.cale_chitanta_IPJ_Botosani }}
+                                    {% if form.cale_chitanta_IPJ_Botosani.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.cale_chitanta_IPJ_Botosani.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                     <!-- Bottom actions -->

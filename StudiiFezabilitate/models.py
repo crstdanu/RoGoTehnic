@@ -168,6 +168,9 @@ def cale_upload_aviz_CTE(instance, filename):
 def cale_upload_chitanta_DSP(instance, filename):
     return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_DSP.pdf'
 
+def cale_upload_chitanta_IPJ_Botosani(instance, filename):
+    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_IPJ_Botosani.pdf'
+
 
 class Judet(models.Model):
     nume = models.CharField(max_length=50, unique=True)
@@ -517,6 +520,8 @@ class CertificatUrbanism(models.Model):
         upload_to=cale_upload_aviz_GIS, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
     cale_chitanta_DSP = models.FileField(
         upload_to=cale_upload_chitanta_DSP, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
+    cale_chitanta_IPJ_Botosani = models.FileField(
+        upload_to=cale_upload_chitanta_IPJ_Botosani, validators=[extension_validator_pdf, validate_file_mimetype_pdf], blank=True, null=True,)
 
     @property
     def data_formatata(self):

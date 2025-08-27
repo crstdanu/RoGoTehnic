@@ -416,7 +416,7 @@ def download_file(request, model_name, field_name, object_id):
                 'cale_CU', 'cale_plan_incadrare_CU', 'cale_plan_situatie_CU', 'cale_memoriu_tehnic_CU',
                 'cale_acte_beneficiar', 'cale_acte_facturare', 'cale_chitanta_APM',
                 'cale_plan_situatie_la_scara', 'cale_plan_situatie_DWG', 'cale_extrase_CF',
-                'cale_aviz_GIS', 'cale_ATR', 'cale_aviz_CTE', 'cale_chitanta_DSP'
+                'cale_aviz_GIS', 'cale_ATR', 'cale_aviz_CTE', 'cale_chitanta_DSP', 'cale_chitanta_IPJ_Botosani'
             ]
 
             # Verificăm dacă câmpul specificat există în model

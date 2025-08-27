@@ -339,6 +339,15 @@
                                 {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
                                 {% endwith %}
 
+                                {% if lucrare and lucrare.judet and lucrare.judet.nume %}
+                                {% if lucrare.judet.nume == 'Botoșani' %}
+                                <!-- Cale Chitanță IPJ Botoșani -->
+                                {% with label="Cale Chitanță IPJ Botoșani" file_field=certificat_urbanism.cale_chitanta_IPJ_Botosani field_name="cale_chitanta_IPJ_Botosani" %}
+                                {% include "StudiiFezabilitate/CU/_file_download_link.html" %}
+                                {% endwith %}
+                                {% endif %}
+                                {% endif %}
+
 
 
 
