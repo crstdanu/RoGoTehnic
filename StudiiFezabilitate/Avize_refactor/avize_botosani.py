@@ -226,7 +226,7 @@ def aviz_GN_Delgaz_Botosani(lucrare_id: int, id_aviz: int):
                 lucrare, avizCU, firma, reprezentant, cu, beneficiar, contact, model_detalii, temp_dir)
             fisiere_generate.append(email_pdf_path)
 
-            # --- 5. Generare DWG-ul --- #
+            # --- 6. Generare DWG-ul --- #
             plan_situatie_DWG_path = simple.genereaza_plan_situatie_DWG(
                 lucrare, avizCU, cu, temp_dir)
             fisiere_generate.append(plan_situatie_DWG_path)
