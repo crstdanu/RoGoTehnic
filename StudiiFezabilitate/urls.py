@@ -35,6 +35,8 @@ urlpatterns = [
     path('ajax/get_avize/', views.get_avize, name='get_avize'),
     path('lucrare/<int:lucrare_id>/index_CU/genereaza_aviz/<int:id_aviz>/',
          views.genereaza_aviz, name='genereaza_aviz'),
+    path('lucrare/<int:lucrare_id>/index_CU/aviz/<int:id>/',
+         views.view_Aviz, name='view_aviz'),
 ]
 
 if settings.DEBUG:

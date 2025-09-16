@@ -1,0 +1,114 @@
+{% extends "StudiiFezabilitate/CU/base_CU_SF.html" %}
+
+{% block body %}
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Detalii aviz: <strong>{{ aviz.nume_aviz }}</strong></h4>
+        <div class="d-flex gap-2">
+            <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-outline-secondary btn-sm">Înapoi</a>
+            <a href="{% url 'edit_aviz' lucrare.id aviz.id %}" class="btn btn-primary btn-sm">Editează</a>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Informații generale</div>
+        <div class="card-body">
+            <!-- Descriere aviz (2 rânduri) -->
+            <div class="mb-3">
+                <label class="form-label">Descriere aviz</label>
+                <textarea readonly class="form-control-plaintext" rows="2" style="resize: none;">{{ aviz.descriere_aviz }}</textarea>
+            </div>
+
+            <!-- Două coloane ca la editare -->
+            <div class="row g-3">
+                <!-- Stânga: Depus + Data depunerii -->
+                <div class="col-12 col-md-6">
+                    <div class="mb-2">
+                        <div class="form-label m-0">Depus</div>
+                        <div>{% if aviz.depus %}Da{% else %}Nu{% endif %}</div>
+                    </div>
+                    <div>
+                        <div class="form-label m-0">Data depunerii</div>
+                        <div>{{ aviz.data_depunere|date:"d.m.Y" }}</div>
+                    </div>
+                </div>
+
+                <!-- Dreapta: Primit + Număr aviz + Data aviz + Cale aviz -->
+                <div class="col-12 col-md-6">
+                    <div class="mb-2">
+                        <div class="form-label m-0">Primit</div>
+                        <div>{% if aviz.primit %}Da{% else %}Nu{% endif %}</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="form-label m-0">Număr aviz</div>
+                        <div>{{ aviz.numar_aviz|default:"-" }}</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="form-label m-0">Data aviz</div>
+                        <div>{{ aviz.data_aviz|date:"d.m.Y" }}</div>
+                    </div>
+                    <div>
+                        <div class="form-label m-0">Cale aviz</div>
+                        {% if aviz.cale_aviz_eliberat %}
+                        <a href="{{ aviz.cale_aviz_eliberat.url }}" target="_blank">{{ aviz.cale_aviz_eliberat.name }}</a>
+                        {% else %}
+                        <span class="text-muted">Nu există fișier atașat</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Cheltuieli</span>
+            <span class="fw-semibold">Total: {{ aviz.total_cheltuieli|default:'0.00' }} lei</span>
+        </div>
+        <div class="card-body">
+            {% if cheltuieli %}
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Tip</th>
+                            <th class="text-end">Sumă</th>
+                            <th>Include TVA</th>
+                            <th>Cotă TVA</th>
+                            <th>Document</th>
+                            <th>Dovadă plată</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in cheltuieli %}
+                        <tr>
+                            <td>{{ c.get_tip_display }}</td>
+                            <td class="text-end">{{ c.suma }}</td>
+                            <td>{% if c.include_tva %}Da{% else %}Nu{% endif %}</td>
+                            <td>{{ c.tva }}%</td>
+                            <td>
+                                {% if c.document %}
+                                <a href="{{ c.document.url }}" target="_blank">{{ c.document.name }}</a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if c.dovada_plata %}
+                                <a href="{{ c.dovada_plata.url }}" target="_blank">{{ c.dovada_plata.name }}</a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-muted">Nu există cheltuieli înregistrate.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

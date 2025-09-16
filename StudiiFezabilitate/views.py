@@ -118,6 +118,31 @@ def dd_avize_intarziate(request):
     return render(request, 'StudiiFezabilitate/Dashboard/dashboard_avize_intarziate.html', context)
 
 
+def view_Aviz(request, lucrare_id: int, id: int):
+    """Afișează detalii pentru un AvizCU, inclusiv cheltuieli și fișierul avizului eliberat.
+
+    Args:
+        lucrare_id: ID-ul lucrării părinte (pentru breadcrumb și validare context)
+        id: ID-ul avizului (AvizeCU)
+    """
+    aviz = get_object_or_404(AvizeCU.objects.select_related(
+        'certificat_urbanism', 'certificat_urbanism__lucrare', 'nume_aviz'
+    ), pk=id)
+    lucrare = aviz.certificat_urbanism.lucrare
+    if lucrare.id != lucrare_id:
+        raise Http404("Avizul nu aparține acestei lucrări")
+
+    # Preluăm cheltuielile asociate (lazy eval în template)
+    cheltuieli = aviz.cheltuieli.all().select_related()
+
+    context = {
+        'lucrare': lucrare,
+        'aviz': aviz,
+        'cheltuieli': cheltuieli,
+    }
+    return render(request, 'StudiiFezabilitate/CU/Avize/view_aviz.html', context)
+
+
 def dd_lucrari_finalizate(request):
     """Listă cu lucrările finalizate, ordonate cu ultima finalizată prima, afișează data_finalizare."""
     lucrari = Lucrare.objects.filter(
@@ -336,10 +361,13 @@ def add_Avize(request, id):
 
 
 def edit_Aviz(request, lucrare_id, id):
+    from StudiiFezabilitate.forms import AvizCheltuialaFormSet
     lucrare = Lucrare.objects.get(pk=lucrare_id)
     aviz = AvizeCU.objects.get(pk=id)
     if request.method == 'POST':
-        form = AvizeCUForm(request.POST, instance=aviz)
+        form = AvizeCUForm(request.POST, request.FILES, instance=aviz)
+        formset = AvizCheltuialaFormSet(
+            request.POST, request.FILES, instance=aviz)
         # Filtrăm opțiunile doar la avizele din județul lucrării și validăm alegerea
         try:
             from StudiiFezabilitate.models import Aviz
@@ -352,16 +380,14 @@ def edit_Aviz(request, lucrare_id, id):
             ).exclude(id__in=used_ids).order_by('nume')
         except Exception:
             pass
-        if form.is_valid():
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
-                'form': form,
-                'success': True,
-                'lucrare': lucrare,
-                'aviz': aviz,
-            })
+            formset.save()
+            # Redirect PRG către index_CU pentru lucrare
+            return redirect('index_CU', id=lucrare.id)
     else:
         form = AvizeCUForm(instance=aviz)
+        formset = AvizCheltuialaFormSet(instance=aviz)
         # Filtrăm opțiunile doar la avizele din județul lucrării
         try:
             from StudiiFezabilitate.models import Aviz
@@ -376,6 +402,7 @@ def edit_Aviz(request, lucrare_id, id):
             pass
     return render(request, 'StudiiFezabilitate/CU/Avize/edit_avize.html', {
         'form': form,
+        'formset': formset,
         'lucrare': lucrare,
         'aviz': aviz,
     })

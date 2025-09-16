@@ -4,33 +4,277 @@
 
 
 {% block body %}
+<style>
+    /* Stilizare comutatoare: OFF roșu, ON albastru */
+    .form-switch .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+        cursor: pointer;
+    }
+
+    .form-switch .form-check-input:focus {
+        box-shadow: none;
+    }
+
+    /* OFF state (unchecked) */
+    .form-switch .form-check-input:not(:checked) {
+        background-color: #dc3545;
+        /* red */
+        border-color: #dc3545;
+    }
+
+    /* ON state (checked) */
+    .form-switch .form-check-input:checked {
+        background-color: #0d6efd;
+        /* blue */
+        border-color: #0d6efd;
+    }
+</style>
 <h3 class="text-center m-4">
     Editează <strong>{{ aviz.nume_aviz }}</strong> pentru <strong>{{ lucrare.nume_intern }}</strong>
 </h3>
-
-{% if success %}
-<script>
-    window.location.href = "{% url 'index_CU' lucrare.id %}";
-</script>
-{% else %}
 <div class="row justify-content-center">
-    <div class="col-6">
+    <div class="col-12 col-md-10 col-lg-8">
         <div class="card bg-light mb-3" id="aviz-form" data-judet-id="{{ lucrare.judet.id|default:'' }}">
-            <div class="card-header">
-                <i class="fa-solid fa-pen-to-square fa-lg"></i> Editează - {{ aviz.nume_aviz }}
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-pen-to-square fa-lg me-2"></i>
+                    <span>Editează - {{ aviz.nume_aviz }}</span>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-sm btn-outline-secondary" form="edit-aviz-form">Anulează</a>
+                    <button type="submit" class="btn btn-sm btn-primary" form="edit-aviz-form">Salvează</button>
+                </div>
             </div>
             <div class="card-body">
-                <form action="" method="POST">
+                {% if form.non_field_errors or form.errors or formset and formset.non_form_errors %}
+                <div class="alert alert-danger" role="alert">
+                    Formularul conține erori. Verifică câmpurile evidențiate mai jos.
+                    {% if form.non_field_errors %}<div class="mt-2">{{ form.non_field_errors }}</div>{% endif %}
+                    {% if formset and formset.non_form_errors %}<div class="mt-2">{{ formset.non_form_errors }}</div>{% endif %}
+                </div>
+                {% endif %}
+
+                <form id="edit-aviz-form" action="" method="POST" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary">Salvează modificările</button>
-                    <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-secondary">Anulează</a>
+                    <div class="mb-3">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-md-6">
+                                        <div class="text-center">
+                                            {% if form.instance.pk %}
+                                            <div class="h5 m-0">{{ form.instance.nume_aviz }}</div>
+                                            <input type="hidden" name="{{ form.nume_aviz.html_name }}" value="{{ form.instance.nume_aviz.pk }}">
+                                            {% else %}
+                                            {{ form.nume_aviz }}
+                                            {% endif %}
+                                            <div class="form-text mt-1">Numele avizului nu poate fi schimbat dupa creare</div>
+                                        </div>
+                                        {% if form.nume_aviz.errors %}<div class="invalid-feedback d-block">{{ form.nume_aviz.errors|striptags }}</div>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="{{ form.descriere_aviz.id_for_label }}">{{ form.descriere_aviz.label }}</label>
+                                        {{ form.descriere_aviz }}
+                                        <div class="form-text">Detaliați stadiul sau observații relevante.</div>
+                                        {% if form.descriere_aviz.errors %}<div class="invalid-feedback d-block">{{ form.descriere_aviz.errors|striptags }}</div>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-3">
+                                    <!-- Stânga: Depus + Data depunerii -->
+                                    <div class="col-12 col-md-6">
+                                        <div class="form-check form-switch mb-2">
+                                            {{ form.depus }}
+                                            <label class="form-check-label ms-2" for="{{ form.depus.id_for_label }}">{{ form.depus.label }}</label>
+                                        </div>
+                                        {% if form.depus.errors %}<div class="invalid-feedback d-block">{{ form.depus.errors|striptags }}</div>{% endif %}
+
+                                        <label class="form-label" for="{{ form.data_depunere.id_for_label }}">{{ form.data_depunere.label }}</label>
+                                        {{ form.data_depunere }}
+                                        {% if form.data_depunere.errors %}<div class="invalid-feedback d-block">{{ form.data_depunere.errors|striptags }}</div>{% endif %}
+                                    </div>
+
+                                    <!-- Dreapta: Primit + Număr aviz + Data aviz -->
+                                    <div class="col-12 col-md-6">
+                                        <div class="form-check form-switch mb-2">
+                                            {{ form.primit }}
+                                            <label class="form-check-label ms-2" for="{{ form.primit.id_for_label }}">{{ form.primit.label }}</label>
+                                        </div>
+                                        {% if form.primit.errors %}<div class="invalid-feedback d-block">{{ form.primit.errors|striptags }}</div>{% endif %}
+
+                                        <label class="form-label" for="{{ form.numar_aviz.id_for_label }}">{{ form.numar_aviz.label }}</label>
+                                        {{ form.numar_aviz }}
+                                        {% if form.numar_aviz.errors %}<div class="invalid-feedback d-block">{{ form.numar_aviz.errors|striptags }}</div>{% endif %}
+
+                                        <label class="form-label" for="{{ form.data_aviz.id_for_label }}">{{ form.data_aviz.label }}</label>
+                                        {{ form.data_aviz }}
+                                        {% if form.data_aviz.errors %}<div class="invalid-feedback d-block">{{ form.data_aviz.errors|striptags }}</div>{% endif %}
+                                        <div class="mt-2">
+                                            <label class="form-label" for="{{ form.cale_aviz_eliberat.id_for_label }}">{{ form.cale_aviz_eliberat.label }}</label>
+                                            {{ form.cale_aviz_eliberat }}
+                                            {% if form.cale_aviz_eliberat.errors %}<div class="invalid-feedback d-block">{{ form.cale_aviz_eliberat.errors|striptags }}</div>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h5 class="mb-3">Cheltuieli (facturi/taxe)</h5>
+                    {% if formset %}
+                    {{ formset.management_form }}
+                    <div id="cheltuieli-formset" data-prefix="{{ formset.prefix }}">
+                        {% for f in formset.forms %}
+                        <div class="border rounded p-3 mb-3 formset-row">
+                            {# Hidden fields (e.g., id) are required for updates/deletes #}
+                            {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+                            {% if f.non_field_errors %}
+                            <div class="alert alert-danger py-1 mb-2">{{ f.non_field_errors }}</div>
+                            {% endif %}
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label" for="{{ f.tip.id_for_label }}">{{ f.tip.label }}</label>
+                                    {{ f.tip }}
+                                    {% if f.tip.errors %}<div class="invalid-feedback d-block">{{ f.tip.errors|striptags }}</div>{% endif %}
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <label class="form-label" for="{{ f.suma.id_for_label }}">{{ f.suma.label }}</label>
+                                    {{ f.suma }}
+                                    {% if f.suma.errors %}<div class="invalid-feedback d-block">{{ f.suma.errors|striptags }}</div>{% endif %}
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check form-switch mt-4">
+                                        {{ f.include_tva }}
+                                        <label class="form-check-label" for="{{ f.include_tva.id_for_label }}">{{ f.include_tva.label }}</label>
+                                    </div>
+                                    {% if f.include_tva.errors %}<div class="invalid-feedback d-block">{{ f.include_tva.errors|striptags }}</div>{% endif %}
+                                </div>
+                                <div class="col-12 col-md-3">
+                                    <label class="form-label" for="{{ f.tva.id_for_label }}">{{ f.tva.label }}</label>
+                                    {{ f.tva }}
+                                    {% if f.tva.errors %}<div class="invalid-feedback d-block">{{ f.tva.errors|striptags }}</div>{% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ f.document.id_for_label }}">{{ f.document.label }}</label>
+                                    {{ f.document }}
+                                    {% if f.document.errors %}<div class="invalid-feedback d-block">{{ f.document.errors|striptags }}</div>{% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="{{ f.dovada_plata.id_for_label }}">{{ f.dovada_plata.label }}</label>
+                                    {{ f.dovada_plata }}
+                                    {% if f.dovada_plata.errors %}<div class="invalid-feedback d-block">{{ f.dovada_plata.errors|striptags }}</div>{% endif %}
+                                </div>
+
+                                {% if formset.can_delete %}
+                                <div class="col-12">
+                                    <div class="form-check mt-2">
+                                        {{ f.DELETE }}
+                                        <label class="form-check-label" for="{{ f.DELETE.id_for_label }}">Șterge această înregistrare</label>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {# Empty form prototype (hidden) #}
+                        <template id="cheltuiala-empty-form">
+                            <div class="border rounded p-3 mb-3 formset-row">
+                                {% with f=formset.empty_form %}
+                                {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label" for="{{ f.tip.id_for_label }}">{{ f.tip.label }}</label>
+                                        {{ f.tip }}
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <label class="form-label" for="{{ f.suma.id_for_label }}">{{ f.suma.label }}</label>
+                                        {{ f.suma }}
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="form-check form-switch mt-4">
+                                            {{ f.include_tva }}
+                                            <label class="form-check-label" for="{{ f.include_tva.id_for_label }}">{{ f.include_tva.label }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label" for="{{ f.tva.id_for_label }}">{{ f.tva.label }}</label>
+                                        {{ f.tva }}
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="{{ f.document.id_for_label }}">{{ f.document.label }}</label>
+                                        {{ f.document }}
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="{{ f.dovada_plata.id_for_label }}">{{ f.dovada_plata.label }}</label>
+                                        {{ f.dovada_plata }}
+                                    </div>
+
+                                    {% if formset.can_delete %}
+                                    <div class="col-12">
+                                        <div class="form-check mt-2">
+                                            {{ f.DELETE }}
+                                            <label class="form-check-label" for="{{ f.DELETE.id_for_label }}">Șterge această înregistrare</label>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endwith %}
+                            </div>
+                        </template>
+                        {# End empty form prototype #}
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="add-cheltuiala">Adaugă cheltuială</button>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="fw-semibold">Total cheltuieli: <span id="total-cheltuieli">{{ aviz.total_cheltuieli|default:'0.00' }}</span> lei</div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'index_CU' lucrare.id %}" class="btn btn-outline-secondary">Anulează</a>
+                            <button type="submit" class="btn btn-primary">Salvează</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<script src="{% static 'js/init_avize.js' %}"></script>
-{% endif %}
+<script>
+    // Adăugare dinamică de formulare în formset folosind template (empty_form)
+    (function () {
+        const addBtn = document.getElementById('add-cheltuiala');
+        const container = document.getElementById('cheltuieli-formset');
+        if (!addBtn || !container) return;
+        const prefix = container.getAttribute('data-prefix');
+        const tmpl = document.getElementById('cheltuiala-empty-form');
+        addBtn.addEventListener('click', function () {
+            const totalFormsInput = document.querySelector(`input[name="${prefix}-TOTAL_FORMS"]`);
+            if (!totalFormsInput) return;
+            const total = parseInt(totalFormsInput.value, 10);
+            if (!tmpl || !('content' in document.createElement('template'))) return;
+            const fragment = tmpl.content.cloneNode(true);
+            // actualizează __prefix__ în atributele generate de empty_form
+            fragment.querySelectorAll('input, select, textarea, label').forEach(function (el) {
+                ['for', 'id', 'name'].forEach(function (attr) {
+                    const val = el.getAttribute(attr);
+                    if (val) el.setAttribute(attr, val.replace(/__prefix__/g, total));
+                });
+                // asigură-te că valorile sunt curate
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    if (el.type === 'checkbox') { el.checked = false; }
+                    else if (el.type !== 'file') { el.value = ''; }
+                }
+            });
+            container.appendChild(fragment);
+            totalFormsInput.value = total + 1;
+        });
+    })();
+</script>
 {% endblock %}

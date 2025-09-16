@@ -69,7 +69,7 @@
                                             </thead>
                                             <tbody>
                                                 {% for aviz in avize %}
-                                                <tr>
+                                                <tr class="aviz-row" data-href="{% url 'view_aviz' lucrare.id aviz.id %}">
                                                     <td>
                                                         {% if aviz.is_overdue %}
                                                         <span class="text-danger">{{ aviz.nume_aviz }}</span>
@@ -388,4 +388,24 @@
     </div>
 </div>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    (function () {
+        const rows = document.querySelectorAll('table.table-avize tbody tr.aviz-row');
+        rows.forEach(function (row) {
+            const href = row.getAttribute('data-href');
+            if (!href) return;
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function (e) {
+                // Evită navigarea când se apasă pe butoane/links sau în interiorul unui modal trigger
+                const tag = e.target.tagName.toLowerCase();
+                if (tag === 'a' || tag === 'button' || e.target.closest('a, button')) {
+                    return;
+                }
+                window.location.href = href;
+            });
+        });
+    })();
+</script>
 {% endblock %}

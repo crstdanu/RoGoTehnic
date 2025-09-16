@@ -1,5 +1,13 @@
 from django import forms
-from StudiiFezabilitate.models import Lucrare, CertificatUrbanism, AvizeCU, Localitate, UAT
+from django.forms import inlineformset_factory
+from StudiiFezabilitate.models import (
+    Lucrare,
+    CertificatUrbanism,
+    AvizeCU,
+    Localitate,
+    UAT,
+    AvizCheltuiala,
+)
 from django.core.exceptions import ValidationError
 
 
@@ -14,28 +22,33 @@ class BaseForm(forms.ModelForm):
             # Decide baza în funcție de tipul widgetului
             if isinstance(widget, (forms.Select, forms.SelectMultiple)):
                 base_class = 'form-select'
-                # elimină form-control dacă e setat din greșeală
                 existing_classes = [
                     c for c in existing_classes if c != 'form-control']
             elif isinstance(widget, forms.CheckboxInput):
                 base_class = 'form-check-input'
-                # elimină form-control/select eronate
                 existing_classes = [c for c in existing_classes if c not in (
                     'form-control', 'form-select')]
             else:
                 base_class = 'form-control'
-                # elimină form-select dacă a fost adăugat anterior
                 existing_classes = [
                     c for c in existing_classes if c != 'form-select']
 
             if base_class not in existing_classes:
                 existing_classes.append(base_class)
 
-            # Adaugă is-invalid dacă există erori pe câmp
-            if field_name in self.errors and 'is-invalid' not in existing_classes:
-                existing_classes.append('is-invalid')
-
             widget.attrs['class'] = ' '.join(existing_classes).strip()
+
+    def full_clean(self):
+        # Rulează validarea standard
+        super().full_clean()
+        # Marchează câmpurile cu erori cu clasa Bootstrap 'is-invalid'
+        for field_name in getattr(self, 'errors', {}):
+            if field_name in self.fields:
+                widget = self.fields[field_name].widget
+                existing = widget.attrs.get('class', '').split()
+                if 'is-invalid' not in existing:
+                    existing.append('is-invalid')
+                    widget.attrs['class'] = ' '.join(existing).strip()
 
 
 class LucrareForm(BaseForm):
@@ -195,7 +208,7 @@ class AvizeCUForm(BaseForm):
     class Meta:
         model = AvizeCU
         fields = ['nume_aviz', 'depus', 'data_depunere', 'primit', 'numar_aviz',
-                  'data_aviz', 'cale_aviz_eliberat', 'descriere_aviz', 'cost_net', 'cost_tva', 'cost_total',]
+                  'data_aviz', 'cale_aviz_eliberat', 'descriere_aviz']
         labels = {
             'nume_aviz': 'Nume aviz',
             'depus': 'Depus',
@@ -205,9 +218,6 @@ class AvizeCUForm(BaseForm):
             'data_aviz': 'Data aviz',
             'cale_aviz_eliberat': 'Cale aviz',
             'descriere_aviz': 'Descriere aviz',
-            'cost_net': 'Cost Net',
-            'cost_tva': 'Cost TVA',
-            'cost_total': 'Cost Total',
         }
 
         widgets = {
@@ -217,18 +227,13 @@ class AvizeCUForm(BaseForm):
             'primit': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'numar_aviz': forms.TextInput(attrs={'class': 'form-control'}),
             'data_aviz': forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control', 'placeholder': 'zz.ll.aaaa', 'data-role': 'datepicker'}),
-            'cale_aviz_eliberat': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți calea avizului'}),
-            'descriere_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Introduceți descrierea avizului'}),
-            'cost_net': forms.NumberInput(attrs={'class': 'form-control'}),
-            'cost_tva': forms.NumberInput(attrs={'class': 'form-control'}),
-            'cost_total': forms.NumberInput(attrs={'class': 'form-control'}),
+            # Cale aviz este un fișier încărcat (FileField) – folosim input de fișier
+            'cale_aviz_eliberat': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
+            'descriere_aviz': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Introduceți descrierea avizului'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['cost_net'].required = False
-        self.fields['cost_tva'].required = False
-        self.fields['cost_total'].required = False
         # Acceptă dd.mm.yyyy și (opțional) ISO
         if 'data_depunere' in self.fields:
             self.fields['data_depunere'].input_formats = [
@@ -270,3 +275,38 @@ class AvizeCUForm(BaseForm):
             # Fără blocaj dacă există probleme de context; validarea modelului/DB va prinde oricum
             pass
         return cleaned
+
+
+class AvizCheltuialaForm(BaseForm):
+    class Meta:
+        model = AvizCheltuiala
+        fields = ['tip', 'suma', 'include_tva', 'tva',
+                  'document', 'dovada_plata']
+        labels = {
+            'tip': 'Tip',
+            'suma': 'Sumă',
+            'include_tva': 'Suma contine TVA',
+            'tva': 'Cotă TVA',
+            'document': 'Document (factură/taxă)',
+            'dovada_plata': 'Dovadă plată',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Pentru formularele noi/necompletate, bifa 'Suma contine TVA' să fie activă by default
+        if not self.is_bound:
+            try:
+                if not getattr(self.instance, 'pk', None):
+                    self.fields['include_tva'].initial = True
+            except Exception:
+                self.fields['include_tva'].initial = True
+
+
+# Inline formset pentru cheltuieli asociate unui AvizeCU
+AvizCheltuialaFormSet = inlineformset_factory(
+    AvizeCU,
+    AvizCheltuiala,
+    form=AvizCheltuialaForm,
+    extra=0,
+    can_delete=True
+)

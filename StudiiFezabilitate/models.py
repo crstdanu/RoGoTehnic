@@ -6,6 +6,7 @@ import os
 import magic
 import datetime
 import calendar
+from decimal import Decimal
 
 
 # Create your models here.
@@ -168,8 +169,55 @@ def cale_upload_aviz_CTE(instance, filename):
 def cale_upload_chitanta_DSP(instance, filename):
     return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_DSP.pdf'
 
+
 def cale_upload_chitanta_IPJ_Botosani(instance, filename):
     return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_IPJ_Botosani.pdf'
+
+
+# Upload helpers pentru cheltuieli (facturi/taxe) ale AvizeCU
+def cale_upload_factura_aviz(instance, filename):
+    try:
+        nume_intern = instance.aviz_cu.certificat_urbanism.lucrare.nume_intern
+    except Exception:
+        nume_intern = 'Lucrare'
+    return f"SF/{nume_intern}/CU/Facturi/{filename}"
+
+
+def cale_upload_dovada_plata_aviz(instance, filename):
+    try:
+        nume_intern = instance.aviz_cu.certificat_urbanism.lucrare.nume_intern
+    except Exception:
+        nume_intern = 'Lucrare'
+    return f"SF/{nume_intern}/CU/Dovezi/{filename}"
+
+
+# Upload helper pentru fișierul de aviz eliberat (AvizeCU.cale_aviz_eliberat)
+def cale_upload_aviz_eliberat(instance, filename):
+    """Returnează calea de salvare pentru avizul eliberat.
+
+    Structură propusă:
+    SF/<nume_intern>/CU/Avize_eliberate/<lucrare_id>/<nume_aviz>/<filename>
+
+    Se folosește ID-ul lucrării pentru a avea un director unic per lucrare.
+    """
+    try:
+        lucrare = instance.certificat_urbanism.lucrare
+        nume_intern = getattr(lucrare, 'nume_intern',
+                              None) or f"Lucrare_{lucrare.id}"
+        lucrare_id = lucrare.id
+    except Exception:
+        nume_intern = 'Lucrare'
+        lucrare_id = 'NA'
+
+    try:
+        aviz_nume = getattr(instance.nume_aviz, 'nume', 'Aviz')
+    except Exception:
+        aviz_nume = 'Aviz'
+
+    # Sanitizăm numele avizului pentru a evita caractere problematice în cale
+    safe_aviz = ''.join(c if c.isalnum() or c in (
+        ' ', '-', '_') else '_' for c in aviz_nume).strip().replace(' ', '_')
+    return f"SF/{nume_intern}/CU/Avize_eliberate/{lucrare_id}/{safe_aviz}/{filename}"
 
 
 class Judet(models.Model):
@@ -671,6 +719,11 @@ class CertificatUrbanism(models.Model):
         return f'CU expiră în {days} zile'
 
 
+class TVAChoices(models.IntegerChoices):
+    TVA_19 = 19, '19%'
+    TVA_21 = 21, '21%'
+
+
 class AvizeCU(models.Model):
     certificat_urbanism = models.ForeignKey(
         CertificatUrbanism, on_delete=models.CASCADE, related_name='avize_certificat')
@@ -682,14 +735,20 @@ class AvizeCU(models.Model):
     numar_aviz = models.CharField(max_length=100, blank=True, null=True,)
     data_aviz = models.DateField(blank=True, null=True,)
     cale_aviz_eliberat = models.FileField(
-        max_length=512, blank=True, null=True,)
+        upload_to=cale_upload_aviz_eliberat,
+        validators=[extension_validator_pdf, validate_file_mimetype_pdf],
+        max_length=512, blank=True, null=True,
+    )
     descriere_aviz = models.TextField(blank=True, null=True,)
-    cost_net = models.DecimalField(
+    cost_aviz = models.DecimalField(
         max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
-    cost_tva = models.DecimalField(
-        max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
-    cost_total = models.DecimalField(
-        max_digits=8, decimal_places=2, default=0.00, blank=True, null=True,)
+    cost_cu_TVA = models.BooleanField(default=True,)
+    valoare_TVA = models.PositiveSmallIntegerField(
+        choices=TVAChoices.choices,
+        default=TVAChoices.TVA_21,
+        verbose_name='Valoare TVA (%)',
+        blank=True, null=True,
+    )
 
     class Meta:
         verbose_name = "AvizCU"
@@ -739,3 +798,58 @@ class AvizeCU(models.Model):
             return cu.cu_button_class
         except CertificatUrbanism.DoesNotExist:
             return 'btn-primary'
+
+    @property
+    def total_cheltuieli(self):
+        """Totalul cheltuielilor (facturi/taxe) agregat din înregistrările asociate.
+        Dacă nu există cheltuieli, întoarce 0.00.
+        """
+        try:
+            return sum((c.total_cu_tva or Decimal('0.00')) for c in self.cheltuieli.all())
+        except Exception:
+            return Decimal('0.00')
+
+
+class AvizCheltuiala(models.Model):
+    class Tip(models.TextChoices):
+        FACTURA = 'factura', 'Factură'
+        TAXA = 'taxa', 'Taxă'
+
+    aviz_cu = models.ForeignKey(
+        'AvizeCU', on_delete=models.CASCADE, related_name='cheltuieli')
+    tip = models.CharField(max_length=20, choices=Tip.choices)
+
+    suma = models.DecimalField(
+        max_digits=10, decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text='Suma de bază (netă dacă "TVA inclus" e debifat; altfel suma deja conține TVA).'
+    )
+    include_tva = models.BooleanField(
+        default=True, verbose_name='Suma conține TVA')
+    tva = models.PositiveSmallIntegerField(
+        choices=TVAChoices.choices, default=TVAChoices.TVA_21, verbose_name='Cotă TVA (%)'
+    )
+
+    # Document primar (factură/taxă) și dovadă de plată; ambele opționale
+    document = models.FileField(
+        upload_to=cale_upload_factura_aviz,
+        validators=[extension_validator_pdf, validate_file_mimetype_pdf],
+        blank=True, null=True
+    )
+    dovada_plata = models.FileField(
+        upload_to=cale_upload_dovada_plata_aviz,
+        validators=[extension_validator_pdf, validate_file_mimetype_pdf],
+        blank=True, null=True
+    )
+
+    class Meta:
+        verbose_name = "Cheltuială aviz"
+        verbose_name_plural = "Cheltuieli aviz"
+        ordering = ['id']
+
+    @property
+    def total_cu_tva(self):
+        if self.include_tva:
+            return self.suma or Decimal('0.00')
+        cota = Decimal(str(self.tva or 0)) / Decimal('100')
+        return (self.suma or Decimal('0.00')) * (Decimal('1.00') + cota)
