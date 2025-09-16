@@ -114,81 +114,129 @@ def cale_upload_reprezentant_semnatura(instance, filename):
     return f'reprezentanti/{instance.nume}/semnatura/{filename}'
 
 
+# Helper intern pentru a construi prefixul directorului pe baza lucrării
+def _prefix_SF_lucrare(lucrare) -> str:
+    """Returnează prefixul standard "SF/{lucrare_id}_{nume_intern}".
+
+    În caz de date incomplete, cade pe o variantă sigură "SF/NA_Lucrare".
+    """
+    try:
+        lucrare_id = getattr(lucrare, 'id', None)
+        nume_intern = getattr(lucrare, 'nume_intern', None)
+        if lucrare_id is None or not nume_intern:
+            raise Exception()
+        return f"SF/{lucrare_id}_{nume_intern}"
+    except Exception:
+        return "SF/NA_Lucrare"
+
+
 def cale_upload_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Certificat_de_urbanism.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Certificat_de_urbanism.pdf'
 
 
 def cale_upload_plan_incadrare_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_de_incadrare.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Plan_de_incadrare.pdf'
 
 
 def cale_upload_plan_situatie_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_de_situatie.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Plan_de_situatie.pdf'
 
 
 def cale_upload_memoriu_tehnic_CU(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Memoriu_tehnic.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Memoriu_tehnic.pdf'
 
 
 def cale_upload_acte_beneficiar(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/Acte beneficiar/Acte_beneficiar.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/Acte beneficiar/Acte_beneficiar.pdf'
 
 
 def cale_upload_acte_facturare(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Acte_facturare.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Acte_facturare.pdf'
 
 
 def cale_upload_chitanta_APM(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_APM.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Chitanta_APM.pdf'
 
 
 def cale_upload_plan_situatie_la_scara(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_situatie_-_la_scara.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Plan_situatie_-_la_scara.pdf'
 
 
 def cale_upload_plan_situatie_DWG(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Plan_situatie.dwg'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Plan_situatie.dwg'
 
 
 def cale_upload_extrase_CF(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Extrase_CF.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Extrase_CF.pdf'
 
 
 def cale_upload_aviz_GIS(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz_GIS.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Aviz_GIS.pdf'
 
 
 def cale_upload_ATR(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/ATR.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/ATR.pdf'
 
 
 def cale_upload_aviz_CTE(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Aviz_CTE.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Aviz_CTE.pdf'
 
 
 def cale_upload_chitanta_DSP(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_DSP.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Chitanta_DSP.pdf'
 
 
 def cale_upload_chitanta_IPJ_Botosani(instance, filename):
-    return f'SF/{instance.lucrare.nume_intern}/CU/Chitanta_IPJ_Botosani.pdf'
+    prefix = _prefix_SF_lucrare(getattr(instance, 'lucrare', None))
+    return f'{prefix}/CU/Chitanta_IPJ_Botosani.pdf'
 
 
 # Upload helpers pentru cheltuieli (facturi/taxe) ale AvizeCU
 def cale_upload_factura_aviz(instance, filename):
     try:
-        nume_intern = instance.aviz_cu.certificat_urbanism.lucrare.nume_intern
+        lucrare = instance.aviz_cu.certificat_urbanism.lucrare
     except Exception:
-        nume_intern = 'Lucrare'
-    return f"SF/{nume_intern}/CU/Facturi/{filename}"
+        lucrare = None
+    prefix = _prefix_SF_lucrare(lucrare)
+    return f"{prefix}/CU/Facturi/{filename}"
 
 
 def cale_upload_dovada_plata_aviz(instance, filename):
+    """Calea de upload pentru dovada de plată a unei cheltuieli de aviz.
+
+    Structură propusă (similar cu aviz eliberat):
+    SF/<nume_intern>/CU/Dovezi/<lucrare_id>/<nume_aviz>/<filename>
+    """
     try:
-        nume_intern = instance.aviz_cu.certificat_urbanism.lucrare.nume_intern
+        aviz_cu = instance.aviz_cu
+        lucrare = aviz_cu.certificat_urbanism.lucrare
     except Exception:
-        nume_intern = 'Lucrare'
-    return f"SF/{nume_intern}/CU/Dovezi/{filename}"
+        aviz_cu = None
+        lucrare = None
+
+    try:
+        aviz_nume = getattr(aviz_cu.nume_aviz, 'nume', 'Aviz')
+    except Exception:
+        aviz_nume = 'Aviz'
+
+    prefix = _prefix_SF_lucrare(lucrare)
+    safe_aviz = ''.join(c if c.isalnum() or c in (
+        ' ', '-', '_') else '_' for c in aviz_nume).strip().replace(' ', '_')
+    return f"{prefix}/CU/Dovezi/{safe_aviz}/{filename}"
 
 
 # Upload helper pentru fișierul de aviz eliberat (AvizeCU.cale_aviz_eliberat)
@@ -202,12 +250,8 @@ def cale_upload_aviz_eliberat(instance, filename):
     """
     try:
         lucrare = instance.certificat_urbanism.lucrare
-        nume_intern = getattr(lucrare, 'nume_intern',
-                              None) or f"Lucrare_{lucrare.id}"
-        lucrare_id = lucrare.id
     except Exception:
-        nume_intern = 'Lucrare'
-        lucrare_id = 'NA'
+        lucrare = None
 
     try:
         aviz_nume = getattr(instance.nume_aviz, 'nume', 'Aviz')
@@ -217,7 +261,8 @@ def cale_upload_aviz_eliberat(instance, filename):
     # Sanitizăm numele avizului pentru a evita caractere problematice în cale
     safe_aviz = ''.join(c if c.isalnum() or c in (
         ' ', '-', '_') else '_' for c in aviz_nume).strip().replace(' ', '_')
-    return f"SF/{nume_intern}/CU/Avize_eliberate/{lucrare_id}/{safe_aviz}/{filename}"
+    prefix = _prefix_SF_lucrare(lucrare)
+    return f"{prefix}/CU/Avize_eliberate/{safe_aviz}/{filename}"
 
 
 class Judet(models.Model):
