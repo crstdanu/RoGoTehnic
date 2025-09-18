@@ -274,6 +274,25 @@
             });
             container.appendChild(fragment);
             totalFormsInput.value = total + 1;
+
+            // Inițializează Tom Select pe select-urile nou adăugate
+            try {
+                const rows = container.querySelectorAll('.formset-row');
+                const newRow = rows[rows.length - 1];
+                if (newRow) {
+                    newRow.querySelectorAll('select.form-select').forEach(function (sel) {
+                        if (!sel.tomselect && window.TomSelect) {
+                            new TomSelect(sel, {
+                                create: false,
+                                persist: false,
+                                allowEmptyOption: true,
+                                plugins: ['clear_button'],
+                                sortField: { field: 'text', direction: 'asc' }
+                            });
+                        }
+                    });
+                }
+            } catch (e) { /* silent */ }
         });
     })();
 </script>

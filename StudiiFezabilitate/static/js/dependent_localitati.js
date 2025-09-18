@@ -17,7 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!judetId) {
-            localitateSelect.innerHTML = '<option value="">---------</option>';
+            // Integrare cu Tom Select dacă este activ
+            if (localitateSelect.tomselect) {
+                localitateSelect.tomselect.clear();
+                localitateSelect.tomselect.clearOptions();
+                localitateSelect.tomselect.addOption({ value: '', text: '---------' });
+            } else {
+                localitateSelect.innerHTML = '<option value="">---------</option>';
+            }
             localitateSelect.disabled = true;
             localitateSelect.removeAttribute('aria-busy');
             return;
@@ -25,7 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         localitateSelect.disabled = true;
         localitateSelect.setAttribute('aria-busy', 'true');
-        localitateSelect.innerHTML = '<option selected disabled>Se încarcă…</option>';
+        if (localitateSelect.tomselect) {
+            localitateSelect.tomselect.clearOptions();
+            localitateSelect.tomselect.addOption({ value: '', text: 'Se încarcă…' });
+            localitateSelect.tomselect.refreshOptions(false);
+        } else {
+            localitateSelect.innerHTML = '<option selected disabled>Se încarcă…</option>';
+        }
 
         const controller = new AbortController();
         currentFetchController = controller;
@@ -42,34 +55,56 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (judetSelect.value !== expectedJudetId || thisRequestId !== requestCounter) {
                     return;
                 }
-                const frag = document.createDocumentFragment();
-                const placeholder = document.createElement('option');
-                placeholder.value = '';
-                placeholder.textContent = '---------';
-                frag.appendChild(placeholder);
+                if (localitateSelect.tomselect) {
+                    const ts = localitateSelect.tomselect;
+                    ts.clear();
+                    ts.clearOptions();
+                    ts.addOption({ value: '', text: '---------' });
+                    // add all options
+                    const options = data.map(item => ({ value: String(item.id), text: item.text }));
+                    ts.addOptions(options);
+                    ts.refreshOptions(false);
+                    if (desiredSelectedId) {
+                        const val = String(desiredSelectedId);
+                        const exists = options.some(o => o.value === val);
+                        if (exists) ts.setValue(val, true);
+                    }
+                } else {
+                    const frag = document.createDocumentFragment();
+                    const placeholder = document.createElement('option');
+                    placeholder.value = '';
+                    placeholder.textContent = '---------';
+                    frag.appendChild(placeholder);
 
-                data.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = String(item.id);
-                    option.textContent = item.text;
-                    frag.appendChild(option);
-                });
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = String(item.id);
+                        option.textContent = item.text;
+                        frag.appendChild(option);
+                    });
 
-                localitateSelect.innerHTML = '';
-                localitateSelect.appendChild(frag);
+                    localitateSelect.innerHTML = '';
+                    localitateSelect.appendChild(frag);
 
-                if (desiredSelectedId) {
-                    const val = String(desiredSelectedId);
-                    const hasOption = Array.from(localitateSelect.options).some(opt => opt.value === val);
-                    if (hasOption) {
-                        localitateSelect.value = val;
+                    if (desiredSelectedId) {
+                        const val = String(desiredSelectedId);
+                        const hasOption = Array.from(localitateSelect.options).some(opt => opt.value === val);
+                        if (hasOption) {
+                            localitateSelect.value = val;
+                        }
                     }
                 }
             })
             .catch(err => {
                 if (err && err.name === 'AbortError') return;
                 console.error('Eroare la încărcarea localităților:', err);
-                localitateSelect.innerHTML = '<option value="">---------</option>';
+                if (localitateSelect.tomselect) {
+                    localitateSelect.tomselect.clear();
+                    localitateSelect.tomselect.clearOptions();
+                    localitateSelect.tomselect.addOption({ value: '', text: '---------' });
+                } else {
+                    localitateSelect.innerHTML = '<option value="">---------</option>';
+                }
             })
             .finally(() => {
                 if (judetSelect.value === expectedJudetId && thisRequestId === requestCounter) {
