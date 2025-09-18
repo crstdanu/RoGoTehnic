@@ -194,21 +194,26 @@ def add_lucrare_SF(request) -> HttpResponse:
 
 
 def edit(request, id):
+    lucrare = get_object_or_404(Lucrare, pk=id)
     if request.method == 'POST':
-        lucrare = Lucrare.objects.get(pk=id)
         form = LucrareForm(request.POST, instance=lucrare)
         if form.is_valid():
             form.save()
+            messages.success(request, "Lucrarea a fost editată.")
+            # Redirect către pagina anterioară dacă a fost furnizată (?next=...), altfel la index
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('index')
+        else:
             return render(request, 'StudiiFezabilitate/edit_lucrare_SF.html', {
-                'form': form,  # LucrareForm(instance=lucrare)
-                'success': True
+                'form': form
             })
     else:
-        lucrare = Lucrare.objects.get(pk=id)
         form = LucrareForm(instance=lucrare)
-    return render(request, 'StudiiFezabilitate/edit_lucrare_SF.html', {
-        'form': form
-    })
+        return render(request, 'StudiiFezabilitate/edit_lucrare_SF.html', {
+            'form': form
+        })
 
 
 def delete(request, id):

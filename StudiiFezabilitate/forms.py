@@ -86,7 +86,27 @@ class LucrareForm(BaseForm):
         # Folosește self.instance (setată de ModelForm) după super().__init__
         instance = getattr(self, 'instance', None)
 
-        if instance and getattr(instance, 'pk', None):
+        # 1) Dacă formularul este BOUND (POST/GET cu date), folosim JUDEȚ-ul din datele trimise
+        if self.is_bound:
+            try:
+                posted_judet = self.data.get('judet')
+                if posted_judet:
+                    judet_id = int(posted_judet)
+                    self.fields['localitate'].queryset = Localitate.objects.filter(
+                        judet_id=judet_id
+                    ).order_by('nume')
+            except (TypeError, ValueError):
+                # Lăsăm queryset-ul neschimbat dacă judet nu e valid în date
+                pass
+
+            # Păstrăm selecția utilizatorului pentru re-randare (util pentru JS dependent)
+            posted_localitate = self.data.get('localitate')
+            if posted_localitate:
+                self.fields['localitate'].widget.attrs['data-selected'] = str(
+                    posted_localitate)
+
+        # 2) Altfel (formular nelegat), la editare folosim JUDEȚ-ul instanței pentru a filtra localitățile
+        elif instance and getattr(instance, 'pk', None):
             if instance.judet_id:
                 # Filtrează opțiunile pentru câmpul localitate doar la cele care aparțin județului instanței
                 self.fields['localitate'].queryset = Localitate.objects.filter(
