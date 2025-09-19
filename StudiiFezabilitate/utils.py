@@ -76,6 +76,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return iasi.aviz_TransGaz_Iasi(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Iasi":
                 return iasi.aviz_ANIF_Iasi(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Iasi":
+                return iasi.studiu_geotehnic_Iasi(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Iași nu poate fi generată (...încă)")
@@ -132,6 +134,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return neamt.aviz_TransGaz_Neamt(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Neamt":
                 return neamt.aviz_ANIF_Neamt(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Neamt":
+                return neamt.studiu_geotehnic_Neamt(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Neamț nu poate fi generată (...încă)")
@@ -186,6 +190,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return bacau.aviz_TransGaz_Bacau(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Bacau":
                 return bacau.aviz_ANIF_Bacau(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Bacau":
+                return bacau.studiu_geotehnic_Bacau(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Bacău nu poate fi generată (...încă)")
@@ -228,6 +234,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_TransGaz_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Suceava":
                 return suceava.aviz_ANIF_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Suceava":
+                return suceava.studiu_geotehnic_Suceava(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Suceava nu poate fi generată (...încă)")
@@ -278,6 +286,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return botosani.aviz_TransGaz_Botosani(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Botosani":
                 return botosani.aviz_ANIF_Botosani(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Botosani":
+                return botosani.studiu_geotehnic_Botosani(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Botoșani nu poate fi generată (...încă)")
@@ -316,6 +326,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return vaslui.aviz_TransGaz_Vaslui(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Aviz ANIF - Vaslui":
                 return vaslui.aviz_ANIF_Vaslui(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Studiu geotehnic - Vaslui":
+                return vaslui.studiu_geotehnic_Vaslui(lucrare_id, id_aviz)
             return DocumentGenerationResult.error_result(
                 "Aceasta documentație din Vaslui nu poate fi generată (...încă)")
         else:
