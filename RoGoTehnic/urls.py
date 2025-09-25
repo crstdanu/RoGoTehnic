@@ -19,5 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Studii de Fezabilitate raman temporar la radacina (Etapa 1 focus pe PTH prefix)
     path('', include('StudiiFezabilitate.urls')),
+    # Prefix PTH pentru aplicatia ProiecteTehnice
+    path('PTH/', include('ProiecteTehnice.urls')),
 ]
