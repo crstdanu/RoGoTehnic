@@ -236,6 +236,8 @@ def creeaza_fisier(lucrare_id, id_aviz):
                 return suceava.aviz_ANIF_Suceava(lucrare_id, id_aviz)
             elif avizCU.nume_aviz.nume == "Studiu geotehnic - Suceava":
                 return suceava.studiu_geotehnic_Suceava(lucrare_id, id_aviz)
+            elif avizCU.nume_aviz.nume == "Aviz NATURA 2000 - Suceava":
+                return suceava.aviz_Natura_2000_Suceava(lucrare_id, id_aviz)
             else:
                 return DocumentGenerationResult.error_result(
                     "Aceasta documentație din Suceava nu poate fi generată (...încă)")

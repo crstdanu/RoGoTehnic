@@ -1922,6 +1922,7 @@ def aviz_TransElectrica_Iasi(lucrare_id: int, id_aviz: int):
         print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
+
 def aviz_TransGaz_Iasi(lucrare_id: int, id_aviz: int):
     """
     Aceasta functie genereaza documentatia necesara pentru avizul TransGaz.
@@ -2004,6 +2005,7 @@ def aviz_TransGaz_Iasi(lucrare_id: int, id_aviz: int):
         print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
 
+
 def aviz_ANIF_Iasi(lucrare_id: int, id_aviz: int):
     """
     Aceasta functie genereaza documentatia necesara pentru avizul ANIF Iași.
@@ -2080,6 +2082,7 @@ def aviz_ANIF_Iasi(lucrare_id: int, id_aviz: int):
         # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
         print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
 
 def studiu_geotehnic_Iasi(lucrare_id: int, id_aviz: int):
     """
@@ -2179,3 +2182,4 @@ def studiu_geotehnic_Iasi(lucrare_id: int, id_aviz: int):
         # Prindem orice altă excepție neașteptată (ex: probleme de conectare la DB)
         print(f"Eroare neașteptată în {avizCU.nume_aviz.nume}: {e}")
         return DocumentGenerationResult.error_result(f"Eroare neașteptată: {str(e)}")
+
